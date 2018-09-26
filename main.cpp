@@ -1,24 +1,30 @@
-#include <SFML/Graphics.hpp>
+#include "table.h"
+#include <iostream>
+#include <cmath>
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Red);
 
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
+    Table table({
+        { -4.0 * M_PI / 180.0,  -0.14,   0.014,  0,   -0.036 },
+        { -2.0 * M_PI / 180.0,   0.02,   0.008,  0,   -0.052 },
+        {  0.0 * M_PI / 180.0,   0.14,   0.008,  0,   -0.090 },
+        {  2.0 * M_PI / 180.0,   0.32,   0.012,  0,   -0.130 },
+        {  4.0 * M_PI / 180.0,   0.46,   0.020,  0,   -0.160 },
+        {  6.0 * M_PI / 180.0,   0.60,   0.030,  0,   -0.200 },
+        {  8.0 * M_PI / 180.0,   0.76,   0.044,  0,   -0.240 },
+        { 10.0 * M_PI / 180.0,   0.90,   0.060,  0,   -0.280 },
+        { 12.0 * M_PI / 180.0,   1.04,   0.070,  0,   -0.310 },
+        { 14.0 * M_PI / 180.0,   1.16,   0.096,  0,   -0.330 },
+        { 15.0 * M_PI / 180.0,   1.22,   0.110,  0,   -0.340 },
+        { 16.0 * M_PI / 180.0,   1.16,   0.140,  0,   -0.350 },  
+        { 18.0 * M_PI / 180.0,   1.02,   0.210,  0,   -0.384 },
+        { 20.0 * M_PI / 180.0,   0.94,   0.260,  0,   -0.390 }
 
-        window.clear();
-        window.draw(shape);
-        window.display();
-    }
+    });
+
+    std::cout << table << std::endl;
+    std::cout << table.get(0.22) << std::endl;
 
     return 0;
 }
