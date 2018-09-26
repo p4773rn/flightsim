@@ -16,10 +16,8 @@ int main()
     sf::Clock clock;
     sf::View view = window.getDefaultView();
 
-    sf::CircleShape dot(2);
-    dot.setPosition(200, 300);
     Plot p = Plot(600, 600);
-    int i = 0;
+    std::pair<float, float> point = {0,0};
     while (window.isOpen())
     {
         sf::Event event;
@@ -29,14 +27,9 @@ int main()
                 window.close();
         }
         float t = clock.getElapsedTime().asSeconds() * 1000.0f;
-        std::pair<float, float> point;
         point.first = t;
-        if (i != 1) {
-            i = 1;
-            point.second = 0;
-        } else {
-            point.second = getNextRandom(p.values.back().second);
-        }
+        point.second = getNextRandom(point.second);
+        
         p.add(point);
         window.setView(view);
 
