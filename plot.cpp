@@ -16,7 +16,7 @@ void Plot::add(std::pair<float, float> value) {
         maxY = std::abs(value.second);
     
     float t = value.first - interval;
-    while(values.front().first < t) {
+    while(!values.empty() && values.front().first < t) {
         values.pop();
     }
     values.push(value);
@@ -35,7 +35,7 @@ void Plot::draw(sf::RenderWindow& window) {
             pointX = x + offset;
             pointY = y + height/2 - (height/2 * (value.second/maxY)); // height * (value.second/maxY) <= height/2
         }
-        std::cout<<maxY<<std::endl;
+        // std::cout<<maxY<<std::endl;
         dot.setPosition(pointX, pointY);
         window.draw(dot);
         values.push(value);
