@@ -6,7 +6,14 @@
 
 class Airfoil {
 public:
-    Vec2 getLift(const Vec2& velocity, float angle);
+    Airfoil(const Table& table, double area, double airfoilAngle) : 
+        table(table),
+        area(area),
+        airfoilAngle(airfoilAngle)
+    {
+
+    }
+    Vec2 getForce(const Vec2& velocity, double angle, double airPressure);
 private:
     // Warning: unlike Hans' code this doesn't convert degrees to radians
     //Table table = {
@@ -25,7 +32,9 @@ private:
     //    { 18.0,   1.02,   0.210,  0,   -0.384 },
     //    { 20.0,   0.94,   0.260,  0,   -0.390 }
     //};
-
+    Table table;
+    double area;
+    double airfoilAngle;
 };
 
 #endif

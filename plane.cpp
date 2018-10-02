@@ -1,14 +1,15 @@
 #include "plane.h"
+#include "environment.h"
 
-
-void Plane::update(float delta) {
+void Plane::update(double delta) {
     Vec2 netForce;
     
-    netForce += Vec2(0, -9.8 * mass);
+    netForce += Vec2(0, GRAVITATIONAL_ACCELERATION * mass);
     
-    netForce += wing.getLift(velocity, angle);
+    netForce += wing.getForce(velocity, angle, getAirPressure(pos.getY()));
 
-    
-    velocity += netForce / mass * delta;
+    netForce += engine.getThrust(angle);
+
+    //velocity += netForce / mass * delta;
     pos += velocity * delta;
 }

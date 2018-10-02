@@ -1,7 +1,7 @@
 #include "table.h"
 #include <cmath>
 
-Table::Entry::Entry(float alpha, float lift, float drag, float axis, float moment) :
+Table::Entry::Entry(double alpha, double lift, double drag, double axis, double moment) :
                 alpha{alpha}, 
                 lift{lift}, 
                 drag{drag}
@@ -15,19 +15,19 @@ Table::Entry::Entry(float alpha, float lift, float drag, float axis, float momen
 }
 
 
-Table::Entry Table::get(float alpha) {
+Table::Entry Table::get(double alpha) {
     if (alpha < entries.front().alpha)
         return entries.front();
     if (entries.back().alpha <= alpha)
         return entries.back();
 
     for (int i = 0; i < entries.size() - 1; ++i) {
-        float alpha1 = entries[i].alpha;
-        float alpha2 = entries[i+1].alpha;
+        double alpha1 = entries[i].alpha;
+        double alpha2 = entries[i+1].alpha;
 
         if (alpha1 <= alpha && alpha < alpha2)
         {
-            float ratio = (alpha - alpha1) / (alpha2 - alpha1);
+            double ratio = (alpha - alpha1) / (alpha2 - alpha1);
             
             return Entry(
                     alpha,

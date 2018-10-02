@@ -11,11 +11,11 @@ Plot::Plot(unsigned int _width, unsigned int _height)
     maxY = 0;
 }
 
-void Plot::add(std::pair<float, float> value) {
+void Plot::add(std::pair<double, double> value) {
     if (std::abs(value.second) > maxY)
         maxY = std::abs(value.second);
     
-    float t = value.first - interval;
+    double t = value.first - interval;
     while(!values.empty() && values.front().first < t) {
         values.pop();
     }
@@ -24,10 +24,10 @@ void Plot::add(std::pair<float, float> value) {
 
 void Plot::draw(sf::RenderWindow& window) {
     int iterations = values.size();
-    float t = values.back().first; // time of newest value
+    double t = values.back().first; // time of newest value
     sf::CircleShape dot(1);
     for (unsigned int i = iterations; i > 0; i--) {
-        std::pair<float, float> value = values.front(); // the oldest value in queue
+        std::pair<double, double> value = values.front(); // the oldest value in queue
         values.pop();
         unsigned int pointX, pointY; // points where to draw
         int offset = (1.0f - ((t - value.first) / interval)) * width;

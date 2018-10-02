@@ -7,7 +7,7 @@
 #include "table.h"
 #include "plane.h"
 
-float getNextRandom(float prev) {
+double getNextRandom(double prev) {
     return prev + ((rand() % 100) - 50);
 }
 
@@ -19,14 +19,14 @@ int main()
     const int FPS = 120;
     window.setFramerateLimit(FPS);
     sf::Clock clock;
-    float lastUpdateTime = clock.getElapsedTime().asSeconds();
+    double lastUpdateTime = clock.getElapsedTime().asSeconds();
     sf::View view = window.getDefaultView();
 
     Plot p = Plot(600, 600);
     
     Plane plane = Plane();
 
-    std::pair<float, float> point = {0, plane.getHeight()};
+    std::pair<double, double> point = {0, plane.getHeight()};
     while (window.isOpen())
     {
         sf::Event event;
