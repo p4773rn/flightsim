@@ -13,7 +13,7 @@ public:
     {
 
     }
-    Vec2 getForce(const Vec2& velocity, double angle, double airPressure);
+    Vec2 getLift(const Vec2& velocity, double angle, double airPressure);
 private:
     // Warning: unlike Hans' code this doesn't convert degrees to radians
     //Table table = {

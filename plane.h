@@ -8,7 +8,8 @@
 class Plane {
 public:
     Plane() :
-        engine(1000),
+        engine(5000),
+        // TODO: explain what each entry of table means
         wing(Table(
             {
                 { -4.0 * M_PI / 180,  -0.14,   0.014,  0,   -0.036 },
@@ -27,11 +28,10 @@ public:
                 { 20.0 * M_PI / 180,   0.94,   0.260,  0,   -0.390 }
             }),
             20,
-            0
-        )
+            0)
     {
         pos = Vec2(0, 100);
-        velocity = Vec2(0, 0);
+        velocity = Vec2(100, 0);
     }
 
     double getHeight() const {return pos.getY();}

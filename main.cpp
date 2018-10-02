@@ -7,26 +7,30 @@
 #include "table.h"
 #include "plane.h"
 
-double getNextRandom(double prev) {
-    return prev + ((rand() % 100) - 50);
-}
-
 int main()
 {
+    const int FPS = 10;
+
     srand((int)time(NULL));
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "FlightSim");
-    const int FPS = 120;
     window.setFramerateLimit(FPS);
+
     sf::Clock clock;
     double lastUpdateTime = clock.getElapsedTime().asSeconds();
+
     sf::View view = window.getDefaultView();
 
+    // Plane height plot
     Plot p = Plot(600, 600);
     
     Plane plane = Plane();
 
+    // Point that will be displayed on plot
+    // point.first = elapsed time
+    // point.second = height of the plane
     std::pair<double, double> point = {0, plane.getHeight()};
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -37,12 +41,14 @@ int main()
         }
         plane.update(lastUpdateTime - clock.getElapsedTime().asSeconds());
         lastUpdateTime = clock.getElapsedTime().asSeconds();
+
         point.first = clock.getElapsedTime().asSeconds() * 1000;
         point.second = plane.getHeight();
-        std::cout<<point.first<<"; "<<point.second<<std::endl; 
         p.add(point);
-        window.setView(view);
 
+        // std::cout<<point.first<<"; "<<point.second<<std::endl;
+
+        window.setView(view);
         window.clear();
         p.draw(window);
 
