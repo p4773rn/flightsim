@@ -1,6 +1,6 @@
 #include "plot.h"
-
 #include <iostream>
+#include <vector>
 
 Plot::Plot(unsigned int _width, unsigned int _height)
     : width(_width), height(_height) 
@@ -9,35 +9,40 @@ Plot::Plot(unsigned int _width, unsigned int _height)
     y = 0;
     interval = 2000.0f;
     maxY = 0;
+    vertices = sf::VertexArray(sf::LineStrip, 200);
 }
 
 void Plot::add(std::pair<double, double> value) {
-    if (std::abs(value.second) > maxY)
-        maxY = std::abs(value.second);
+    if (std::abs(value.second) >= maxY)
+        maxY = std::abs(value.second) * 2;
     
     double t = value.first - interval;
     while(!values.empty() && values.front().first < t) {
-        values.pop();
+        values.erase(values.begin());
     }
-    values.push(value);
+    values.push_back(value);
 }
 
 void Plot::draw(sf::RenderWindow& window) {
-    int iterations = values.size();
-    double t = values.back().first; // time of newest value
-    sf::CircleShape dot(1);
-    for (unsigned int i = iterations; i > 0; i--) {
-        std::pair<double, double> value = values.front(); // the oldest value in queue
-        values.pop();
-        unsigned int pointX, pointY; // points where to draw
-        int offset = (1.0f - ((t - value.first) / interval)) * width;
+    sf::RectangleShape box(sf::Vector2f(width, height));
+    box.setPosition(sf::Vector2f(x, y));
+    box.setFillColor(sf::Color::Blue);
+
+    if (vertices.getVertexCount() != values.size())
+            vertices.resize(values.size());
+    double t = values.back().first;
+    for (unsigned int i = 0; i < values.size(); ++i) {
+        unsigned int pX, pY;
+        int offset = (1.0f - ((t - values[i].first) / interval)) * width;
         if (offset >= 0) {
-            pointX = x + offset;
-            pointY = y + height/2 - (height/2 * (value.second/maxY)); // height * (value.second/maxY) <= height/2
+            pX = x + offset;
+            pY = y + height/2 - (height/2 * (values[i].second/maxY));
         }
-        // std::cout<<maxY<<std::endl;
-        dot.setPosition(pointX, pointY);
-        window.draw(dot);
-        values.push(value);
+        //vertices[i] = sf::Vertex(sf::Vector2f(pX, pY), sf::Color::Red);
+        vertices[i].position.x = pX;
+        vertices[i].position.y = pY;
+        vertices[i].color = sf::Color::Red;
     }
+    window.draw(box);
+    window.draw(vertices);
 }

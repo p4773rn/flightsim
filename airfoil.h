@@ -6,15 +6,20 @@
 
 class Airfoil {
 public:
-    Airfoil(const Table& table, double area, double airfoilAngle) : 
+    Airfoil(const Table& table, double area, double airfoilAngle, double chordLength) : 
         table(table),
         area(area),
-        airfoilAngle(airfoilAngle)
+        airfoilAngle(airfoilAngle),
+        chordLength(chordLength)
     {
 
     }
     Vec2 getForce(const Vec2& velocity, double angle, double airPressure);
     double getLiftMagnitude() {return this->liftMagnitude;}
+    // double getWingsArea() {return this->area;}
+    // double getWingsChordLength() {return this->chordLength;}
+    // Table getTable() {return this->table;}
+    double getTorque(double airPressure, double angle, const Vec2& velocity);
 private:
     // Warning: unlike Hans' code this doesn't convert degrees to radians
     //Table table = {
@@ -36,6 +41,7 @@ private:
     Table table;
     double area;
     double airfoilAngle;
+    double chordLength;
     double liftMagnitude; // need to calculate torque
 };
 

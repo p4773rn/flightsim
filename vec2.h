@@ -46,6 +46,9 @@ public:
     Vec2 operator / ( double d ) const {
         return {x / d, y / d};
     }
+    Vec2 operator - () const {
+        return {-x, -y};
+    }
 
 private:
     double x;
