@@ -37,6 +37,9 @@ public:
         x += v.x;
         y += v.y;
     }
+    Vec2 operator + ( const Vec2& v ) const {
+        return {x + v.getX(), y + v.getY()};
+    }
     Vec2 operator * ( double d ) const {
         return {x * d, y * d};
     }

@@ -8,8 +8,7 @@
 class Plane {
 public:
     Plane() :
-        engine(5000),
-        // TODO: explain what each entry of table means
+        engine(2000),
         wing(Table(
             {
                 { -4.0 * M_PI / 180,  -0.14,   0.014,  0,   -0.036 },
@@ -28,7 +27,7 @@ public:
                 { 20.0 * M_PI / 180,   0.94,   0.260,  0,   -0.390 }
             }),
             20,
-            0)
+            1)
     {
         pos = Vec2(0, 100);
         velocity = Vec2(100, 0);
@@ -40,9 +39,9 @@ public:
 private:
     Vec2 pos; // For now, xy coordinates of the plane
     Vec2 velocity;
-    double angle = 0; // angle of plane relative to horizon
-    double angularVel = 0;
-
+    double angle = 1; // angle of plane relative to horizon
+    double angularVelocity = 0;
+    double wingsPoint = 1; // distance from wings' force to the mass center
     double mass = 1000;
 
     Airfoil wing;

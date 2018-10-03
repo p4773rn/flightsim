@@ -11,13 +11,11 @@ void Plane::update(double delta) {
     // Weight
     netForce += Vec2(0, -GRAVITATIONAL_ACCELERATION * mass);
     
-    // Lift
-    netForce += wing.getLift(velocity, angle, getAirPressure(pos.getY()));
+    // Lift + Drag
+    Vec2 wingsForce = wing.getForce(velocity, angle, getAirPressure(pos.getY()));
+    netForce += wingsForce;
     // std::cout << "Net X: " << netForce.getX() << std::endl;
     // std::cout << "Net Y: " << netForce.getY() << std::endl << std::endl;
-
-    // Drag
-    // TODO: get Drag coef table and calculate drag force in airfoil.cpp
 
     // Thrust
     netForce += engine.getThrust(angle);
@@ -27,5 +25,8 @@ void Plane::update(double delta) {
 
     // Torque update
     // TODO: get MOMENT COEFFICIENT and calculate angular acceleration
-
+    angularVelocity = wing.getLiftMagnitude() / (mass * wingsPoint) * delta;
+    // std::cout << "Lift: " << wing.getLiftMagnitude() << std::endl;
+    // std::cout << "angVel: " << angularVelocity << std::endl << std::endl;
+    angle += angularVelocity * delta;
 }

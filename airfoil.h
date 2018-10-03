@@ -13,7 +13,8 @@ public:
     {
 
     }
-    Vec2 getLift(const Vec2& velocity, double angle, double airPressure);
+    Vec2 getForce(const Vec2& velocity, double angle, double airPressure);
+    double getLiftMagnitude() {return this->liftMagnitude;}
 private:
     // Warning: unlike Hans' code this doesn't convert degrees to radians
     //Table table = {
@@ -35,6 +36,7 @@ private:
     Table table;
     double area;
     double airfoilAngle;
+    double liftMagnitude; // need to calculate torque
 };
 
 #endif

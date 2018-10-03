@@ -9,7 +9,7 @@
 
 int main()
 {
-    const int FPS = 10;
+    const int FPS = 60;
 
     srand((int)time(NULL));
 
