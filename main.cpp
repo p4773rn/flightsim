@@ -22,8 +22,11 @@ int main()
     float lastUpdateTime = clock.getElapsedTime().asSeconds();
     sf::View view = window.getDefaultView();
 
-    Plot p = Plot(600, 600);
-    
+    Plot p1 = Plot(800, 200);
+    Plot p2 = Plot(800,200);
+    Plot p3 = Plot(800,200);
+    p2.setPosition(0, 200);
+    p3.setPosition(0, 400);
     Plane plane = Plane();
 
     std::pair<float, float> point = {0, plane.getHeight()};
@@ -35,16 +38,20 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-        plane.update(lastUpdateTime - clock.getElapsedTime().asSeconds());
+        plane.update(clock.getElapsedTime().asSeconds() - lastUpdateTime);
         lastUpdateTime = clock.getElapsedTime().asSeconds();
         point.first = clock.getElapsedTime().asSeconds() * 1000;
         point.second = plane.getHeight();
-        std::cout<<point.first<<"; "<<point.second<<std::endl; 
-        p.add(point);
+        //std::cout<<point.first<<"; "<<point.second<<std::endl; 
+        p1.add(point);
+        p2.add(point);
+        p3.add(point);
+        
         window.setView(view);
-
         window.clear();
-        p.draw(window);
+        p1.draw(window);
+        p2.draw(window);
+        p3.draw(window);
 
         window.display();
     }
