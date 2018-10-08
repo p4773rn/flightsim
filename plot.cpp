@@ -38,6 +38,7 @@ void Plot::draw(sf::RenderWindow& window) {
             pX = x + offset;
             pY = y + height - (height * (values[i].second/maxY));
         }
+        //vertices[i] = sf::Vertex(sf::Vector2f(pX, pY), sf::Color::Red);
         vertices[i].position.x = pX;
         vertices[i].position.y = pY;
         vertices[i].color = sf::Color::Red;
