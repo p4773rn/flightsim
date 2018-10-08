@@ -14,7 +14,7 @@ Plot::Plot(unsigned int _width, unsigned int _height)
 
 void Plot::add(std::pair<double, double> value) {
     if (std::abs(value.second) >= maxY)
-        maxY = std::abs(value.second) * 2;
+        maxY = std::abs(value.second);
     
     double t = value.first - interval;
     while(!values.empty() && values.front().first < t) {
@@ -36,7 +36,7 @@ void Plot::draw(sf::RenderWindow& window) {
         int offset = (1.0f - ((t - values[i].first) / interval)) * width;
         if (offset >= 0) {
             pX = x + offset;
-            pY = y + height/2 - (height/2 * (values[i].second/maxY));
+            pY = y + height - (height * (values[i].second/maxY));
         }
         //vertices[i] = sf::Vertex(sf::Vector2f(pX, pY), sf::Color::Red);
         vertices[i].position.x = pX;

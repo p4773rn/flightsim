@@ -38,7 +38,7 @@ double Airfoil::getTorque(double airPressure, double angle, const Vec2& velocity
     double angleOfAttack = airfoilAngle
                              + angle
                              + atan2(-velocity.getY(), velocity.getX());
-    std::cout << "AoA: " << angleOfAttack / M_PI * 180 << std::endl;
+    std::cout << "AoA: " << angleOfAttack << std::endl;
     std::cout << "Moment coef: " << table.get(angleOfAttack).moment << std::endl;
     return 0.5 * airPressure * velocity.lengthSquared()
                         * area * chordLength * table.get(angleOfAttack).moment;

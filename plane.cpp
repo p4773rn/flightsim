@@ -3,7 +3,7 @@
 #include <iostream>
 
 void Plane::update(double delta) {
-    double airPressure = getAirPressure(pos.getY());
+    double airDensity = getAirPressure(pos.getY());
     // Forces update
 
     Vec2 netForce;
@@ -12,8 +12,12 @@ void Plane::update(double delta) {
     netForce += Vec2(0, -GRAVITATIONAL_ACCELERATION * mass);
     
     // Lift + Drag
-    Vec2 wingsForce = wing.getForce(velocity, angle, airPressure);
+    Vec2 wingsForce = wing.getForce(velocity, angle, airDensity);
     netForce += wingsForce;
+
+    Vec2 elevatorsVelocity = velocity; // TODO: elevator's velocity should depend on angularVelocity of the plane
+    Vec2 elevatorsForce = elevators.getForce(elevatorsVelocity, angle, airDensity);
+    netForce += elevatorsForce;
 
     // Thrust
     netForce += engine.getThrust(angle);
@@ -28,8 +32,16 @@ void Plane::update(double delta) {
     //      angularVelocity = wing.getLiftMagnitude() / (mass * wingsPoint) * delta;
     // wingsForce = mass * wingsPoint * angularAcceleration
     // L = q.S.CL(α)
-    double torque = wing.getTorque(airPressure, angle, velocity);
-    torque += wingsForce.getY() * wingsPoint;
+    double torque = 0;
+    
+    double wingsTorque = wing.getTorque(airDensity, angle, velocity);
+    wingsTorque += wingsForce.getY() * wingsPoint;
+    torque += wingsTorque;
+
+    double elevatorsTorque = elevators.getTorque(airDensity, angle, elevatorsVelocity);
+    elevatorsTorque += elevatorsForce.getY() * elevatorsPoint;
+    torque += elevatorsTorque;
+
     double angularAcceleration = torque / inertia;
     angularVelocity += angularAcceleration * delta;   
 
@@ -71,13 +83,3 @@ void Plane::update(double delta) {
   
 }
 
-/*
-g++ *.cpp -o fs.out -lsfml-graphics -lsfml-window -lsfml-system
-/tmp/ccujh0Ov.o: In function `getAirPressure(double)':
-plane.cpp:(.text+0x0): multiple definition of `getAirPressure(double)'
-/tmp/ccqd9xta.o:airfoil.cpp:(.text+0x0): first defined here
-collect2: error: ld returned 1 exit status
-Makefile:5: recipe for target 'all' failed
-make: *** [all] Error 1
-
-*/
