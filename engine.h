@@ -8,6 +8,7 @@ public:
     Engine(double maxThrust) : maxThrust{maxThrust}
         {}
 
+    int getThrottle() const {return throttle;}
     void setThrottle(int throttle);
     Vec2 getThrust(double angle) const;
 private:

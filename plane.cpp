@@ -14,8 +14,11 @@ void Plane::update(double delta) {
     
     std::tie(wingsForce, wingsTorque) = wings.getForceAndTorque(velocity, angle, airDensity);
 
-    Vec2 elevatorsVelocity = {velocity.getX() - angularVelocity * (elevatorsPoint * sin(angle)),
-                              velocity.getY() + angularVelocity * (elevatorsPoint * cos(angle))};
+    Vec2 elevatorsVelocity = {
+        velocity.getX() - angularVelocity * (elevatorsPoint.getX() * sin(angle) + 
+                                             elevatorsPoint.getY() * cos(angle)),
+        velocity.getY() + angularVelocity * (elevatorsPoint.getX() * cos(angle) - 
+                                             elevatorsPoint.getY() * sin(angle))};
     
     std::tie(elevatorsForce, elevatorsTorque) = elevators.getForceAndTorque(elevatorsVelocity, angle, airDensity);
     
@@ -30,7 +33,8 @@ void Plane::update(double delta) {
     netForce += elevatorsForce;
 
     // Thrust
-    netForce += engine.getThrust(angle);
+    Vec2 thrust = engine.getThrust(angle);
+    netForce += thrust;
 
     Vec2 acceleration = netForce / mass;
     velocity += acceleration * delta;
@@ -40,8 +44,8 @@ void Plane::update(double delta) {
     // Torque update
     double torque = 0;
     
-    torque += wingsTorque + wingsForce.getY() * wingsPoint;
-    torque += elevatorsTorque + elevatorsForce.getY() * elevatorsPoint;
+    torque += wingsTorque + wingsPoint.cross(wingsForce);
+    torque += elevatorsTorque + elevatorsPoint.cross(elevatorsForce);
 
 
     double angularAcceleration = torque / inertia;
@@ -56,6 +60,10 @@ void Plane::update(double delta) {
     cout << "Torque: " << torque << endl;
     cout << "Wings AoA: " << wings.getAngleOfAttack(velocity, angle) / M_PI * 180 << " deg" << endl;
     cout << "Elevators AoA: " << elevators.getAngleOfAttack(velocity, angle) / M_PI * 180 << " deg"  << endl;
+    cout << "--------------------------------------" << endl;
+    cout << "Throttle: " << engine.getThrottle() << endl;
+    cout << "Thrust: " << thrust << endl;
+    cout << "|Vel|: " << velocity.length() << endl;
     cout << endl;
 }
 
@@ -116,9 +124,9 @@ Plane Plane::getDefaultPlane() {
         2027731, // inertia
         
         std::move(wings),
-        2, // wingsPoint
+        Vec2(2, -1), // wingsPoint
         std::move(elevators),
-        -15, // elevatorsPoint
+        Vec2(-15, 1), // elevatorsPoint
         Engine(250000)// engine
     );
 

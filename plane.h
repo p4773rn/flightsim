@@ -14,9 +14,9 @@ public:
           double inertia,
 
           Airfoil wings,
-          double wingsPoint,
+          Vec2 wingsPoint,
           Airfoil elevators,
-          double elevatorsPoint,
+          Vec2 elevatorsPoint,
           Engine engine) :
           
           pos{pos},
@@ -49,10 +49,10 @@ private:
     double mass;
     double inertia;
 
-    double wingsPoint; // distance from wingss' force to the mass center
+    Vec2 wingsPoint; // distance from wingss' force to the mass center
     Airfoil wings;
 
-    double elevatorsPoint;
+    Vec2 elevatorsPoint;
     Airfoil elevators;
 
     Engine engine;

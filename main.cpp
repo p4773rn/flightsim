@@ -9,7 +9,8 @@
 
 int main()
 {
-    const int FPS = 60;
+    const int SPEED = 20; // simulation speed; 1 = real time; 10 = 10 times faster;
+    const int FPS = 30 * SPEED; 
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "FlightSim");
     window.setFramerateLimit(FPS);
@@ -30,11 +31,24 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
-                window.close();
+            switch (event.type) {
+                case sf::Event::Closed:
+                    window.close();
+                    break;
+                
+                case sf::Event::KeyPressed:
+                    if (event.key.code == sf::Keyboard::Z)
+                        std::cout << "throttle-" << std::endl;
+                    if (event.key.code == sf::Keyboard::X)
+                        std::cout << "throttle+" << std::endl;
+                    break;
+
+                default:
+                    break;
+            }
         }
 
-        plane.update((clock.getElapsedTime().asSeconds() - lastUpdateTime) * 2);
+        plane.update((clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED);
         lastUpdateTime = clock.getElapsedTime().asSeconds();
 
         std::pair<double, double> point = {plane.getPos().getX(), plane.getPos().getY()};

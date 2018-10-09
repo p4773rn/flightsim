@@ -31,6 +31,10 @@ public:
         return (*this) / length();
     }
 
+    double cross(const Vec2& v) const {
+        return x * v.y - y * v.x;
+    }
+
     void setX(double x) {this->x = x;}
     void setY(double y) {this->y = y;}
 
@@ -56,11 +60,11 @@ public:
     }
 
     Vec2 operator + (const Vec2& v) const {
-        return {x + v.getX(), y + v.getY()};
+        return {x + v.x, y + v.y};
     }
 
     Vec2 operator - (const Vec2& v) const {
-        return {x - v.getX(), y - v.getY()};
+        return {x - v.x, y - v.y};
     }
 
     Vec2 operator / (double d) const {
