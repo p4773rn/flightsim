@@ -19,23 +19,24 @@ public:
           double elevatorsPoint,
           Engine engine) :
           
-          pos(pos),
-          velocity(velocity),
-          angle(angle),
-          angularVelocity(0),
-          mass(mass),
-          inertia(inertia),
-          wings(wings),
-          wingsPoint(wingsPoint),
-          elevators(elevators),
-          elevatorsPoint(elevatorsPoint),
-          engine(engine)
+          pos{pos},
+          velocity{velocity},
+          angle{angle},
+          angularVelocity{0},
+          mass{mass},
+          inertia{inertia},
+          wings{wings},
+          wingsPoint{wingsPoint},
+          elevators{elevators},
+          elevatorsPoint{elevatorsPoint},
+          engine{engine}
     {}
-    
 
     double getHeight() const {return pos.getY();}
     const Vec2& getPos() const {return pos;}
     void update(double delta);
+
+    static Plane getDefaultPlane();
 
 private:
     Vec2 pos; // For now, xy coordinates of the plane

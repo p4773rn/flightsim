@@ -9,13 +9,22 @@
 class Airfoil {
 public:
     Airfoil(const Table& table, double area, double airfoilAngle, double chordLength) : 
-        table(table),
-        area(area),
-        airfoilAngle(airfoilAngle),
-        chordLength(chordLength)
-    {
+        table{table},
+        area{area},
+        airfoilAngle{airfoilAngle},
+        chordLength{chordLength}
+    {}
 
-    }
+    Airfoil(const Airfoil& other) = default;
+
+    Airfoil(Airfoil&& other) :
+        table{std::move(other.table)},
+        area{other.area},
+        airfoilAngle{other.airfoilAngle},
+        chordLength{other.chordLength}
+    {}
+
+
     std::tuple<Vec2, double> getForceAndTorque(const Vec2& velocity, double angle, double airDensity) const;
     // double getWingsArea() {return this->area;}
     // double getWingsChordLength() {return this->chordLength;}

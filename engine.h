@@ -5,7 +5,7 @@
 
 class Engine {
 public:
-    Engine(double maxThrust) : maxThrust(maxThrust)
+    Engine(double maxThrust) : maxThrust{maxThrust}
         {}
 
     void setThrottle(int throttle);

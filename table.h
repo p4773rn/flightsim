@@ -21,7 +21,9 @@ public:
         entries{entries}
     {}
 
-    Table(const Table& table) : entries(table.entries)
+    Table(const Table& other) = default;
+
+    Table(Table&& other) : entries{std::move(other.entries)}
     {}
 
     Entry get(double alpha) const;
