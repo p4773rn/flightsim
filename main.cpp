@@ -37,10 +37,20 @@ int main()
                     break;
                 
                 case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::Z)
-                        plane.setThrottle(plane.getThrottle() - 5);
-                    if (event.key.code == sf::Keyboard::X)
-                        plane.setThrottle(plane.getThrottle() + 5);
+                    switch (event.key.code) {
+                        case sf::Keyboard::Z:
+                            plane.setThrottle(plane.getThrottle() - 5);
+                            break;
+                        case sf::Keyboard::X:
+                            plane.setThrottle(plane.getThrottle() + 5);
+                            break;
+                        case sf::Keyboard::Q:
+                            plane.setElevatorDeflection(plane.getElevatorDeflection() - 0.1);
+                            break;
+                        case sf::Keyboard::W:
+                            plane.setElevatorDeflection(plane.getElevatorDeflection() + 0.1);
+                            break;
+                    }
                     break;
 
                 default:

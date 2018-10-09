@@ -42,6 +42,9 @@ public:
     int getThrottle() const {return engine.getThrottle();}
     void setThrottle(int throttle) {engine.setThrottle(throttle);}
 
+    double getElevatorDeflection() const {return elevators.getDeflection();}
+    void setElevatorDeflection(double deflection) {elevators.setDeflection(deflection);}
+
     static Plane getDefaultPlane();
 
 private:

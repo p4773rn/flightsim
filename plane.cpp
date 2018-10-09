@@ -61,9 +61,11 @@ void Plane::update(double delta) {
     cout << "Wings AoA: " << wings.getAngleOfAttack(velocity, angle) / M_PI * 180 << " deg" << endl;
     cout << "Elevators AoA: " << elevators.getAngleOfAttack(velocity, angle) / M_PI * 180 << " deg"  << endl;
     cout << "--------------------------------------" << endl;
+    cout << "Wings: " << wingsForce << " " << wingsTorque + wingsPoint.cross(wingsForce) << endl;
+    cout << "Elevators: " << elevatorsForce << " " << elevatorsTorque + elevatorsPoint.cross(elevatorsForce) << endl;
+    cout << "--------------------------------------" << endl;
     cout << "Throttle: " << engine.getThrottle() << endl;
-    cout << "Thrust: " << thrust << endl;
-    cout << "|Vel|: " << velocity.length() << endl;
+    cout << "Elevator Deflection: " << elevators.getDeflection() << endl;
     cout << endl;
 }
 
