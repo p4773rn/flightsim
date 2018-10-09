@@ -117,7 +117,7 @@ Plane Plane::getDefaultPlane() {
     );
 
     Plane plane = Plane(
-        Vec2(0, 100), // pos
+        Vec2(0, 1000), // pos
         Vec2(100, 0),// velocity
         0, // angle
         51710, // mass
@@ -127,7 +127,7 @@ Plane Plane::getDefaultPlane() {
         Vec2(2, -1), // wingsPoint
         std::move(elevators),
         Vec2(-15, 1), // elevatorsPoint
-        Engine(250000)// engine
+        Engine(20000)// engine
     );
 
     return plane;

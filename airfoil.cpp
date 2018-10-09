@@ -14,7 +14,7 @@ std::tuple<Vec2, double> Airfoil::getForceAndTorque(
                            * area 
                            * coefficients.lift 
                            * velocity.lengthSquared();
-    double dragMagnitude = -airDensity
+    double dragMagnitude = airDensity
                            * area 
                            * coefficients.drag 
                            * velocity.lengthSquared();
