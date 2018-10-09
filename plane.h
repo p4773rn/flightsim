@@ -39,6 +39,9 @@ public:
     const Vec2& getPos() const {return pos;}
     void update(double delta);
 
+    int getThrottle() const {return engine.getThrottle();}
+    void setThrottle(int throttle) {engine.setThrottle(throttle);}
+
     static Plane getDefaultPlane();
 
 private:

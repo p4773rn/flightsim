@@ -38,9 +38,9 @@ int main()
                 
                 case sf::Event::KeyPressed:
                     if (event.key.code == sf::Keyboard::Z)
-                        std::cout << "throttle-" << std::endl;
+                        plane.setThrottle(plane.getThrottle() - 5);
                     if (event.key.code == sf::Keyboard::X)
-                        std::cout << "throttle+" << std::endl;
+                        plane.setThrottle(plane.getThrottle() + 5);
                     break;
 
                 default:
