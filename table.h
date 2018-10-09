@@ -24,7 +24,7 @@ public:
     Table(const Table& table) : entries(table.entries)
     {}
 
-    Entry get(double alpha);
+    Entry get(double alpha) const;
 
     friend std::ostream& operator<<(std::ostream& stream, const Table& table);
 private:

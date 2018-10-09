@@ -6,7 +6,7 @@
 std::tuple<Vec2, double> Airfoil::getForceAndTorque(
     const Vec2& velocity, 
     double angle, 
-    double airDensity) {
+    double airDensity) const {
 
     double angleOfAttack = airfoilAngle
                            + angle

@@ -15,7 +15,7 @@ Table::Entry::Entry(double alpha, double lift, double drag, double axis, double 
 }
 
 
-Table::Entry Table::get(double alpha) {
+Table::Entry Table::get(double alpha) const {
     if (alpha < entries.front().alpha || entries.back().alpha <= alpha)
         return Entry(0, 0, 0, 0, 0);
 
