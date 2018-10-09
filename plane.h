@@ -32,6 +32,9 @@ public:
           engine{engine}
     {}
 
+    Plane(const Plane& other) = default;
+    Plane(Plane&& other) = default;
+
     double getHeight() const {return pos.getY();}
     const Vec2& getPos() const {return pos;}
     void update(double delta);

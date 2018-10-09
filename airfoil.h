@@ -16,13 +16,7 @@ public:
     {}
 
     Airfoil(const Airfoil& other) = default;
-
-    Airfoil(Airfoil&& other) :
-        table{std::move(other.table)},
-        area{other.area},
-        airfoilAngle{other.airfoilAngle},
-        chordLength{other.chordLength}
-    {}
+    Airfoil(Airfoil&& other) = default;
 
 
     std::tuple<Vec2, double> getForceAndTorque(const Vec2& velocity, double angle, double airDensity) const;
