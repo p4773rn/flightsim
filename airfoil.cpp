@@ -8,11 +8,7 @@ std::tuple<Vec2, double> Airfoil::getForceAndTorque(
     double angle, 
     double airDensity) const {
 
-    double angleOfAttack = airfoilAngle
-                           + angle
-                           + atan2(-velocity.getY(), velocity.getX());
-
-    Table::Entry coefficients = table.get(angleOfAttack);
+    Table::Entry coefficients = table.get(getAngleOfAttack(velocity, angle));
 
     double liftMagnitude = airDensity
                            * area 

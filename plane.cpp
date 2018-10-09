@@ -3,6 +3,9 @@
 #include <iostream>
 #include <tuple>
 
+using std::cout;
+using std::endl;
+
 void Plane::update(double delta) {
     double airDensity = getAirDensity(pos.getY());
     
@@ -11,7 +14,9 @@ void Plane::update(double delta) {
     
     std::tie(wingsForce, wingsTorque) = wings.getForceAndTorque(velocity, angle, airDensity);
 
-    Vec2 elevatorsVelocity = velocity; // TODO: elevator's velocity should depend on angularVelocity of the plane
+    Vec2 elevatorsVelocity = {velocity.getX() - angularVelocity * (elevatorsPoint * sin(angle)),
+                              velocity.getY() + angularVelocity * (elevatorsPoint * cos(angle))};
+    
     std::tie(elevatorsForce, elevatorsTorque) = elevators.getForceAndTorque(elevatorsVelocity, angle, airDensity);
     
     // Forces update
@@ -43,17 +48,15 @@ void Plane::update(double delta) {
     angularVelocity += angularAcceleration * delta;   
     angle += angularVelocity * delta;
     
-    // std::cout << "Lift: " << wings.getLiftMagnitude() << std::endl;
-    // std::cout << "angVel: " << angularVelocity << std::endl << std::endl;
-    
-
-    //std::cout << "Velocity X: " << velocity.getX() << std::endl;
-    //std::cout << "Velocity Y: " << velocity.getY() << std::endl << std::endl;
-    //std::cout << "Net X: " << netForce.getX() << std::endl;
-    //std::cout << "Net Y: " << netForce.getY() << std::endl;
-    //std::cout << "Torque: " << torque << "; Angular velocity: " << angularVelocity << std::endl;
-    //std::cout << "Angle: " << angle << std::endl;
-    //std::cout << std::endl;
+    cout << "Pos: " << pos << endl;
+    cout << "Vel: " << velocity << endl;
+    cout << "Angle: " << angle / M_PI * 180 << " deg" << endl;
+    cout << "AngVel: " << angularVelocity / M_PI * 180 << " deg/sec" << endl;
+    cout << "Force: " << netForce << endl;
+    cout << "Torque: " << torque << endl;
+    cout << "Wings AoA: " << wings.getAngleOfAttack(velocity, angle) / M_PI * 180 << " deg" << endl;
+    cout << "Elevators AoA: " << elevators.getAngleOfAttack(velocity, angle) / M_PI * 180 << " deg"  << endl;
+    cout << endl;
 }
 
 

@@ -2,6 +2,7 @@
 #define VEC2_H
 
 #include <cmath>
+#include <ostream>
 
 class Vec2 {
 public:
@@ -33,16 +34,39 @@ public:
     void setX(double x) {this->x = x;}
     void setY(double y) {this->y = y;}
 
-    void operator+=(const Vec2& v) {
+
+    void operator += (const Vec2& v) {
         x += v.x;
         y += v.y;
     }
+
+    void operator -= (const Vec2& v) {
+        x -= v.x;
+        y -= v.y;
+    }
+
+    void operator *= (double s) {
+        x *= s;
+        y *= s;
+    }
+
+    void operator /= (double s) {
+        x /= s;
+        y /= s;
+    }
+
     Vec2 operator + (const Vec2& v) const {
         return {x + v.getX(), y + v.getY()};
     }
+
+    Vec2 operator - (const Vec2& v) const {
+        return {x - v.getX(), y - v.getY()};
+    }
+
     Vec2 operator / (double d) const {
         return {x / d, y / d};
     }
+
     Vec2 operator - () const {
         return {-x, -y};
     }
@@ -54,5 +78,7 @@ private:
 
 Vec2 operator * (double s, const Vec2& v);
 Vec2 operator * (const Vec2& v, double s);
+
+std::ostream& operator << (std::ostream& stream, const Vec2& v);
 
 #endif

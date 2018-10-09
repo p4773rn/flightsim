@@ -20,6 +20,13 @@ public:
 
 
     std::tuple<Vec2, double> getForceAndTorque(const Vec2& velocity, double angle, double airDensity) const;
+    
+    double getAngleOfAttack(const Vec2& velocity, double angle) const {
+        return airfoilAngle
+               + angle
+               + atan2(-velocity.getY(), velocity.getX());
+    }
+
     // double getWingsArea() {return this->area;}
     // double getWingsChordLength() {return this->chordLength;}
     // Table getTable() {return this->table;}
