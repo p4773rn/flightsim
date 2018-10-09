@@ -37,13 +37,10 @@ public:
         x += v.x;
         y += v.y;
     }
-    Vec2 operator + ( const Vec2& v ) const {
+    Vec2 operator + (const Vec2& v) const {
         return {x + v.getX(), y + v.getY()};
     }
-    Vec2 operator * ( double d ) const {
-        return {x * d, y * d};
-    }
-    Vec2 operator / ( double d ) const {
+    Vec2 operator / (double d) const {
         return {x / d, y / d};
     }
     Vec2 operator - () const {
@@ -55,6 +52,7 @@ private:
     double y;
 };
 
-
+Vec2 operator * (double s, const Vec2& v);
+Vec2 operator * (const Vec2& v, double s);
 
 #endif
