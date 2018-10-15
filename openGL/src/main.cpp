@@ -27,8 +27,8 @@ int last_x = 400;
 int last_y = 300;
 
 void renderScene(sf::Window& win) {
-  glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "model"),
-                     1, GL_FALSE, glm::value_ptr(model->scale()));
+  //glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "model"),
+  //                   1, GL_FALSE, glm::value_ptr(model->scale()));
   glm::mat4 view;
   view = camera->getView();
   glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "view"),
@@ -75,6 +75,8 @@ void mouseInput(sf::Window& window){
 int main(int argc, char** argv) {
     sf::ContextSettings settings;
     settings.depthBits = 24;
+    settings.majorVersion = 3;
+    settings.minorVersion = 3;
     sf::Window window(sf::VideoMode(800, 600), "OpenGL Demo", sf::Style::Default, settings);
     window.setFramerateLimit(60);
     window.setActive(true);
@@ -91,7 +93,7 @@ int main(int argc, char** argv) {
 
 
     camera = new Camera(glm::vec3(1.0f, 500.0f, 0.5f));
-    model = new Model("assets/models/" +  std::string((argc == 2) ? (argv[1]) : "tree.obj"));
+    //model = new Model("assets/models/" +  std::string((argc == 2) ? (argv[1]) : "tree.obj"));
     
     terrain = new Terrain("assets/terrain/hm.png");
     bool running = true;
