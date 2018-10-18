@@ -15,9 +15,10 @@ private:
 	unsigned int patches;
 	double scale;
 	GLuint VAO, VBO;
-	Shader* shader;
+	std::unique_ptr<Shader> shader;
 public:
 	Terrain(const std::string& fname);
+	~Terrain();
 	void draw(const glm::mat4& view, const glm::mat4& proj);
 	glm::mat4 getMVP();
 	void setup();

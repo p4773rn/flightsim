@@ -90,11 +90,11 @@ void Model::load_obj(const std::string& file_name) {
 	}
 
 	std::cout << "Loaded obj_vertices: " << vertices.size() << std::endl;
-	only = std::make_unique<Mesh>(Mesh(vertices));
+	only = std::make_unique<Mesh>(vertices);
 }
 
 glm::mat4 Model::scale(){
-  glm::mat4 scale = glm::mat4(1.0f);
+    glm::mat4 scale = glm::mat4(1.0f);
 	float max = 0.0f;
 	for (unsigned int i = 0; i < only->vertices.size(); i++){
 		float mofv = std::max(only->vertices[i].position.x,

@@ -16,11 +16,12 @@ public:
 
 	Mesh(const std::vector<Vertex>& vertices);
 	Mesh(const std::vector<Vertex>& vectors, const std::vector<unsigned int>& indices);
+	~Mesh();
 	void setup();
 	void draw();
 private:
-	GLuint m_vao;
-	GLuint m_vbo;
-	GLuint m_ebo;
+	GLuint vao;
+	GLuint vbo;
+	GLuint ebo;
 };
 #endif

@@ -12,10 +12,11 @@ class Shader {
 	private:
 		GLuint program;
 		std::string read_file(const std::string& path);
-		GLuint create_program(const std::string& path, GLuint shader_type);
+		GLuint create_shader(const std::string& path, GLuint shader_type);
 		bool check_error(GLuint program, bool isShader, const std::string& error_msg);
 	public:
 		Shader(const std::vector<std::pair<std::string, GLuint>>& paths);
+		~Shader();
 		void use();
 		GLuint getID();
 };

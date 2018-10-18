@@ -7,7 +7,7 @@
 
 Terrain::Terrain(const std::string& fname) {
 	if (!map.loadFromFile(fname)) {
-		std::cout << "Error while loading file:" << fname << std::endl;
+		std::cerr << "Error while loading file:" << fname << std::endl;
 		return;
 	}
 	map_text.loadFromFile("assets/terrain/text.tga");
@@ -19,9 +19,14 @@ Terrain::Terrain(const std::string& fname) {
       std::pair<std::string, GLuint>("shaders/terrain.tse", GL_TESS_EVALUATION_SHADER),
       std::pair<std::string, GLuint>("shaders/terrain.frgmnt", GL_FRAGMENT_SHADER)
     };
-    shader = new Shader(paths);
+    shader = std::make_unique<Shader>(paths);
     patches = 16;
     setup();
+}
+
+Terrain::~Terrain() {
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
 }
 
 void Terrain::draw(const glm::mat4& view, const glm::mat4& proj) {

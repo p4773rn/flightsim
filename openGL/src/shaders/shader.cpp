@@ -1,36 +1,41 @@
 #include <iostream>
 #include "shader.h"
+#include <sstream>
 
 Shader::Shader(const std::vector<std::pair<std::string, GLuint>>& paths){
 	program = glCreateProgram();
+	std::vector<GLuint> shaders;
 	for (const auto& p : paths) {
-		GLuint sh = create_program(p.first, p.second);
+		GLuint sh = create_shader(p.first, p.second);
 		glAttachShader(program, sh);
+		shaders.push_back(sh);
 	}
 	glLinkProgram(program);
 	check_error(program, false, "LINKING::ERROR");
+
+	for (auto sh : shaders)
+	    glDeleteShader(sh);
+}
+
+Shader::~Shader() {
+    glDeleteProgram(program);
 }
 
 std::string Shader::read_file(const std::string& path){
-	std::string text;
 	std::ifstream shader_file(path);
-	for(std::string line; getline(shader_file, line);){
-		text += line;
-		text += "\n";
-	}
-	return text;
+	std::stringstream buffer;
+	buffer << shader_file.rdbuf();
+	return buffer.str();
 }
 
-GLuint Shader::create_program(const std::string& path, GLuint shader_type){
+GLuint Shader::create_shader(const std::string& path, GLuint shader_type){
 	std::string text = read_file(path);
-	GLuint shader;
 	const GLchar* source = text.c_str();
-	shader = glCreateShader(shader_type);
+	GLuint shader = glCreateShader(shader_type);
 	glShaderSource(shader, 1, &source, NULL);
 	glCompileShader(shader);
 	check_error(shader, true, "SHADER::COMPILE ERROR");
-	source = NULL;
-	//std::cout << text << std::endl;
+	
 	return shader;
 }
 
@@ -41,7 +46,7 @@ bool Shader::check_error(GLuint program, bool isShader,const std::string& error_
 		glGetShaderiv(program, GL_COMPILE_STATUS, &success);
 		if(!success){
 			glGetShaderInfoLog(program, 512, NULL, infoLog);
-			std::cout << error_msg << std::endl << infoLog << std::endl;
+			std::cerr << error_msg << std::endl << infoLog << std::endl;
 			return false;
 		}
 	}
@@ -49,7 +54,7 @@ bool Shader::check_error(GLuint program, bool isShader,const std::string& error_
 		glGetProgramiv(program, GL_LINK_STATUS, &success);
 		if(!success){
 			glGetProgramInfoLog(program, 512,NULL, infoLog);
-			std::cout << error_msg << std::endl << infoLog << std::endl;
+			std::cerr << error_msg << std::endl << infoLog << std::endl;
 			return false;
 		}
 	}

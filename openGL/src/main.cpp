@@ -110,5 +110,10 @@ int main(int argc, char** argv) {
         mouseInput(window);
         renderScene(window);
     }
+
+    delete terrain;
+    delete mainShader;
+    delete model;
+    delete camera;
     return 0;
 }

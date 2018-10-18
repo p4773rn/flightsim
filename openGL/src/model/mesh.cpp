@@ -13,27 +13,35 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>&
 	setup();
 } 
 
+Mesh::~Mesh() {
+    glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(1, &vbo);
+}
+
 void Mesh::setup(){
-	glGenBuffers(1, &m_vbo);
-	glGenVertexArrays(1, &m_vao);
-	// glGenBuffers(1, &m_ebo);
-	Vertex v = vertices[1];
+	glGenVertexArrays(1, &vao);
+	// glGenBuffers(1, &ebo);
+	glGenBuffers(1, &vbo);
+	
+	//Vertex v = vertices[1];
 	/*std::cout << v.position.x << ' ' << v.position.y << ' ' << v.position.z << ' '
 		  << v.normal.x << ' ' << v.normal.y << ' ' << v.normal.z << std::endl;*/
-	glBindVertexArray(m_vao);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
-	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	// glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 0);
+    // position
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1,3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec3)));
+	// normal
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec3)));
 	glEnableVertexAttribArray(1);
 }
 
 void Mesh::draw(){
-	glBindVertexArray(m_vao);
+	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 }
