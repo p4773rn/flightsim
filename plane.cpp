@@ -26,7 +26,8 @@ void Plane::update(double delta) {
     Vec2 netForce;
     
     // Weight
-    netForce += Vec2(0, -GRAVITATIONAL_ACCELERATION * mass);
+    Vec2 weight = Vec2(0, -GRAVITATIONAL_ACCELERATION * mass);
+    netForce += weight;
     
     // Lift + Drag
     netForce += wingsForce;
@@ -51,18 +52,20 @@ void Plane::update(double delta) {
     double angularAcceleration = torque / inertia;
     angularVelocity += angularAcceleration * delta;   
     angle += angularVelocity * delta;
-    
+   
+    //cout << pos.getX() << " " << pos.getY() << endl;
     cout << "Pos: " << pos << endl;
     cout << "Vel: " << velocity << endl;
     cout << "Angle: " << angle / M_PI * 180 << " deg" << endl;
     cout << "AngVel: " << angularVelocity / M_PI * 180 << " deg/sec" << endl;
-    cout << "Force: " << netForce << endl;
-    cout << "Torque: " << torque << endl;
     cout << "Wings AoA: " << wings.getAngleOfAttack(velocity, angle) / M_PI * 180 << " deg" << endl;
     cout << "Elevators AoA: " << elevators.getAngleOfAttack(velocity, angle) / M_PI * 180 << " deg"  << endl;
     cout << "--------------------------------------" << endl;
+    cout << "Gravity: " << weight << endl;
     cout << "Wings: " << wingsForce << " " << wingsTorque + wingsPoint.cross(wingsForce) << endl;
+    cout << "Engines: " << thrust << endl;
     cout << "Elevators: " << elevatorsForce << " " << elevatorsTorque + elevatorsPoint.cross(elevatorsForce) << endl;
+    cout << "Total: " << netForce << " " << torque << endl;
     cout << "--------------------------------------" << endl;
     cout << "Throttle: " << engine.getThrottle() << endl;
     cout << "Elevator Deflection: " << elevators.getDeflection() << endl;
