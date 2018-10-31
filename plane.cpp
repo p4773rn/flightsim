@@ -36,11 +36,6 @@ void Plane::update(double delta) {
     // Thrust
     Vec2 thrust = engine.getThrust(angle);
     netForce += thrust;
-
-    Vec2 acceleration = netForce / mass;
-    velocity += acceleration * delta;
-    pos += velocity * delta;
-
    
     // Torque update
     double torque = 0;
@@ -53,6 +48,17 @@ void Plane::update(double delta) {
     angularVelocity += angularAcceleration * delta;   
     angle += angularVelocity * delta;
    
+    // Check for collision with ground (think about refactoring this)
+    double check = pos.getY();
+    if (check < 0) {
+        // land();
+    }
+
+    // Final calculations
+    Vec2 acceleration = netForce / mass;
+    velocity += acceleration * delta;
+    pos += velocity * delta;
+
     //cout << pos.getX() << " " << pos.getY() << endl;
     cout << "Pos: " << pos << endl;
     cout << "Vel: " << velocity << endl;
@@ -72,7 +78,21 @@ void Plane::update(double delta) {
     cout << endl;
 }
 
-
+void Plane::land() {
+    Vec2 friction;
+    Vec2 normal;
+    // You was too tired
+    // normal.setY(netForce.getY()); // TODO: reaction force (normal force)
+    // Check the angle to reason if it is contact with wheels or crash
+    if (angle < 20 && angle > -10) {
+        // TODO: add amortization
+        angle = 0; // TODO: after test, change this to use angular acceleration
+        friction.setX(-10000); // Landing
+    } else {
+        angle = 0; // TODO: change this after implemention body deformation (if ever)
+        friction.setX(-1000000); // Heavy crash
+    }
+}
 
 Plane Plane::getDefaultPlane() {
     Airfoil wings(

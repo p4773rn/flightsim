@@ -29,7 +29,8 @@ public:
           wingsPoint{wingsPoint},
           elevators{elevators},
           elevatorsPoint{elevatorsPoint},
-          engine{engine}
+          engine{engine},
+          isOnGround{false}
     {}
 
     Plane(const Plane& other) = default;
@@ -44,6 +45,9 @@ public:
 
     double getElevatorDeflection() const {return elevators.getDeflection();}
     void setElevatorDeflection(double deflection) {elevators.setDeflection(deflection);}
+
+    void takeOff() {isOnGround = false;}
+    void land();
 
     static Plane getDefaultPlane();
 
@@ -62,6 +66,8 @@ private:
     Airfoil elevators;
 
     Engine engine;
+
+    bool isOnGround;
 };
 
 
