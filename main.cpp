@@ -9,8 +9,8 @@
 
 int main()
 {
-    const int SPEED = 20; // simulation speed; 1 = real time; 10 = 10 times faster;
-    const int FPS = 30 * SPEED; 
+    const int SPEED = 1; // simulation speed; 1 = real time; 10 = 10 times faster;
+    const int FPS = 30; 
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "FlightSim");
     window.setFramerateLimit(FPS);
@@ -25,6 +25,7 @@ int main()
     
 
     Plane plane = Plane::getDefaultPlane();
+    plane.setThrottle(75);
 
     while (window.isOpen())
     {
@@ -57,6 +58,8 @@ int main()
                     break;
             }
         }
+
+        std::cout << clock.getElapsedTime().asSeconds() * SPEED << " " << std::endl;
 
         plane.update((clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED);
         lastUpdateTime = clock.getElapsedTime().asSeconds();
