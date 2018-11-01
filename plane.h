@@ -50,6 +50,11 @@ public:
     double getElevatorDeflection() const {return elevators.getDeflection();}
     void setElevatorDeflection(double deflection) {elevators.setDeflection(deflection);}
 
+    void toggleBreaks() {
+        mainWheels.toggleBreaks();
+        frontWheels.toggleBreaks();
+    }
+
     static Plane getDefaultPlane();
 
 private:

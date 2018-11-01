@@ -44,3 +44,12 @@ Vec2 Wheels::getForce(const Vec2& velocity, const Vec2& planePosition, double an
 
     return force;
 }
+
+void Wheels::toggleBreaks() {
+    breaksOn = !breaksOn;
+    if (breaksOn) {
+        frictionCoefficient *= 10;
+    } else {
+        frictionCoefficient /= 10;
+    }
+}

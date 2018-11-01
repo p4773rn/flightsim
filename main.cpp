@@ -51,6 +51,9 @@ int main()
                         case sf::Keyboard::W:
                             plane.setElevatorDeflection(plane.getElevatorDeflection() + 0.1);
                             break;
+                        case sf::Keyboard::B:
+                            plane.toggleBreaks();
+                            break;
                     }
                     break;
 

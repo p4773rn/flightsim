@@ -80,6 +80,7 @@ void Plane::update(double delta) {
     cout << "--------------------------------------" << endl;
     cout << "Throttle: " << engine.getThrottle() << endl;
     cout << "Elevator Deflection: " << elevators.getDeflection() << endl;
+    cout << "Breaks on/off: " << mainWheels.getBreaksStatus() << endl;
     cout << endl;
 }
 
@@ -101,9 +102,9 @@ Plane Plane::getDefaultPlane() {
                 { 14.0 * M_PI / 180,  1.35, 0.042, 0.246, -0.092 },
                 { 16.0 * M_PI / 180,  1.25, 0.059, 0.246, -0.095 }
             }),
-            103, // area
+            1050, // area
             0.0523598775, // angle
-            3.6 // chordLength
+            9 // chordLength
     );
 
     Airfoil elevators(
@@ -125,25 +126,25 @@ Plane Plane::getDefaultPlane() {
                 {  12.0 * M_PI / 180,  0.89, 0.028, 0.25, -0.004 },
                 {  14.0 * M_PI / 180,  0.87, 0.036, 0.25, -0.012 }
             }),
-            33, // area
+            330, // area
             -0.0104719755, // angle
-            2.6 // chordLength
+            5 // chordLength
     );
 
     Plane plane = Plane(
         Vec2(0, 5), // pos
         Vec2(1, 0),// velocity
         0, // angle
-        51710, // mass
+        150000, // mass
         2027731, // inertia
         
         std::move(wings),
         Vec2(2, -1), // wingsPoint
         std::move(elevators),
         Vec2(-15, 1), // elevatorsPoint
-        Engine(100000), // engine
-        Wheels(72467, 10, 10000, Vec2(-35, -5)), // Front wheels
-        Wheels(434802, 400, 40000, Vec2(5, -5)) // Main wheels
+        Engine(500000), // engine
+        Wheels(182467, 10, 20000, Vec2(-35, -5)), // Front wheels
+        Wheels(1034802, 400, 80000, Vec2(5, -5)) // Main wheels
     );
 
     return plane;
