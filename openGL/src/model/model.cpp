@@ -7,90 +7,110 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <utility>
+#include <SFML/Graphics/Image.hpp>
 
-Model::Model(const std::string& fname) : file_name{fname}{
+
+Model::Model(const std::string& fname, const std::string& texturepath) : file_name{fname}{
   load_obj(file_name);
+  load_texture(texturepath);
 }
 
 void Model::load_obj(const std::string& file_name) {
-	std::vector<glm::vec3> obj_vertices;
-	std::vector<glm::vec3> obj_normals;
-	std::vector< std::pair<GLuint, GLuint> > indices;
+	std::vector<glm::vec3> vs;
+	std::vector<glm::vec2> vts;
+	std::vector<glm::vec3> vns;
+
 	std::vector<Vertex> vertices;
 
 	//parse OBJ file
 	std::ifstream model_file(file_name);
 	for(std::string line; getline(model_file, line);) {
-		// obj_vertices
-		if(line.substr(0, 2) == "v ") {
-			glm::vec3 t_vert;
-			std::istringstream s(line.substr(2));
-			s >> t_vert.x; s >> t_vert.y; s >> t_vert.z;
-			obj_vertices.push_back(t_vert);
+		std::istringstream sin(line);
+        std::string key;
+        sin >> key;
+
+		if (key == "v") {
+			glm::vec3 v;
+			sin >> v.x >> v.y >> v.z;
+			vs.push_back(v);
 		}
-		// normals
-		else if (line.substr(0, 3) == "vn ") {
-			glm::vec3 t_norm;
-			std::istringstream s(line.substr(3));
-			s >> t_norm.x; s >> t_norm.y; s >> t_norm.z;
-			obj_normals.push_back(t_norm);
-		}
-		// indices
-		else if(line.substr(0, 2) == "f ") {
-			unsigned int i = 0;
-			GLuint vertexIndex, uvIndex, normalIndex;
-			std::istringstream ss(line.substr(2));
-			//std::cout << line.substr(2) << std::endl;
-			while(!ss.eof()){
-				i++;
-				ss >> vertexIndex >> std::ws;
-				if (ss.peek() == '/') {
-					ss.get();
-					if (ss.peek() == '/') {
-						ss.get();
-						ss >> normalIndex >> std::ws;
-					} else {
-						ss >> uvIndex >> std::ws;
-						if (ss.peek() == '/') {
-							ss.get();
-							ss >> normalIndex >> std::ws;
-						}
-					}
-				}
-				//std::cout << vertexIndex << '/' << uvIndex << '/' << normalIndex << std::endl;
-				if (i <= 3){
-					indices.push_back(std::make_pair(vertexIndex-1, normalIndex-1));
-					//std::cout << vertexIndex-1 << ' ' << normalIndex - 1 << std::endl;
-				}
-				else{
-					auto t1 = indices[indices.size() - i + 1];
-					auto t2 = indices[indices.size() - 1];
-					indices.push_back(t1);
-					indices.push_back(std::make_pair(vertexIndex-1, normalIndex-1));
-					indices.push_back(t2);
-				}
-			}
-		}
+		else if (key == "vt") {
+            glm::vec2 vt;
+            sin >> vt.x >> vt.y;
+            vts.push_back(vt);
+        }
+        else if (key == "vn") {
+            glm::vec3 vn;
+            sin >> vn.x >> vn.y >> vn.z;
+            vns.push_back(vn);
+        }
+        else if (key == "f") {
+            for (int i = 0; !sin.eof(); ++i) {
+                int vi=0, vti=0, vni=0; // 0 is not a valid index and indicates that index was not initialized
+                sin >> vi;
+                if (sin.peek() == '/') {
+                    sin.get();
+                    if (sin.peek() == '/') {
+                        sin.get();
+                        sin >> vni;
+                    } else {
+                        sin >> vti;
+                        if (sin.peek() == '/') {
+                            sin.get();
+                            sin >> vni;
+                        }
+                    }
+                }
+                sin >> std::ws; // there might be '\r' after the last vertex in a face
+                
+                Vertex v;
+                v.position = vs[vi-1];
+                if (vti != 0)
+                    v.texcoords = vts[vti-1];
+                if (vni != 0)
+                    v.normal = vns[vni-1];
+
+                if (i < 3) {
+                    vertices.push_back(v);
+                } else {
+                    Vertex v1 = vertices[vertices.size() - i];
+                    Vertex v2 = vertices[vertices.size() - 1];
+                    vertices.push_back(v1);
+                    vertices.push_back(v2);
+                    vertices.push_back(v);
+                }
+            }
+        }
 	}
 
-	for (const auto& indice_pair: indices) {
-		/*std::cout << obj_vertices[indice_pair.first].x << ' '
-				  << obj_vertices[indice_pair.first].y<< ' '
-				  << obj_vertices[indice_pair.first].z<< ' '
-
-				  << obj_normals[indice_pair.second].x << ' '
-				  << obj_normals[indice_pair.second].y << ' '
-				  << obj_normals[indice_pair.second].z << ' '
-				  << std::endl;*/
-		Vertex v = { obj_vertices[indice_pair.first], obj_normals[indice_pair.second] };
-		/*std::cout << v.position.x << ' ' << v.position.y << ' ' << v.position.z << ' '
-				  << v.normal.x << ' ' << v.normal.y << ' ' << v.normal.z
-				  << std::endl << "-----------" << std::endl;*/
-		vertices.push_back(v);
-	}
+	//for (auto& v : vertices)
+	//    std::cout << v.position.x << ' ' << v.position.y << ' ' << v.position.z << ' '
+	//			  << v.normal.x << ' ' << v.normal.y << ' ' << v.normal.z
+	//			  << v.texcoords.x << ' ' << v.texcoords.y
+	//			  << std::endl << "-----------" << std::endl;
 
 	std::cout << "Loaded obj_vertices: " << vertices.size() << std::endl;
 	only = std::make_unique<Mesh>(vertices);
+}
+
+void Model:: load_texture(const std::string& texturepath) {
+    sf::Image textureimage;
+    if (!textureimage.loadFromFile(texturepath)) {
+        std::cerr << "Error loading texture: " << texturepath << std::endl;
+    }
+
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+				textureimage.getSize().x, textureimage.getSize().y,
+				0, GL_RGBA, GL_UNSIGNED_BYTE, textureimage.getPixelsPtr());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+
 }
 
 glm::mat4 Model::scale(){
@@ -106,5 +126,6 @@ glm::mat4 Model::scale(){
 }
 
 void Model::draw(){
+    glBindTexture(GL_TEXTURE_2D, texture);
 	only->draw();
 }

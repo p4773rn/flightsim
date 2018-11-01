@@ -2,7 +2,7 @@
 OBJS = shader.o model.o mesh.o camera.o quaternion.o terrain.o
 
 #CC specifies which compiler we're using
-CC = g++
+CC = g++ -g
 
 INCLUDE_PATHS =
 LIBRARY_PATHS =
@@ -10,7 +10,7 @@ LIBRARY_PATHS =
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
 # -Wl,-subsystem,windows gets rid of the console window
-COMPILER_FLAGS = 
+COMPILER_FLAGS =
 #-w -Wl,-subsystem,windows
 #LINKER_FLAGS specifies the libraries we're linking against
 LINKER_FLAGS =  -lsfml-graphics -lsfml-window -lsfml-system -lGLEW -lGLU -lGL 
@@ -20,7 +20,7 @@ OBJ_NAME = ../build/GLex
 
 #This is the target that compiles our executable
 all: main.cpp model.o shader.o camera.o core.o terrain.o
-	$(CC) main.cpp $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) $(COMPILER_FLAGS) -o $(OBJ_NAME)
+	$(CC)  main.cpp $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) $(COMPILER_FLAGS) -o $(OBJ_NAME)
 
 model.o: model/mesh.cpp model/model.cpp model/mesh.h model/model.h
 	$(CC) -c model/model.cpp model/mesh.cpp $(INCLUDE_PATHS) $(LIBRARY_PATHS)

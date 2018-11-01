@@ -26,49 +26,54 @@ Camera* camera;
 int last_x = 400;
 int last_y = 300;
 
+glm::mat4 modelt;
+
 void renderScene(sf::Window& win) {
-  //glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "model"),
-  //                   1, GL_FALSE, glm::value_ptr(model->scale()));
-  glm::mat4 view;
-  view = camera->getView();
-  glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "view"),
-                     1, GL_FALSE, glm::value_ptr(view));
-  glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "projection"),
-                     1, GL_FALSE,
-                     glm::value_ptr(glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f)));
-
-  glm::vec4 light(1.0f, 1.0f, 1.0f, 1.0f);
-  light = view * light;
-  glUniform3fv(glGetUniformLocation(mainShader->getID(), "lightSource"), 1,
-               glm::value_ptr(glm::vec3(light.x, light.y, light.z)));
-
-
-  glEnable(GL_DEPTH_TEST);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  //model->draw();
-  terrain->draw(view, glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 10.0f, 2000.0f));
-  win.display();
+    glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "model"),
+                       1, GL_FALSE, glm::value_ptr(modelt));
+    glm::mat4 view;
+    view = camera->getView();
+    glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "view"),
+                       1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "projection"),
+                       1, GL_FALSE,
+                       glm::value_ptr(glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 2000.0f)));
+  
+    glm::vec4 light(100.0f, 500.0f, 1.0f, 1.0f);
+    light = view * light;
+    glUniform3fv(glGetUniformLocation(mainShader->getID(), "lightSource"), 1,
+                 glm::value_ptr(glm::vec3(light.x, light.y, light.z)));
+  
+  
+    glEnable(GL_DEPTH_TEST);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    model->draw();
+    glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "model"),
+                       1, GL_FALSE, glm::value_ptr(glm::translate(modelt, glm::vec3(100,0,0))));
+    model->draw();
+//    terrain->draw(view, glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 10.0f, 2000.0f));
+    win.display();
 }
 
 void keyInput() {
-  float speed = 0.01;
-  if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-    camera->movePosition(0);
-  if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-    camera->movePosition(1);
-  if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-    camera->movePosition(2);
-  if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-    camera->movePosition(3);
+    float speed = 0.01;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+      camera->movePosition(0);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+      camera->movePosition(1);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+      camera->movePosition(2);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+      camera->movePosition(3);
 }
 
 
 void mouseInput(sf::Window& window){
-  sf::Vector2i pos = sf::Mouse::getPosition(window);
-  float offset_x = (pos.x - last_x)/(float)window.getSize().x;
-  float offset_y = (last_y - pos.y)/(float)window.getSize().y;
-  camera->moveMouse(offset_x, offset_y);
-  sf::Mouse::setPosition(sf::Vector2i(last_x, last_y), window);
+    sf::Vector2i pos = sf::Mouse::getPosition(window);
+    float offset_x = (pos.x - last_x)/(float)window.getSize().x;
+    float offset_y = (last_y - pos.y)/(float)window.getSize().y;
+    camera->moveMouse(offset_x, offset_y);
+    sf::Mouse::setPosition(sf::Vector2i(last_x, last_y), window);
 }
 
 
@@ -93,8 +98,10 @@ int main(int argc, char** argv) {
 
 
     camera = new Camera(glm::vec3(1.0f, 500.0f, 0.5f));
-    //model = new Model("assets/models/" +  std::string((argc == 2) ? (argv[1]) : "tree.obj"));
-    
+    model = new Model("assets/models/tree.obj", "assets/models/tree.png");
+   
+    modelt = glm::translate(glm::mat4(1.0), glm::vec3(0, 400.0, -100));
+
     terrain = new Terrain("assets/terrain/hm.png");
     bool running = true;
     while(running) {
@@ -108,6 +115,7 @@ int main(int argc, char** argv) {
         }
         keyInput();
         mouseInput(window);
+        mainShader->use();
         renderScene(window);
     }
 

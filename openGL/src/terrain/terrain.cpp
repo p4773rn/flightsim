@@ -48,7 +48,7 @@ void Terrain::draw(const glm::mat4& view, const glm::mat4& proj) {
                      glm::value_ptr(proj));
   	glBindVertexArray(VAO);
 	glPatchParameteri(GL_PATCH_VERTICES, 4);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDrawArrays(GL_PATCHES, 0, 4*patches*patches);
 }
 
