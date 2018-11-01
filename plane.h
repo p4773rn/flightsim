@@ -4,6 +4,7 @@
 #include "airfoil.h"
 #include "vec2.h"
 #include "engine.h"
+#include "wheels.h"
 
 class Plane {
 public:
@@ -17,7 +18,9 @@ public:
           Vec2 wingsPoint,
           Airfoil elevators,
           Vec2 elevatorsPoint,
-          Engine engine) :
+          Engine engine,
+          Wheels frontWheels,
+          Wheels mainWheels) :
           
           pos{pos},
           velocity{velocity},
@@ -30,7 +33,8 @@ public:
           elevators{elevators},
           elevatorsPoint{elevatorsPoint},
           engine{engine},
-          isOnGround{false}
+          frontWheels{frontWheels},
+          mainWheels{mainWheels}
     {}
 
     Plane(const Plane& other) = default;
@@ -45,9 +49,6 @@ public:
 
     double getElevatorDeflection() const {return elevators.getDeflection();}
     void setElevatorDeflection(double deflection) {elevators.setDeflection(deflection);}
-
-    void takeOff() {isOnGround = false;}
-    void land();
 
     static Plane getDefaultPlane();
 
@@ -67,7 +68,8 @@ private:
 
     Engine engine;
 
-    bool isOnGround;
+    Wheels frontWheels;
+    Wheels mainWheels;
 };
 
 

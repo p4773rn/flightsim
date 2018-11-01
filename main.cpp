@@ -25,7 +25,7 @@ int main()
     
 
     Plane plane = Plane::getDefaultPlane();
-    plane.setThrottle(75);
+    // plane.setThrottle(75);
 
     while (window.isOpen())
     {

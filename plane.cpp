@@ -37,6 +37,16 @@ void Plane::update(double delta) {
     Vec2 thrust = engine.getThrust(angle);
     netForce += thrust;
    
+    // Check for collision with ground (think about refactoring this)
+    Vec2 wheelsForce = frontWheels.getForce(velocity, pos, angularVelocity, angle) + mainWheels.getForce(velocity, pos, angularVelocity, angle);
+    cout << endl << "WHEELS FORCE: " << wheelsForce << endl << endl;
+    netForce += wheelsForce;
+
+    // Straightforward implementation of drag from fuselage
+    Vec2 fuselageDrag;
+    fuselageDrag.setX( -velocity.getX() * 100);
+    netForce += fuselageDrag;
+
     // Torque update
     double torque = 0;
     
@@ -48,11 +58,6 @@ void Plane::update(double delta) {
     angularVelocity += angularAcceleration * delta;   
     angle += angularVelocity * delta;
    
-    // Check for collision with ground (think about refactoring this)
-    double check = pos.getY();
-    if (check < 0) {
-        // land();
-    }
 
     // Final calculations
     Vec2 acceleration = netForce / mass;
@@ -76,22 +81,6 @@ void Plane::update(double delta) {
     cout << "Throttle: " << engine.getThrottle() << endl;
     cout << "Elevator Deflection: " << elevators.getDeflection() << endl;
     cout << endl;
-}
-
-void Plane::land() {
-    Vec2 friction;
-    Vec2 normal;
-    // You was too tired
-    // normal.setY(netForce.getY()); // TODO: reaction force (normal force)
-    // Check the angle to reason if it is contact with wheels or crash
-    if (angle < 20 && angle > -10) {
-        // TODO: add amortization
-        angle = 0; // TODO: after test, change this to use angular acceleration
-        friction.setX(-10000); // Landing
-    } else {
-        angle = 0; // TODO: change this after implemention body deformation (if ever)
-        friction.setX(-1000000); // Heavy crash
-    }
 }
 
 Plane Plane::getDefaultPlane() {
@@ -142,8 +131,8 @@ Plane Plane::getDefaultPlane() {
     );
 
     Plane plane = Plane(
-        Vec2(0, 1000), // pos
-        Vec2(100, 0),// velocity
+        Vec2(0, 5), // pos
+        Vec2(1, 0),// velocity
         0, // angle
         51710, // mass
         2027731, // inertia
@@ -152,7 +141,9 @@ Plane Plane::getDefaultPlane() {
         Vec2(2, -1), // wingsPoint
         std::move(elevators),
         Vec2(-15, 1), // elevatorsPoint
-        Engine(20000)// engine
+        Engine(100000), // engine
+        Wheels(72467, 10, 10000, Vec2(-35, -5)), // Front wheels
+        Wheels(434802, 400, 40000, Vec2(5, -5)) // Main wheels
     );
 
     return plane;
