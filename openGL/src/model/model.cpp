@@ -126,6 +126,7 @@ glm::mat4 Model::scale(){
 }
 
 void Model::draw(){
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
 	only->draw();
 }

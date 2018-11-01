@@ -39,7 +39,7 @@ void renderScene(sf::Window& win) {
                        1, GL_FALSE,
                        glm::value_ptr(glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 2000.0f)));
   
-    glm::vec4 light(100.0f, 500.0f, 1.0f, 1.0f);
+    glm::vec4 light(800.0f, 800.0f, 1.0f, 1.0f);
     light = view * light;
     glUniform3fv(glGetUniformLocation(mainShader->getID(), "lightSource"), 1,
                  glm::value_ptr(glm::vec3(light.x, light.y, light.z)));
@@ -51,7 +51,7 @@ void renderScene(sf::Window& win) {
     glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "model"),
                        1, GL_FALSE, glm::value_ptr(glm::translate(modelt, glm::vec3(100,0,0))));
     model->draw();
-//    terrain->draw(view, glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 10.0f, 2000.0f));
+    terrain->draw(view, glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 2000.0f));
     win.display();
 }
 
