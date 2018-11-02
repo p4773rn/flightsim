@@ -46,6 +46,11 @@ Vec2 Wheels::getForce(const Vec2& velocity, const Vec2& planePosition, double an
 }
 
 void Wheels::toggleBreaks() {
+    // min(slip, breaks)
+    // break >>>> slip
+    // add flaps
+    // look at videos for takeoff 
+    // its 737
     breaksOn = !breaksOn;
     if (breaksOn) {
         frictionCoefficient *= 10;
