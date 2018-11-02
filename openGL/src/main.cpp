@@ -32,7 +32,7 @@ void renderScene(sf::Window& win) {
     glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "model"),
                        1, GL_FALSE, glm::value_ptr(modelt));
     glm::mat4 view;
-    view = camera->getView();
+    view = camera->get_view();
     glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "view"),
                        1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "projection"),
@@ -47,24 +47,24 @@ void renderScene(sf::Window& win) {
   
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    model->draw();
+    //model->draw();
     glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "model"),
                        1, GL_FALSE, glm::value_ptr(glm::translate(modelt, glm::vec3(100,0,0))));
-    model->draw();
-    terrain->draw(view, glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 2000.0f));
+    //model->draw();
+    terrain->draw(camera->get_position(), view, glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 2000.0f));
     win.display();
 }
 
 void keyInput() {
     float speed = 0.01;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-      camera->movePosition(0);
+      camera->move_position(0);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-      camera->movePosition(1);
+      camera->move_position(1);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-      camera->movePosition(2);
+      camera->move_position(2);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-      camera->movePosition(3);
+      camera->move_position(3);
 }
 
 
@@ -72,7 +72,7 @@ void mouseInput(sf::Window& window){
     sf::Vector2i pos = sf::Mouse::getPosition(window);
     float offset_x = (pos.x - last_x)/(float)window.getSize().x;
     float offset_y = (last_y - pos.y)/(float)window.getSize().y;
-    camera->moveMouse(offset_x, offset_y);
+    camera->move_mouse(offset_x, offset_y);
     sf::Mouse::setPosition(sf::Vector2i(last_x, last_y), window);
 }
 
@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
    
     modelt = glm::translate(glm::mat4(1.0), glm::vec3(0, 400.0, -100));
 
-    terrain = new Terrain("assets/terrain/hm.png");
+    terrain = new Terrain("assets/terrain/hm.png", camera->get_position());
     bool running = true;
     while(running) {
         sf::Event event;
