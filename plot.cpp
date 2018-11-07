@@ -8,13 +8,11 @@ Plot::Plot(unsigned int _width, unsigned int _height)
     x = 0;
     y = 0;
     interval = 2000.0f;
-    maxY = 0;
+    maxY = 5000;
     vertices = sf::VertexArray(sf::LineStrip, 200);
 }
 
 void Plot::add(std::pair<double, double> value) {
-    if (std::abs(value.second) >= maxY)
-        maxY = std::abs(value.second);
     
     double t = value.first - interval;
     while(!values.empty() && values.front().first < t) {
