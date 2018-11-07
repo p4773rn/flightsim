@@ -1,6 +1,7 @@
 #version 420 core
 
 uniform sampler2D text;
+uniform vec3 color;
 in vec2 tex;
 out vec4 FragColor;
 
@@ -8,6 +9,6 @@ void main()
 {
 	//vec4 color = texture(hmap, vec2(tex.x/2.0 + 0.5, tex.y/2.0 + 0.5));
 	//float gray = 0.299 * color.r +  0.587 * color.g + 0.114 * color.b;
-	//FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-	FragColor = texture(text, tex);
+	FragColor = vec4(color, 1.0f);
+	//FragColor = texture(text, tex);
 }

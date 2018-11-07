@@ -3,24 +3,19 @@
 #include <string>
 #include <memory>
 #include "../shaders/shader.h"
+//#include "../model/texture.h"
 #include <glm/glm.hpp>
-#include <GL/glew.h>
+#include "quadtree.h"
 #include <SFML/Graphics/Image.hpp>
 
+// I haven't include any collisions yet
 class Terrain {
 private:
-	sf::Image map;
-	sf::Image map_text;
-	unsigned int hmap_texture, tex1;
-	unsigned int patches;
 	double scale;
-	GLuint VAO, VBO;
-	std::unique_ptr<Shader> shader;
+	Quadtree terrain_renderer;
 public:
-	Terrain(const std::string& fname);
-	~Terrain();
-	void draw(const glm::mat4& view, const glm::mat4& proj);
-	glm::mat4 getMVP();
+	Terrain(const std::string& fname, const glm::vec3& camera_position);
+	void draw(const glm::vec3& camera_position, const glm::mat4& view, const glm::mat4& proj);
 	void setup();
 };
 #endif
