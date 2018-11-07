@@ -47,7 +47,7 @@ void renderScene(sf::Window& win) {
   
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //model->draw();
+    model->draw();
     glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "model"),
                        1, GL_FALSE, glm::value_ptr(glm::translate(modelt, glm::vec3(100,0,0))));
     //model->draw();

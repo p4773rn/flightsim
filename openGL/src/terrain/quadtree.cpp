@@ -61,6 +61,9 @@ Quadtree::Quadtree(const glm::vec3& _camera_position, const float width, const f
 		-1.0f, 1.0f,
 		 1.0f, 1.0f,
 		 1.0f, -1.0f,
+
+		-1.0f, 1.0f,
+		 1.0f, -1.0f,
 		-1.0f, -1.0f,
 	};
 	glGenVertexArrays(1, &VAO);
@@ -192,7 +195,8 @@ void Quadtree::renderNode(TreeNode* node) {
 	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glBindVertexArray(VAO);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glDrawArrays(GL_QUADS, 0, 4);
+	//glPatchParameteri(GL_PATCH_VERTICES, 4);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 void Quadtree::render_rec(TreeNode* node) {

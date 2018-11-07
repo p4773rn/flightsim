@@ -2,7 +2,7 @@
 OBJS = shader.o model.o mesh.o camera.o quaternion.o terrain.o quadtree.o
 
 #CC specifies which compiler we're using
-CC = g++
+CC = g++ -g
 
 INCLUDE_PATHS =
 LIBRARY_PATHS =
