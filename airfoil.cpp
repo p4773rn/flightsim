@@ -1,8 +1,5 @@
 #include "airfoil.h"
 #include "environment.h"
-#include <cmath>
-#include <algorithm>
-#include <iostream>
 
 std::tuple<Vec2, double> Airfoil::getForceAndTorque(
     const Vec2& velocity, 
@@ -27,6 +24,3 @@ std::tuple<Vec2, double> Airfoil::getForceAndTorque(
 }
 
 
-void Airfoil::setDeflection(double deflection) {
-    this->deflection = std::max(-1.0, std::min(1.0, deflection));
-}

@@ -16,7 +16,8 @@ public:
 
           Airfoil wings,
           Vec2 wingsPoint,
-          Airfoil elevators,
+          Airfoil elevators0,
+          Airfoil elevators1,
           Vec2 elevatorsPoint,
           Engine engine,
           Wheels frontWheels,
@@ -30,7 +31,8 @@ public:
           inertia{inertia},
           wings{wings},
           wingsPoint{wingsPoint},
-          elevators{elevators},
+          elevators0{elevators0},
+          elevators1{elevators1},
           elevatorsPoint{elevatorsPoint},
           engine{engine},
           frontWheels{frontWheels},
@@ -47,8 +49,11 @@ public:
     int getThrottle() const {return engine.getThrottle();}
     void setThrottle(int throttle) {engine.setThrottle(throttle);}
 
-    double getElevatorDeflection() const {return elevators.getDeflection();}
-    void setElevatorDeflection(double deflection) {elevators.setDeflection(deflection);}
+    double getElevatorDeflection() const {return elevatorDeflection;}
+    void setElevatorDeflection(double deflection);
+
+    double getElevatorAngleOffset() const {return elevators0.getAirfoilAngleOffset();}
+    void setElevatorAngleOffset(double angle);
 
     void toggleBreaks() {
         mainWheels.toggleBreaks();
@@ -69,7 +74,9 @@ private:
     Airfoil wings;
 
     Vec2 elevatorsPoint;
-    Airfoil elevators;
+    Airfoil elevators0; // elevators without flaps
+    Airfoil elevators1; // elevators with flaps
+    double elevatorDeflection = 0; // interpolate between with and without flaps
 
     Engine engine;
 

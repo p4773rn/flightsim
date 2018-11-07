@@ -6,6 +6,7 @@
 #include <ctime>
 #include "table.h"
 #include "plane.h"
+#include "misc.h"
 
 int main()
 {
@@ -50,6 +51,12 @@ int main()
                             break;
                         case sf::Keyboard::W:
                             plane.setElevatorDeflection(plane.getElevatorDeflection() + 0.1);
+                            break;
+                        case sf::Keyboard::E:
+                            plane.setElevatorAngleOffset(plane.getElevatorAngleOffset() - deg2rad(0.5));
+                            break;
+                        case sf::Keyboard::R:
+                            plane.setElevatorAngleOffset(plane.getElevatorAngleOffset() + deg2rad(0.5));
                             break;
                         case sf::Keyboard::B:
                             plane.toggleBreaks();

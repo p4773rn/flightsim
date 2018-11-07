@@ -23,13 +23,14 @@ public:
     
     double getAngleOfAttack(const Vec2& velocity, double angle) const {
         return airfoilAngle 
-               + deflection * (5.0 * M_PI / 180)
+               + airfoilAngleOffset
                + angle
                + atan2(-velocity.getY(), velocity.getX());
     }
 
-    double getDeflection() const {return deflection;}
-    void setDeflection(double deflection);
+    double getAirfoilAngle() const { return airfoilAngle; }
+    double getAirfoilAngleOffset() const { return airfoilAngleOffset; }
+    void setAirfoilAngleOffset(double airfoilAngleOffset) { this->airfoilAngleOffset = airfoilAngleOffset; }
 
     // double getWingsArea() {return this->area;}
     // double getWingsChordLength() {return this->chordLength;}
@@ -38,10 +39,8 @@ private:
     Table table;
     double area;
     double airfoilAngle;
+    double airfoilAngleOffset = 0;
     double chordLength;
-
-    // TODO: come up with better controls
-    double deflection; // a number between -1 and 1.
 };
 
 #endif
