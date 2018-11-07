@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
     camera = new Camera(glm::vec3(1.0f, 500.0f, 0.5f));
     model = new Model("assets/models/tree.obj", "assets/models/tree.png");
    
-    modelt = glm::translate(glm::mat4(1.0), glm::vec3(0, 400.0, -100));
+    modelt = glm::translate(glm::mat4(1.0), glm::vec3(0, 200.0, -100));
 
     terrain = new Terrain("assets/terrain/hm.png", camera->get_position());
     bool running = true;

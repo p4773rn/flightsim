@@ -1,8 +1,10 @@
 #include "../shaders/shader.h"
+#include "texture.h"
 
-model::Texture(const std::string& path) {
-	if (!image.loadFromFile(fname)) {
-		std::cout << "Error while loading file in Texture:" << fname << std::endl;
+Texture::Texture(const std::string& path) {
+	sf::Image image;
+	if (!image.loadFromFile(path)) {
+		std::cout << "Error while loading file in Texture:" << path << std::endl;
 		return;
 	}
 	glGenTextures(1, &id);
@@ -14,12 +16,12 @@ model::Texture(const std::string& path) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
-void model::Texture::activate(GLenum unit) {
+void Texture::activate(GLenum unit) {
 	glActiveTexture(unit);
 	glBindTexture(GL_TEXTURE_2D, id);
 }
 
-void model::Texture::release() {
+void Texture::release() {
 	if (id)
 		glDeleteTextures(1, &id);
 }

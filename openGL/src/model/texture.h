@@ -4,24 +4,25 @@
 #include <GL/glew.h>
 #include <SFML/Graphics/Image.hpp>
 
-class model::Texture {
+class Texture {
 	private:
-		sf::Image image;
-		GLuint id;
+		GLuint id = 0;
+		void release();
 	public:
 		Texture(const Texture& t) = delete;
 		Texture& operator=(const Texture& t) = delete;
 		Texture(const std::string& path);
+		Texture() { id = 0;};
 		~Texture() {release();};
+		Texture(Texture&& other) : id(other.id) { other.id = 0;};
 		Texture& operator=(Texture&& t) {
 			if (this != &t) {
 				release();
-				std::swap(image, t.image);
 				std::swap(id, t.id);
 			}
+			return *this;
 		};
 		void activate(GLenum unit);
-		void release();
-}
+};
 
 #endif

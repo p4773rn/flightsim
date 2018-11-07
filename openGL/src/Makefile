@@ -1,11 +1,8 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = shader.o model.o mesh.o camera.o quaternion.o terrain.o quadtree.o
+OBJS = shader.o model.o mesh.o camera.o quaternion.o terrain.o quadtree.o texture.o
 
 #CC specifies which compiler we're using
 CC = g++
-
-INCLUDE_PATHS =
-LIBRARY_PATHS =
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
@@ -22,8 +19,8 @@ OBJ_NAME = ../build/GLex
 all: main.cpp model.o shader.o camera.o core.o terrain.o
 	$(CC) main.cpp $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) $(COMPILER_FLAGS) -o $(OBJ_NAME)
 
-model.o: model/mesh.cpp model/model.cpp model/mesh.h model/model.h
-	$(CC) -c model/model.cpp model/mesh.cpp $(INCLUDE_PATHS) $(LIBRARY_PATHS)
+model.o: model/mesh.cpp model/model.cpp model/mesh.h model/model.h model/texture.h model/texture.cpp
+	$(CC) -c model/model.cpp model/mesh.cpp model/texture.cpp $(INCLUDE_PATHS) $(LIBRARY_PATHS)
 shader.o: shaders/shader.cpp shaders/shader.h
 	$(CC) -c shaders/shader.cpp $(INCLUDE_PATHS) $(LIBRARY_PATHS)
 camera.o: camera/camera.cpp camera/camera.h

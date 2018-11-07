@@ -1,7 +1,9 @@
 #ifndef C_TERRAIN_QUADTREE
 #define C_TERRAIN_QUADTREE
 #include <glm/glm.hpp>
+#include <SFML/Graphics/Image.hpp>
 #include "../shaders/shader.h"
+#include "../model/texture.h"
 
 const unsigned int MAX_NODES = 1024;
 const unsigned int MIN_NODE_WIDTH = 64;
@@ -27,9 +29,10 @@ struct TreeNode {
 
 class Quadtree {
 public:
-	Quadtree(const glm::vec3& _camera_position, const float width, const float height);
+	Quadtree(const glm::vec3& _camera_position, const std::string& path, const float width, const float height);
 	~Quadtree();
 	void render(const glm::vec3 _camera_position, const glm::mat4& view, const glm::mat4& proj);
+	void set_wh(const float width, const float height);
 private:
 	bool isDivisible(TreeNode* node);
 	void divide(TreeNode* node);
@@ -38,7 +41,7 @@ private:
 	void render_rec(TreeNode* node);
 	void construct_tree();
 	TreeNode* create_node(TreeNode* p, const glm::vec2& origin);
-	TreeNode* find(TreeNode* node, const glm::vec2& target);
+	TreeNode* find(TreeNode* node, float x, float y);
 	glm::vec3 camera_position;
 	unsigned int nodes_count;
 	TreeNode* nodes;
@@ -46,6 +49,7 @@ private:
 	TreeNode* current;
 	Shader* shader;
 	GLuint VAO, VBO;
+	Texture heightmap;
 };
 #endif
 

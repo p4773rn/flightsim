@@ -4,7 +4,7 @@ layout (quads, fractional_odd_spacing, ccw) in;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform sampler2D hmap;
+uniform sampler2D heightmap;
 
 out vec2 tex;
 
@@ -13,10 +13,11 @@ void main() {
 	vec4 p2 = mix(gl_in[2].gl_Position, gl_in[3].gl_Position,gl_TessCoord.x);
 	gl_Position = mix(p1, p2, gl_TessCoord.y);
 
-	tex = vec2(gl_Position.x/2.0 + 0.5, gl_Position.y/2.0 + 0.5);
-	vec4 color = texture(hmap, vec2(gl_Position.x/2.0 + 0.5, gl_Position.y/2.0 + 0.5));
+	vec4 tex = model * gl_Position;
+	vec2 texcoord = vec2(tex.x/4097.0 + 0.5, tex.z/2049.0 + 0.5);
+	vec4 color = texture(heightmap, texcoord);
 	float gray = 0.299 * color.r +  0.587 * color.g + 0.114 * color.b;
-	gray = (color.r + color.g + color.b)/3.0;
-	gl_Position.z = gray * 2.0;
+	//float gray = (color.r + color.g + color.b)/3.0f;
+	gl_Position.y = gray * 500;
 	gl_Position = projection * view * model * gl_Position;
 }

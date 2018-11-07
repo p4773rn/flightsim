@@ -25,10 +25,6 @@ void print_tree(TreeNode* n, int i) {
 		std::cout << "Origin: " << n->origin.x << " " << n->origin.y << std::endl;
 		std::cout << s;
 		std::cout << "W/H: " << n->width << " " << n->height << std::endl;
-		//std::cout << n->left_top->origin.x << "|" << n->left_top->origin.y << std::endl;
-		//std::cout << n->left_bottom->origin.x << "|" << n->left_bottom->origin.y << std::endl;
-		//std::cout << n->right_top->origin.x << "|" << n->right_top->origin.y << std::endl;
-		//std::cout << n->right_bottom->origin.x << "|" << n->right_bottom->origin.y << std::endl;
 		i = i+1;
 		print_tree(n->left_top, i);
 		print_tree(n->left_bottom, i);
@@ -37,13 +33,14 @@ void print_tree(TreeNode* n, int i) {
 	}
 }
 
-Quadtree::Quadtree(const glm::vec3& _camera_position, const float width, const float height) :
+Quadtree::Quadtree(const glm::vec3& _camera_position, const std::string& path, const float width, const float height) :
 	camera_position{_camera_position}
 {
+	heightmap = Texture(path);
 	std::vector<std::pair<std::string, GLuint>> paths = {
       std::pair<std::string, GLuint>("shaders/terrain.vrtx", GL_VERTEX_SHADER),
-      //std::pair<std::string, GLuint>("shaders/terrain.tec", GL_TESS_CONTROL_SHADER),
-      //std::pair<std::string, GLuint>("shaders/terrain.tse", GL_TESS_EVALUATION_SHADER),
+      std::pair<std::string, GLuint>("shaders/terrain.tec", GL_TESS_CONTROL_SHADER),
+      std::pair<std::string, GLuint>("shaders/terrain.tse", GL_TESS_EVALUATION_SHADER),
       std::pair<std::string, GLuint>("shaders/terrain.frgmnt", GL_FRAGMENT_SHADER)
     };
     shader = new Shader(paths);
@@ -72,25 +69,12 @@ Quadtree::Quadtree(const glm::vec3& _camera_position, const float width, const f
 	glVertexAttribPointer(0,2, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), (void*) 0);
 	glEnableVertexAttribArray(0);
 	//
-
 	construct_tree();
-	std::cout << nodes_count << std::endl;
-	glm::mat4 model = glm::mat4(1.0f);
-	//model = glm::translate(model, glm::vec3(125, 0.0f, 125));
-	model = glm::scale(model, glm::vec3(200, 1.0f,200));
-	model[3][0] = 125;
-	model[3][2] = 125;
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			std::cout << model[j][i] << " ";
-		}
-		std::cout << std::endl;
-	}
-	print_tree(root, 0);
 }
 
 Quadtree::~Quadtree() {
-	delete[] nodes;
+	if (nodes)
+		delete[] nodes;
 }
 
 TreeNode* Quadtree::create_node(TreeNode* p, const glm::vec2& origin) {
@@ -124,31 +108,30 @@ bool Quadtree::isDivisible(TreeNode* node) {
 }
 
 //find closest Node to target vec2
-TreeNode* Quadtree::find(TreeNode* node, const glm::vec2& target) {
+TreeNode* Quadtree::find(TreeNode* node, float x, float y) {
 	//std::cout << "test" << std::endl;
-	if (node->origin.x == target.x && node->origin.y == target.y)
+	if (node->origin.x == x && node->origin.y == y)
 		return node;
 	if (!node->left_top && !node->left_bottom && !node->right_top && !node->right_bottom)
 		return node;
-	if (target.x < node->origin.x && target.y > node->origin.y)
-		return find(node->left_top, target);
-	else if(target.x < node->origin.x && target.y < node->origin.y)
-		return find(node->left_bottom, target);
-	else if(target.x > node->origin.x && target.y > node->origin.y)
-		return find(node->right_top, target);
-	else if(target.x > node->origin.x && target.y < node->origin.y)
-		return find(node->right_bottom, target);
+	if (x < node->origin.x && y > node->origin.y)
+		return find(node->left_top, x, y);
+	else if(x < node->origin.x && y < node->origin.y)
+		return find(node->left_bottom, x, y);
+	else if(x > node->origin.x && y > node->origin.y)
+		return find(node->right_top, x, y);
+	else if(x > node->origin.x && y < node->origin.y)
+		return find(node->right_bottom, x, y);
 	return node;
 }
 
 void Quadtree::calcTess(TreeNode* node) {
 	if (!node->parent)
 		return;
-	TreeNode* left = find(root, node->origin);
-	TreeNode* right = find(root, node->origin);
-	TreeNode* top = find(root, node->origin);
-	TreeNode* bottom = find(root, node->origin);
-
+	TreeNode* top = find(root, node->origin.x, node->origin.y + 1 + node->height / 2.0f);
+	TreeNode* right = find(root, node->origin.x + 1 + node->width / 2.0f, node->origin.y);
+	TreeNode* bottom = find(root, node->origin.x, node->origin.y - 1 - node->height / 2.0f);
+	TreeNode* left = find(root, node->origin.x - 1 - node->width / 2.0f, node->origin.y);
 	if(left->width > node->width)
 		node->tesselation_left = 2.0f;
 	if(right->width > node->width)
@@ -185,27 +168,28 @@ void Quadtree::divide(TreeNode* node) {
 
 void Quadtree::renderNode(TreeNode* node) {
 	calcTess(node);
-	glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(node->width/2.0f, 0.0f, node->height/2.0f));
+	glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(node->width/2.0f, 1.0f, node->height/2.0f));
 	glm::mat4 trans = glm::translate(glm::mat4(1.0f), glm::vec3(node->origin.x, 0.0f, node->origin.y));
 
 	glm::mat4 model = trans * scale;
 	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glUniform1f(glGetUniformLocation(shader->getID(), "tesselation_right"), node->tesselation_right);
+	glUniform1f(glGetUniformLocation(shader->getID(), "tesselation_left"), node->tesselation_left);
+	glUniform1f(glGetUniformLocation(shader->getID(), "tesselation_top"), node->tesselation_top);
+	glUniform1f(glGetUniformLocation(shader->getID(), "tesselation_bottom"), node->tesselation_bottom);
 	glBindVertexArray(VAO);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glDrawArrays(GL_QUADS, 0, 4);
+	glPatchParameteri(GL_PATCH_VERTICES, 4);
+	glDrawArrays(GL_PATCHES, 0, 4);
 }
 
 void Quadtree::render_rec(TreeNode* node) {
 	if (!node->left_top && !node->left_bottom && !node->right_bottom && !node->right_top){
 		renderNode(node);
 	} else {
-	  	glUniform3fv(glGetUniformLocation(shader->getID(), "color"),1, glm::value_ptr(glm::vec3(1.0f, 0.0f, 0.0f)));
 		render_rec(node->left_top);
-	  	glUniform3fv(glGetUniformLocation(shader->getID(), "color"),1, glm::value_ptr(glm::vec3(0.0f, 1.0f, 0.0f)));
 		render_rec(node->right_top);
-	  	glUniform3fv(glGetUniformLocation(shader->getID(), "color"),1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.0f)));
 		render_rec(node->left_bottom);
-	  	glUniform3fv(glGetUniformLocation(shader->getID(), "color"),1, glm::value_ptr(glm::vec3(0.0f, 0.0f, 1.0f)));
 		render_rec(node->right_bottom);
 	}
 }
@@ -224,6 +208,13 @@ void Quadtree::render(const glm::vec3 _camera_position, const glm::mat4& view, c
   	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "projection"),
                      1, GL_FALSE,
                      glm::value_ptr(proj));
+  	glUniform1i(glGetUniformLocation(shader->getID(), "heightmap"), 0);
+  	heightmap.activate(GL_TEXTURE0);
 	construct_tree();
 	render_rec(root);
+}
+
+void Quadtree::set_wh(const float w, const float h) {
+	root->width = w;
+	root->height = h;
 }
