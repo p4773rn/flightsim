@@ -2,7 +2,7 @@
 OBJS = shader.o model.o mesh.o camera.o quaternion.o terrain.o quadtree.o texture.o
 
 #CC specifies which compiler we're using
-CC = g++
+CC = g++ -g
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
