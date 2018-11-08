@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = shader.o model.o mesh.o camera.o quaternion.o terrain.o quadtree.o
+OBJS = shader.o model.o mesh.o texturearray.o camera.o quaternion.o terrain.o quadtree.o
 
 #CC specifies which compiler we're using
 CC = g++ -g
@@ -19,11 +19,11 @@ LINKER_FLAGS =  -lsfml-graphics -lsfml-window -lsfml-system -lGLEW -lGLU -lGL
 OBJ_NAME = ../build/GLex
 
 #This is the target that compiles our executable
-all: main.cpp model.o shader.o camera.o core.o terrain.o
-	$(CC) main.cpp $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) $(COMPILER_FLAGS) -o $(OBJ_NAME)
+all: main.cpp model.o shader.o camera.o core.o terrain.o misc.cpp
+	$(CC) main.cpp misc.cpp $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) $(COMPILER_FLAGS) -o $(OBJ_NAME)
 
-model.o: model/mesh.cpp model/model.cpp model/mesh.h model/model.h
-	$(CC) -c model/model.cpp model/mesh.cpp $(INCLUDE_PATHS) $(LIBRARY_PATHS)
+model.o: model/mesh.cpp model/model.cpp model/texturearray.cpp model/mesh.h model/model.h model/texturearray.h
+	$(CC) -c model/model.cpp model/mesh.cpp model/texturearray.cpp $(INCLUDE_PATHS) $(LIBRARY_PATHS)
 shader.o: shaders/shader.cpp shaders/shader.h
 	$(CC) -c shaders/shader.cpp $(INCLUDE_PATHS) $(LIBRARY_PATHS)
 camera.o: camera/camera.cpp camera/camera.h

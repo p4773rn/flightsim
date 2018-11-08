@@ -89,7 +89,7 @@ Quadtree::Quadtree(const glm::vec3& _camera_position, const float width, const f
 		}
 		std::cout << std::endl;
 	}
-	print_tree(root, 0);
+	//print_tree(root, 0);
 }
 
 Quadtree::~Quadtree() {
@@ -194,7 +194,7 @@ void Quadtree::renderNode(TreeNode* node) {
 	glm::mat4 model = trans * scale;
 	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glBindVertexArray(VAO);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	//glPatchParameteri(GL_PATCH_VERTICES, 4);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }

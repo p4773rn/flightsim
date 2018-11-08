@@ -1,5 +1,6 @@
 #include "mesh.h"
 #include <iostream>
+#include "../misc.h"
 
 Mesh::Mesh(const std::vector<Vertex>& _vertices) :
 	vertices{_vertices}
@@ -42,7 +43,10 @@ void Mesh::setup(){
 	// texcoords
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texcoords));
 	glEnableVertexAttribArray(2);
-
+    // material index
+    glVertexAttribIPointer(3, 1, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, materialI));
+	glEnableVertexAttribArray(3);
+    
     glBindVertexArray(0);
 }
 
@@ -50,4 +54,10 @@ void Mesh::draw(){
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 	glBindVertexArray(0);
+}
+
+
+std::ostream& operator << (std::ostream& stream, const Vertex& v) {
+    stream << "<" << v.position << ", " << v.normal << ", " << v.texcoords << ", " << v.materialI << ">";
+    return stream;
 }
