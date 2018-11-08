@@ -20,6 +20,6 @@ void main()
 	vertexPos = vec3(view * model * vec4(aPos, 1.0f));
 	normal = mat3(transpose(inverse(view * model))) * aNorm;
 
-	texCoord = aTexCoord;
+	texCoord = vec2(aTexCoord.x, 1-aTexCoord.y);
 	materialI = aMaterialI;
 }

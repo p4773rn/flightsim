@@ -20,10 +20,8 @@ Model::Model(const std::string& fname) :
                std::pair<std::string, GLuint>("shaders/basic.frgmnt", GL_FRAGMENT_SHADER)
            })
 {
-    textures.add("assets/models/tree1.png");
-    textures.add("assets/models/tree.png");
     load_obj(file_name);
-    //load_mtl("assets/models/BGEAR_plane.mtl");
+    
     shader.use();
     textures.setLocation(shader.getID(), "maps");
 
