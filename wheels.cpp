@@ -4,8 +4,9 @@
 using std::cout;
 using std::endl;
 
-Vec2 Wheels::getForce(const Vec2& velocity, const Vec2& planePosition, double angularVelocity, double angle) const {
+std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const Vec2& planePosition, double angularVelocity, double angle) const {
     Vec2 force;
+    double torque;
 
     // Position relative to the plane
     Vec2 relativePosition = Vec2(
@@ -15,7 +16,7 @@ Vec2 Wheels::getForce(const Vec2& velocity, const Vec2& planePosition, double an
 
     // Check contact with ground (no contact = no force)
     if (relativePosition.getY() + planePosition.getY() > 0) {
-        return force;
+        return { force, torque };
     }
 
     // Speed relative to the plane
@@ -36,11 +37,24 @@ Vec2 Wheels::getForce(const Vec2& velocity, const Vec2& planePosition, double an
     Vec2 absolutePosition = relativePosition + planePosition;
     Vec2 absoluteSpeed = relativeSpeed + velocity;
 
+    double normalForceMagnitude =  -absolutePosition.getY() * stiffness - (absoluteSpeed.getY() * springFriction);
+
     // Hand-made formula
-    force.setX( -absoluteSpeed.getX() * frictionCoefficient);
+    if (brakesOn) {
+        // Temp storage of friction coeffs
+        double slipFrictionCoefficient = 0.7;
+
+        double slipFrictionMagnitude = normalForceMagnitude * slipFrictionCoefficient;
+        double brakesFrictionMagnitude = 1000000000000;
+        force.setX( - std::min(slipFrictionMagnitude, brakesFrictionMagnitude));
+    } else {
+        force.setX( -absoluteSpeed.getX() * frictionCoefficient);
+    }
 
     // absolutePosition.getY() returns the deformation
-    force.setY( -absolutePosition.getY() * stiffness - (absoluteSpeed.getY() * springFriction));
+    force.setY(normalForceMagnitude);
 
-    return force;
+    torque = force.getY() * position.getX();
+
+    return { force, torque };
 }

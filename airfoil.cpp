@@ -8,8 +8,12 @@ std::tuple<Vec2, double> Airfoil::getForceAndTorque(
     const Vec2& velocity, 
     double angle, 
     double airDensity) const {
-
-    Table::Entry coefficients = table.get(getAngleOfAttack(velocity, angle));
+    
+    Table::Entry coefficients = tableDefaultFlaps.get(getAngleOfAttack(velocity, angle));
+    // TODO: add default constructor to avoid double function call
+    if (flaps > 0) {
+        coefficients = tableTakeOffFlaps.get(getAngleOfAttack(velocity, angle));
+    }
 
     double dynamicPressure = 0.5 * airDensity * velocity.lengthSquared();
 
@@ -29,4 +33,12 @@ std::tuple<Vec2, double> Airfoil::getForceAndTorque(
 
 void Airfoil::setDeflection(double deflection) {
     this->deflection = std::max(-1.0, std::min(1.0, deflection));
+}
+
+void Airfoil::toggleFlaps() {
+    if (flaps > 0) {
+        flaps = 0;
+    } else {
+        flaps = 1;
+    }
 }

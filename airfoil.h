@@ -8,8 +8,9 @@
 
 class Airfoil {
 public:
-    Airfoil(const Table& table, double area, double airfoilAngle, double chordLength) : 
-        table{table},
+    Airfoil(const Table& tableDefaultFlaps, const Table& tableTakeOffFlaps, double area, double airfoilAngle, double chordLength) : 
+        tableDefaultFlaps{tableDefaultFlaps},
+        tableTakeOffFlaps{tableTakeOffFlaps},
         area{area},
         airfoilAngle{airfoilAngle},
         chordLength{chordLength}
@@ -30,18 +31,19 @@ public:
 
     double getDeflection() const {return deflection;}
     void setDeflection(double deflection);
+    double getFlapsStatus() const {return flaps;}
+    void toggleFlaps();
 
-    // double getWingsArea() {return this->area;}
-    // double getWingsChordLength() {return this->chordLength;}
-    // Table getTable() {return this->table;}
 private:
-    Table table;
+    Table tableDefaultFlaps;
+    Table tableTakeOffFlaps;
     double area;
     double airfoilAngle;
     double chordLength;
 
     // TODO: come up with better controls
     double deflection; // a number between -1 and 1.
+    double flaps; // [0, 1] where 0 is default and 1 is take-off position
 };
 
 #endif

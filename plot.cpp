@@ -8,7 +8,7 @@ Plot::Plot(unsigned int _width, unsigned int _height)
     x = 0;
     y = 0;
     interval = 2000.0f;
-    maxY = 0;
+    maxY = 1000;
     vertices = sf::VertexArray(sf::LineStrip, 200);
 }
 

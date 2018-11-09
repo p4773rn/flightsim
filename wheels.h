@@ -10,15 +10,21 @@ public:
         stiffness{stiffness},
         frictionCoefficient{frictionCoefficient},
         springFriction{springFriction},
-        position{position}
+        position{position},
+        brakesOn{false}
     {}
 
-    Vec2 getForce(const Vec2& velocity, const Vec2& planePosition, double angularVelocity, double angle) const;
+    std::tuple<Vec2, double> getForceAndTorque(const Vec2& velocity, const Vec2& planePosition, double angularVelocity, double angle) const;
+
+    void toggleBrakes() {brakesOn = !brakesOn;};
+    bool getBrakesStatus() {return brakesOn;}
+
 private:
     double stiffness; // stiffness of amortization spring
     double frictionCoefficient; // friction of wheels
     double springFriction; // TEST?
     Vec2 position; // position realtive to the plane
+    bool brakesOn;
 };
 
 #endif
