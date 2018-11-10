@@ -66,6 +66,3 @@ void Shader::use(){
 	glUseProgram(Shader::program);
 }
 
-GLuint Shader::getID(){
-	return program;
-}

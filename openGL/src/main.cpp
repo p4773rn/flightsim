@@ -29,29 +29,18 @@ int last_y = 300;
 glm::mat4 modelt;
 
 void renderScene(sf::Window& win) {
-    glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "model"),
-                       1, GL_FALSE, glm::value_ptr(modelt));
-    glm::mat4 view;
-    view = camera->get_view();
-    glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "view"),
-                       1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "projection"),
-                       1, GL_FALSE,
-                       glm::value_ptr(glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 2000.0f)));
-  
+    glm::mat4 view = camera->get_view();
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 2000.0f);
     glm::vec4 light(800.0f, 800.0f, 1.0f, 1.0f);
     light = view * light;
-    glUniform3fv(glGetUniformLocation(mainShader->getID(), "lightSource"), 1,
-                 glm::value_ptr(glm::vec3(light.x, light.y, light.z)));
   
   
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    model->draw();
-    glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "model"),
-                       1, GL_FALSE, glm::value_ptr(glm::translate(modelt, glm::vec3(100,0,0))));
-    //model->draw();
-    terrain->draw(camera->get_position(), view, glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 2000.0f));
+    
+    model->draw(glm::scale(modelt, glm::vec3(10,10,10)), view, projection, glm::vec3(light.x, light.y, light.z));
+    terrain->draw(camera->get_position(), view, projection);
+    
     win.display();
 }
 
@@ -98,9 +87,10 @@ int main(int argc, char** argv) {
 
 
     camera = new Camera(glm::vec3(1.0f, 500.0f, 0.5f));
-    model = new Model("assets/models/tree.obj", "assets/models/tree.png");
-   
-    modelt = glm::translate(glm::mat4(1.0), glm::vec3(0, 200.0, -100));
+
+    model = new Model("assets/models/BGEAR_plane.obj");
+  
+    modelt = glm::translate(glm::mat4(1.0), glm::vec3(0, 400.0, -100));
 
     terrain = new Terrain("assets/terrain/hm.png", camera->get_position());
     bool running = true;
