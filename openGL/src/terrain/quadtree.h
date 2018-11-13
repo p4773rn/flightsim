@@ -6,8 +6,9 @@
 #include "../model/texture.h"
 
 const unsigned int MAX_NODES = 1024;
-const unsigned int MIN_NODE_WIDTH = 64;
-const unsigned int MIN_NODE_HEIGHT = 64;
+const unsigned int MIN_NODE_WIDTH = 128;
+const unsigned int MIN_NODE_HEIGHT = 128;
+const unsigned int MAX_TEXTURES = 4;
 
 struct TreeNode {
 	float width;
@@ -40,6 +41,7 @@ private:
 	void renderNode(TreeNode* node);
 	void render_rec(TreeNode* node);
 	void construct_tree();
+	void load_textures();
 	TreeNode* create_node(TreeNode* p, const glm::vec2& origin);
 	TreeNode* find(TreeNode* node, float x, float y);
 	glm::vec3 camera_position;
@@ -50,6 +52,8 @@ private:
 	Shader* shader;
 	GLuint VAO, VBO;
 	Texture heightmap;
+	Texture splatmap;
+	Texture textures[MAX_TEXTURES];
 };
 #endif
 

@@ -11,7 +11,7 @@ class Texture {
 	public:
 		Texture(const Texture& t) = delete;
 		Texture& operator=(const Texture& t) = delete;
-		Texture(const std::string& path);
+		Texture(const std::string& path, bool generateMipmap = true);
 		Texture() { id = 0;};
 		~Texture() {release();};
 		Texture(Texture&& other) : id(other.id) { other.id = 0;};

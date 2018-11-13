@@ -6,18 +6,26 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform sampler2D heightmap;
 
-out vec2 tex;
+out vec4 UVU;
 
 void main() {
+	float width = model[0][0];
+	float height = model[3][3];
 	vec4 p1 = mix(gl_in[1].gl_Position, gl_in[0].gl_Position,gl_TessCoord.x);
 	vec4 p2 = mix(gl_in[2].gl_Position, gl_in[3].gl_Position,gl_TessCoord.x);
 	gl_Position = mix(p1, p2, gl_TessCoord.y);
 
 	vec4 tex = model * gl_Position;
-	vec2 texcoord = vec2(tex.x/4097.0 + 0.5, tex.z/2049.0 + 0.5);
+	vec2 texcoord = vec2(tex.x/2048.0 + 0.5, tex.z/2048.0 + 0.5);
+
 	vec4 color = texture(heightmap, texcoord);
 	float gray = 0.299 * color.r +  0.587 * color.g + 0.114 * color.b;
-	//float gray = (color.r + color.g + color.b)/3.0f;
-	gl_Position.y = gray * 500;
+
+	gl_Position.y = gray * 300;
 	gl_Position = projection * view * model * gl_Position;
+
+	UVU.x = gl_TessCoord.x * max(width/4.0f, 1.0f);
+	UVU.y = gl_TessCoord.y * max(width/4.0f, 1.0f);
+	UVU.z = texcoord.x;
+	UVU.w = texcoord.y;
 }

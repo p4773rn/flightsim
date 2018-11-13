@@ -6,6 +6,8 @@
 #include <utility>
 #include <iostream>
 #include <string>
+#include <fstream>
+#include <algorithm>
 
 void print_tree(TreeNode* n, int i) {
 	if(n) {
@@ -36,7 +38,6 @@ void print_tree(TreeNode* n, int i) {
 Quadtree::Quadtree(const glm::vec3& _camera_position, const std::string& path, const float width, const float height) :
 	camera_position{_camera_position}
 {
-	heightmap = Texture(path);
 	std::vector<std::pair<std::string, GLuint>> paths = {
       std::pair<std::string, GLuint>("shaders/terrain.vrtx", GL_VERTEX_SHADER),
       std::pair<std::string, GLuint>("shaders/terrain.tec", GL_TESS_CONTROL_SHADER),
@@ -68,7 +69,10 @@ Quadtree::Quadtree(const glm::vec3& _camera_position, const std::string& path, c
 	glBufferData(GL_ARRAY_BUFFER, sizeof(patch), patch, GL_STATIC_DRAW);
 	glVertexAttribPointer(0,2, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), (void*) 0);
 	glEnableVertexAttribArray(0);
-	//
+
+
+	heightmap = Texture(path);
+	load_textures();
 	construct_tree();
 }
 
@@ -109,7 +113,6 @@ bool Quadtree::isDivisible(TreeNode* node) {
 
 //find closest Node to target vec2
 TreeNode* Quadtree::find(TreeNode* node, float x, float y) {
-	//std::cout << "test" << std::endl;
 	if (node->origin.x == x && node->origin.y == y)
 		return node;
 	if (!node->left_top && !node->left_bottom && !node->right_top && !node->right_bottom)
@@ -148,22 +151,14 @@ void Quadtree::divide(TreeNode* node) {
 	node->right_top = create_node(node, glm::vec2(node->origin.x + node->width/4.0f, node->origin.y + node->height/4.0f));
 	node->right_bottom = create_node(node, glm::vec2(node->origin.x + node->width/4.0f, node->origin.y - node->height/4.0f));
 
-	if (isDivisible(node->left_top)){
-		//std::cout << tab << "left top" << std::endl;
+	if (isDivisible(node->left_top))
 		divide(node->left_top);
-	}
-	if (isDivisible(node->left_bottom)){
-		//std::cout << tab << "left bottom" << std::endl;
+	if (isDivisible(node->left_bottom))
 		divide(node->left_bottom);
-	}
-	if (isDivisible(node->right_top)){
-		//std::cout << tab << "right top" << std::endl;
+	if (isDivisible(node->right_top))
 		divide(node->right_top);
-	}
-	if (isDivisible(node->right_bottom)){
-		//std::cout << tab << "right bottom" << std::endl;
+	if (isDivisible(node->right_bottom))
 		divide(node->right_bottom);
-	}
 }
 
 void Quadtree::renderNode(TreeNode* node) {
@@ -178,7 +173,7 @@ void Quadtree::renderNode(TreeNode* node) {
 	glUniform1f(glGetUniformLocation(shader->getID(), "tesselation_top"), node->tesselation_top);
 	glUniform1f(glGetUniformLocation(shader->getID(), "tesselation_bottom"), node->tesselation_bottom);
 	glBindVertexArray(VAO);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glPatchParameteri(GL_PATCH_VERTICES, 4);
 	glDrawArrays(GL_PATCHES, 0, 4);
 }
@@ -203,6 +198,7 @@ void Quadtree::construct_tree() {
 void Quadtree::render(const glm::vec3 _camera_position, const glm::mat4& view, const glm::mat4& proj) {
 	shader->use();
 	camera_position = _camera_position;
+	int t_units[MAX_TEXTURES] = {2, 3, 4, 5};
 	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "view"),
                      1, GL_FALSE, glm::value_ptr(view));
   	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "projection"),
@@ -210,11 +206,34 @@ void Quadtree::render(const glm::vec3 _camera_position, const glm::mat4& view, c
                      glm::value_ptr(proj));
   	glUniform1i(glGetUniformLocation(shader->getID(), "heightmap"), 0);
   	heightmap.activate(GL_TEXTURE0);
+  	glUniform1i(glGetUniformLocation(shader->getID(), "splatmap"), 1);
+  	splatmap.activate(GL_TEXTURE1);
+  	glUniform1iv(glGetUniformLocation(shader->getID(), "textures"), MAX_TEXTURES, t_units);
+  	for(size_t i = 0; i < MAX_TEXTURES; ++i) {
+  		textures[i].activate(GL_TEXTURE2 + i);
+  	}
+
 	construct_tree();
+	glEnable(GL_BLEND);
 	render_rec(root);
+	glDisable(GL_BLEND);
 }
 
 void Quadtree::set_wh(const float w, const float h) {
 	root->width = w;
 	root->height = h;
+}
+
+void Quadtree::load_textures() {
+	splatmap = Texture("assets/terrain/alpha.png");
+
+	std::string path = "assets/terrain/alphamap.txt";
+	std::string line;
+	std::ifstream texture_files(path);
+
+	for(unsigned int i = 0; getline(texture_files, line); ++i) {
+		if (line.length() > 0) {
+			textures[i] = Texture(line);
+		}
+	}
 }

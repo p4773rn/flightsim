@@ -6,7 +6,10 @@
 #include <GL/glew.h>
 
 #include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Text.hpp>
 
 #include "model/model.h"
 #include "shaders/shader.h"
@@ -33,6 +36,7 @@ void renderScene(sf::Window& win) {
                        1, GL_FALSE, glm::value_ptr(modelt));
     glm::mat4 view;
     view = camera->get_view();
+
     glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "view"),
                        1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(mainShader->getID(), "projection"),
@@ -52,7 +56,6 @@ void renderScene(sf::Window& win) {
                        1, GL_FALSE, glm::value_ptr(glm::translate(modelt, glm::vec3(100,0,0))));
     //model->draw();
     terrain->draw(camera->get_position(), view, glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 2000.0f));
-    win.display();
 }
 
 void keyInput() {
@@ -82,7 +85,21 @@ int main(int argc, char** argv) {
     settings.depthBits = 24;
     settings.majorVersion = 3;
     settings.minorVersion = 3;
-    sf::Window window(sf::VideoMode(800, 600), "OpenGL Demo", sf::Style::Default, settings);
+
+    sf::Font font;
+    if (!font.loadFromFile("assets/fonts/comme_bold.ttf")) {
+        std::cout << "Could't load font" << std::endl;
+        return -1; 
+    }
+    sf::Text fpsCounter;
+    fpsCounter.setFont(font);
+    fpsCounter.setCharacterSize(24);
+    fpsCounter.setFillColor(sf::Color::Red);
+    fpsCounter.setStyle(sf::Text::Bold | sf::Text::Underlined);
+    fpsCounter.setString("TEST");
+
+
+    sf::RenderWindow window(sf::VideoMode(800, 600), "OpenGL Demo", sf::Style::Default, settings);
     window.setFramerateLimit(60);
     window.setActive(true);
 
@@ -103,6 +120,8 @@ int main(int argc, char** argv) {
     modelt = glm::translate(glm::mat4(1.0), glm::vec3(0, 200.0, -100));
 
     terrain = new Terrain("assets/terrain/hm.png", camera->get_position());
+
+    sf::Clock clock;
     bool running = true;
     while(running) {
         sf::Event event;
@@ -117,6 +136,10 @@ int main(int argc, char** argv) {
         mouseInput(window);
         mainShader->use();
         renderScene(window);
+        int fps = int(1.0f/clock.getElapsedTime().asSeconds());
+        //window.draw(fpsCounter);
+        window.display();
+        clock.restart().asSeconds();
     }
 
     delete terrain;
