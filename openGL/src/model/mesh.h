@@ -3,11 +3,13 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <GL/glew.h>
+#include <ostream>
 
 struct Vertex{
 	glm::vec3 position;
 	glm::vec3 normal;
 	glm::vec2 texcoords;
+	GLint materialI;
 };
 
 class Mesh{
@@ -25,4 +27,8 @@ private:
 	GLuint vbo;
 	GLuint ebo;
 };
+
+
+std::ostream& operator << (std::ostream& stream, const Vertex& v);
+
 #endif

@@ -18,7 +18,7 @@ class Shader {
 		Shader(const std::vector<std::pair<std::string, GLuint>>& paths);
 		~Shader();
 		void use();
-		GLuint getID();
+		GLuint getID() const { return program; }
 };
 
 #endif
