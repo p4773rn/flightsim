@@ -52,7 +52,10 @@ int main()
                             plane.setElevatorDeflection(plane.getElevatorDeflection() + 0.1);
                             break;
                         case sf::Keyboard::F:
-                            plane.toggleFlaps();
+                            plane.setFlaps(plane.getFlaps() - 0.25);
+                            break;
+                        case sf::Keyboard::G:
+                            plane.setFlaps(plane.getFlaps() + 0.25);
                             break;
                         case sf::Keyboard::B:
                             plane.toggleBrakes();

@@ -13,7 +13,9 @@ public:
         tableTakeOffFlaps{tableTakeOffFlaps},
         area{area},
         airfoilAngle{airfoilAngle},
-        chordLength{chordLength}
+        chordLength{chordLength},
+        deflection{0},
+        flaps{0}
     {}
 
     Airfoil(const Airfoil& other) = default;
@@ -31,8 +33,8 @@ public:
 
     double getDeflection() const {return deflection;}
     void setDeflection(double deflection);
-    double getFlapsStatus() const {return flaps;}
-    void toggleFlaps();
+    double getFlaps() const {return flaps;}
+    void setFlaps(double flapsPosition);
 
 private:
     Table tableDefaultFlaps;
@@ -42,8 +44,10 @@ private:
     double chordLength;
 
     // TODO: come up with better controls
-    double deflection; // a number between -1 and 1.
-    double flaps; // [0, 1] where 0 is default and 1 is take-off position
+    // TODO: make the deflections change continiously with time
+    // TODO: come up with better names for deflection and flaps
+    double deflection; // a number between -1 and 1
+    double flaps; // [0, 0.25, 0.5, 0.75, 1] where 0 is minimal drag and 1 is take-off position
 };
 
 #endif

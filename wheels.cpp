@@ -1,10 +1,11 @@
 #include "wheels.h"
+#include "environment.h"
 #include <iostream>
 
 using std::cout;
 using std::endl;
 
-std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const Vec2& planePosition, double angularVelocity, double angle) const {
+std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const Vec2& planePosition, double angularVelocity, double angle, double mass) const {
     Vec2 force;
     double torque;
 
@@ -31,7 +32,7 @@ std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const V
         } else {
             cout << "Main wheels" << endl;
         }
-        throw std::runtime_error("Wheel break");
+        throw std::runtime_error("Wheels break");
     }
 
     Vec2 absolutePosition = relativePosition + planePosition;
@@ -39,16 +40,29 @@ std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const V
 
     double normalForceMagnitude =  -absolutePosition.getY() * stiffness - (absoluteSpeed.getY() * springFriction);
 
-    // Hand-made formula
-    if (brakesOn) {
-        // Temp storage of friction coeffs
-        double slipFrictionCoefficient = 0.7;
-
-        double slipFrictionMagnitude = normalForceMagnitude * slipFrictionCoefficient;
-        double brakesFrictionMagnitude = 1000000000000;
-        force.setX( - std::min(slipFrictionMagnitude, brakesFrictionMagnitude));
+    // Friction from rolling
+    // TODO: Probably need to refactor this
+    double wheelsRadius = 0.55;
+    double rollingFrictionCoefficient = 0.01;
+    double frictionForceDirection;
+    if (velocity.getX() > 0) {
+        frictionForceDirection = -1;
     } else {
-        force.setX( -absoluteSpeed.getX() * frictionCoefficient);
+        frictionForceDirection = 1;
+    }
+    if (velocity.getX() != 0) {
+        // TODO: Refactor somehow to eliminate the need of (dividing the rolling friction by so for the front wheels and main wheels in sum give the correct magnitude)
+        // 
+        force.setX( frictionForceDirection * mass * GRAVITATIONAL_ACCELERATION * rollingFrictionCoefficient / (wheelsRadius * 2));
+        if (brakesOn > 0) {
+            // TODO: Temp storage of friction coeffs, probably refactor?
+            double slipFrictionCoefficient = 0.7;
+            // ABS braking gives friciton which is not greater than friction from slipping
+            // Assumption: Ideal ABS gives the same friction as slipping (without damaging tires)
+            double brakesFrictionMagnitude = normalForceMagnitude * slipFrictionCoefficient;
+
+            force.setX(force.getX() + (frictionForceDirection * brakesFrictionMagnitude));
+        }
     }
 
     // absolutePosition.getY() returns the deformation

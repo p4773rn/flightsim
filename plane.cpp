@@ -41,8 +41,8 @@ void Plane::update(double delta) {
     Vec2 frontWheelsForce, mainWheelsForce;
     double frontWheelsTorque, mainWheelsTorque;
 
-    std::tie(frontWheelsForce, frontWheelsTorque) = frontWheels.getForceAndTorque(velocity, pos, angularVelocity, angle);
-    std::tie(mainWheelsForce, mainWheelsTorque) = mainWheels.getForceAndTorque(velocity, pos, angularVelocity, angle);
+    std::tie(frontWheelsForce, frontWheelsTorque) = frontWheels.getForceAndTorque(velocity, pos, angularVelocity, angle, mass);
+    std::tie(mainWheelsForce, mainWheelsTorque) = mainWheels.getForceAndTorque(velocity, pos, angularVelocity, angle, mass);
 
     cout << endl << "FRONT WHEELS FORCE: " << frontWheelsForce << endl << endl;
     cout << endl << "MAIN WHEELS FORCE: " << mainWheelsForce << endl << endl;
@@ -89,7 +89,7 @@ void Plane::update(double delta) {
     cout << "--------------------------------------" << endl;
     cout << "Throttle: " << engine.getThrottle() << endl;
     cout << "Elevator Deflection: " << elevators.getDeflection() << endl;
-    cout << "Flaps position: " << wings.getFlapsStatus() << endl;
+    cout << "Flaps position: " << wings.getFlaps() << endl;
     cout << "Brakes on/off: " << mainWheels.getBrakesStatus() << endl;
     cout << endl;
 }
@@ -112,6 +112,7 @@ Plane Plane::getDefaultPlane() {
                 { 14.0 * M_PI / 180,  1.35, 0.042, 0.246, -0.092 },
                 { 16.0 * M_PI / 180,  1.25, 0.059, 0.246, -0.095 }
             }), // default flaps position coeffs
+            // TODO: Drag coeffs are wrong
             Table(
             {
                 { -8.0 * M_PI / 180,    0.90,    0.022,  0.25,   -0.287 },

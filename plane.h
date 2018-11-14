@@ -50,9 +50,8 @@ public:
     double getElevatorDeflection() const {return elevators.getDeflection();}
     void setElevatorDeflection(double deflection) {elevators.setDeflection(deflection);}
 
-    void toggleFlaps() {
-        wings.toggleFlaps();
-    }
+    double getFlaps() const {return wings.getFlaps();}
+    void setFlaps(double flapsPosition) {wings.setFlaps(flapsPosition);}
     void toggleBrakes() {
         mainWheels.toggleBrakes();
         frontWheels.toggleBrakes();
