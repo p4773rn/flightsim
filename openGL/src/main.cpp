@@ -40,8 +40,15 @@ void renderScene(sf::Window& win) {
   
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    model->draw(glm::scale(modelt, glm::vec3(10,10,10)), view, projection, glm::vec3(light.x, light.y, light.z));
+
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+
+    model->draw(glm::scale(modelt, glm::vec3(10,10,10)), view, projection, 
+                camera->get_position(), glm::vec3(light.x, light.y, light.z));
     terrain->draw(camera->get_position(), view, projection);
     
     win.display();
