@@ -25,7 +25,7 @@ int main()
     
 
     Plane plane = Plane::getDefaultPlane();
-    plane.setThrottle(75);
+    // plane.setThrottle(75);
 
     while (window.isOpen())
     {
@@ -50,6 +50,15 @@ int main()
                             break;
                         case sf::Keyboard::W:
                             plane.setElevatorDeflection(plane.getElevatorDeflection() + 0.1);
+                            break;
+                        case sf::Keyboard::F:
+                            plane.setFlaps(plane.getFlaps() - 0.25);
+                            break;
+                        case sf::Keyboard::G:
+                            plane.setFlaps(plane.getFlaps() + 0.25);
+                            break;
+                        case sf::Keyboard::B:
+                            plane.toggleBrakes();
                             break;
                     }
                     break;
