@@ -21,9 +21,8 @@ int main()
     sf::View view = window.getDefaultView();
     
     // Plane height plot
-    Plot plot = Plot(800, 600);
+    Plot plot = Plot(view.getSize().x, view.getSize().y);
     
-
     Plane plane = Plane::getDefaultPlane();
     // plane.setThrottle(75);
 
@@ -78,7 +77,8 @@ int main()
 
         window.setView(view);
         window.clear();
-        plot.draw(window);
+        plot.draw(window, plane.getAngle());
+
 
         window.display();
     }

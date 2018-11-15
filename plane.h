@@ -42,6 +42,7 @@ public:
 
     double getHeight() const {return pos.getY();}
     const Vec2& getPos() const {return pos;}
+    float getAngle() const {return angle;}
     void update(double delta);
 
     int getThrottle() const {return engine.getThrottle();}
