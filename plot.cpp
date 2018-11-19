@@ -36,7 +36,8 @@ void Plot::add(std::pair<double, double> value) {
 void Plot::draw(sf::RenderWindow& window, float angle) {
     sf::RectangleShape box(sf::Vector2f(width, height));
     box.setPosition(sf::Vector2f(x, y));
-    box.setFillColor(sf::Color::Blue);
+    sf::Color backgroundColor(201, 232, 255);
+    box.setFillColor(backgroundColor);
 
     if (vertices.getVertexCount() != values.size())
             vertices.resize(values.size());
