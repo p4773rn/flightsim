@@ -114,7 +114,7 @@ void Frontend2d::drawSprites(sf::RenderWindow& window) {
 
 void Frontend2d::drawGround(sf::RenderWindow& window) {
     // depth, roughness, and color of ground layers
-    const std::vector<std::tuple<float, float, sf::Color>> layers = {
+    std::vector<std::tuple<float, float, sf::Color>> layers = {
         {  0,  0, sf::Color::Green},
         { 10, 1, sf::Color::Yellow},
         { 25, 1, sf::Color::Magenta},
@@ -122,7 +122,7 @@ void Frontend2d::drawGround(sf::RenderWindow& window) {
     };
 
     // Color of this layer doesn't matter
-    layers.push_back({cameraSize.y/2, 0, sf::Color::Red};
+    layers.push_back({cameraSize.y/2, 0, sf::Color::Red});
 
     float cellSize = 10; // grid cell size in meters
     sf::Vector2u gridSize(ceil(cameraSize.x / cellSize) + 4, layers.size());
