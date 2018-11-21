@@ -6,6 +6,7 @@
 #include <ctime>
 #include "table.h"
 #include "plane.h"
+#include "frontend2d.h"
 
 int main()
 {
@@ -21,8 +22,8 @@ int main()
     sf::View view = window.getDefaultView();
     
     // Plane height plot
-    Plot plot = Plot(view.getSize().x, view.getSize().y);
-    
+    Frontend2d frontend;
+
     Plane plane = Plane::getDefaultPlane();
     // plane.setThrottle(75);
 
@@ -59,6 +60,12 @@ int main()
                         case sf::Keyboard::B:
                             plane.toggleBrakes();
                             break;
+                        case sf::Keyboard::Add:
+                            frontend.setScale(frontend.getScale() / 2);
+                            break;
+                        case sf::Keyboard::Subtract:
+                            frontend.setScale(frontend.getScale() * 2);
+                            break;
                     }
                     break;
 
@@ -72,12 +79,11 @@ int main()
         plane.update((clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED);
         lastUpdateTime = clock.getElapsedTime().asSeconds();
 
-        std::pair<double, double> point = {plane.getPos().getX(), plane.getPos().getY()};
-        plot.add(point);
+        frontend.update(plane);
 
-        window.setView(view);
         window.clear();
-        plot.draw(window, plane.getAngle());
+        frontend.updateCamera(window);
+        frontend.draw(window);
 
 
         window.display();
