@@ -20,6 +20,7 @@ Frontend2d::Frontend2d() {
 }
 
 void Frontend2d::update(const Plane& plane) {
+    // TODO: remove old positions
     positions.push_back({float(plane.getPos().getX()), -float(plane.getPos().getY())});
     pitch = plane.getAngle();
 }
@@ -79,9 +80,10 @@ void Frontend2d::drawGrid(sf::RenderWindow& window) {
     corner.x = std::floor(corner.x);
     corner.y = std::floor(corner.y);
     corner *= cellSize;
+    corner.y += 1; // shift the grid 1 m down
 
     sf::VertexArray vertices(sf::Lines);
-    sf::Color color(255, 255, 255, 50);
+    sf::Color color(54, 205, 196, 255);
 
     for (int i = 0; i < gridSize.x; ++i) {
         sf::Vector2f v1(cellSize * i, 0);
@@ -115,16 +117,17 @@ void Frontend2d::drawSprites(sf::RenderWindow& window) {
 void Frontend2d::drawGround(sf::RenderWindow& window) {
     // depth, roughness, and color of ground layers
     std::vector<std::tuple<float, float, sf::Color>> layers = {
-        {  0,  0, sf::Color::Green},
-        { 10, 1, sf::Color::Yellow},
-        { 25, 1, sf::Color::Magenta},
-        { 35, 1, sf::Color::Cyan}
+        {  0, 0, sf::Color(30, 30, 30)},
+        {  2, 0.1, sf::Color(28, 16, 30, 255)},
+        { 50, 1, sf::Color(61, 34, 67, 255)},
+        { 120, 1, sf::Color(40, 33, 53, 255)},
+        { 250, 1, sf::Color(11, 18, 40, 255)}
     };
 
     // Color of this layer doesn't matter
     layers.push_back({cameraSize.y/2, 0, sf::Color::Red});
 
-    float cellSize = 10; // grid cell size in meters
+    float cellSize = 50; // grid cell size in meters
     sf::Vector2u gridSize(ceil(cameraSize.x / cellSize) + 4, layers.size());
 
     sf::Vector2f corner(cameraPos.x - cameraSize.x / 2.0f, 0);
@@ -148,9 +151,9 @@ void Frontend2d::drawGround(sf::RenderWindow& window) {
             grid[x][y].x += noise * cellSize / 2.0f * roughness;
             grid[x][y].y += noise * cellSize / 2.0f * roughness;
             
-            color.r = clamp<int>(color.r + noise * 50 , 0, 255);
-            color.g = clamp<int>(color.g + noise * 50 , 0, 255);
-            color.b = clamp<int>(color.b + noise * 50 , 0, 255);
+            color.r = clamp<int>(color.r + noise * 10 , 0, 255);
+            color.g = clamp<int>(color.g + noise * 10 , 0, 255);
+            color.b = clamp<int>(color.b + noise * 10 , 0, 255);
             colorGrid[x][y] = color;
         }
     }
@@ -182,10 +185,12 @@ void Frontend2d::drawGround(sf::RenderWindow& window) {
 void Frontend2d::drawSky(sf::RenderWindow& window) {
     // height and color of sky layers
     std::vector<std::tuple<float, sf::Color>> layers = {
-        {  0, sf::Color::Red},
-        { 15, sf::Color::Yellow},
-        { 150, sf::Color::Cyan},
-        { 400, sf::Color::Blue}
+        {  0, sf::Color(190, 0, 0, 255)},
+        { 10, sf::Color(227, 117, 10, 255)},
+        //{ 30, sf::Color(232, 158, 145, 255)},
+        { 40, sf::Color(255, 102, 145, 255)},
+        { 150, sf::Color(35, 58, 122, 255)},
+        { 400, sf::Color(28, 5, 43, 255)}
     };
 
     float lastHeight;
