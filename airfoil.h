@@ -22,7 +22,7 @@ public:
     Airfoil(Airfoil&& other) = default;
 
 
-    std::tuple<Vec2, double> getForceAndTorque(const Vec2& velocity, double angle, double airDensity) const;
+    std::tuple<Vec2, double> getForceAndTorque(const Vec2& velocity, double angle, double airDensity, double height) const;
     
     double getAngleOfAttack(const Vec2& velocity, double angle) const {
         return airfoilAngle 

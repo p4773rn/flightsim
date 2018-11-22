@@ -12,7 +12,8 @@ void Plane::update(double delta) {
     Vec2 wingsForce, elevatorsForce;
     double wingsTorque, elevatorsTorque;
     
-    std::tie(wingsForce, wingsTorque) = wings.getForceAndTorque(velocity, angle, airDensity);
+    double height = getHeight();
+    std::tie(wingsForce, wingsTorque) = wings.getForceAndTorque(velocity, angle, airDensity, height);
 
     Vec2 elevatorsVelocity = {
         velocity.getX() - angularVelocity * (elevatorsPoint.getX() * sin(angle) + 
@@ -20,7 +21,7 @@ void Plane::update(double delta) {
         velocity.getY() + angularVelocity * (elevatorsPoint.getX() * cos(angle) - 
                                              elevatorsPoint.getY() * sin(angle))};
     
-    std::tie(elevatorsForce, elevatorsTorque) = elevators.getForceAndTorque(elevatorsVelocity, angle, airDensity);
+    std::tie(elevatorsForce, elevatorsTorque) = elevators.getForceAndTorque(elevatorsVelocity, angle, airDensity, height);
     
     // Forces update
     Vec2 netForce;
@@ -50,8 +51,13 @@ void Plane::update(double delta) {
     netForce += mainWheelsForce;
 
     // Straightforward implementation of drag from fuselage
-    Vec2 fuselageDrag;
-    fuselageDrag.setX( -velocity.getX() * 100);
+    // TODO, implement fuselage as airfoil (to produce more realistic drag)
+    // dynamicPressure * area * coefficients.drag;
+    double dynamicPressure = 0.5 * airDensity * velocity.lengthSquared();
+    double fuselageArea = 4 * 4; // Simple square for now
+    double fuselageDragCoef = 1.4; // Experimentally obtained
+    double fuselageDragMagnitude = dynamicPressure * fuselageArea * fuselageDragCoef;
+    Vec2 fuselageDrag = - velocity.normalized() * fuselageDragMagnitude;
     netForce += fuselageDrag;
 
     // Torque update
@@ -85,7 +91,11 @@ void Plane::update(double delta) {
     cout << "Wings: " << wingsForce << " " << wingsTorque + wingsPoint.cross(wingsForce) << endl;
     cout << "Engines: " << thrust << endl;
     cout << "Elevators: " << elevatorsForce << " " << elevatorsTorque + elevatorsPoint.cross(elevatorsForce) << endl;
+    cout << "Fuselage: " << fuselageDrag << endl;
     cout << "Total: " << netForce << " " << torque << endl;
+    cout << "--------------------------------------" << endl;
+    cout << "Air density: " << airDensity << endl;
+    cout << "Ground effect multiplier: " << getGroundEffect(height) << endl;
     cout << "--------------------------------------" << endl;
     cout << "Throttle: " << engine.getThrottle() << endl;
     cout << "Elevator Deflection: " << elevators.getDeflection() << endl;
@@ -111,21 +121,60 @@ Plane Plane::getDefaultPlane() {
                 { 12.0 * M_PI / 180,  1.36, 0.030, 0.246, -0.092 },
                 { 14.0 * M_PI / 180,  1.35, 0.042, 0.246, -0.092 },
                 { 16.0 * M_PI / 180,  1.25, 0.059, 0.246, -0.095 }
-            }), // default flaps position coeffs
-            // TODO: Drag coeffs are wrong
+            }), // default flaps position 
+            /*
+                Original lift old drag
+                { -8.0 * M_PI / 180,    0.90,    0.055,  0.25,   -0.287 },
+                { -6.0 * M_PI / 180,    1.12,    0.035,  0.25,   -0.297 },
+                { -4.0 * M_PI / 180,    1.34,    0.030,  0.25,   -0.302 },
+                { -2.0 * M_PI / 180,    1.56,    0.025,  0.25,   -0.305 },
+                {  0.0 * M_PI / 180,    1.75,    0.025,  0.25,   -0.305 },
+                {  2.0 * M_PI / 180,    1.95,    0.025,  0.25,   -0.305 },
+                {  4.0 * M_PI / 180,    2.14,    0.030,  0.25,   -0.305 },
+                {  6.0 * M_PI / 180,    2.43,    0.035,  0.25,   -0.302 },
+                {  8.0 * M_PI / 180,    2.50,    0.043,  0.25,   -0.300 },
+                { 10.0 * M_PI / 180,    2.65,    0.055,  0.25,   -0.290 },
+                { 12.0 * M_PI / 180,    2.63,    0.075,  0.25,   -0.275 }
+                
+                Old lift new drag
+                { -8.0 * M_PI / 180,    0.81,    0.082,  0.25,   -0.287 },
+                { -6.0 * M_PI / 180,    1.00,    0.052,  0.25,   -0.297 },
+                { -4.0 * M_PI / 180,    1.20,    0.045,  0.25,   -0.302 },
+                { -2.0 * M_PI / 180,    1.40,    0.037,  0.25,   -0.305 },
+                {  0.0 * M_PI / 180,    1.57,    0.037,  0.25,   -0.305 },
+                {  2.0 * M_PI / 180,    1.75,    0.037,  0.25,   -0.305 },
+                {  4.0 * M_PI / 180,    1.92,    0.045,  0.25,   -0.305 },
+                {  6.0 * M_PI / 180,    2.19,    0.052,  0.25,   -0.302 },
+                {  8.0 * M_PI / 180,    2.50,    0.064,  0.25,   -0.300 },
+                { 10.0 * M_PI / 180,    2.25,    0.082,  0.25,   -0.290 },
+                { 12.0 * M_PI / 180,    2.24,    0.112,  0.25,   -0.275 }
+
+                Second lift, drag unchanged from previous
+                { -8.0 * M_PI / 180,    0.65,    0.082,  0.25,   -0.287 },
+                { -6.0 * M_PI / 180,    0.80,    0.052,  0.25,   -0.297 },
+                { -4.0 * M_PI / 180,    0.96,    0.045,  0.25,   -0.302 },
+                { -2.0 * M_PI / 180,    1.12,    0.037,  0.25,   -0.305 },
+                {  0.0 * M_PI / 180,    1.26,    0.037,  0.25,   -0.305 },
+                {  2.0 * M_PI / 180,    1.4,    0.037,  0.25,   -0.305 },
+                {  4.0 * M_PI / 180,    1.54,    0.045,  0.25,   -0.305 },
+                {  6.0 * M_PI / 180,    1.75,    0.052,  0.25,   -0.302 },
+                {  8.0 * M_PI / 180,    2.00,    0.064,  0.25,   -0.300 },
+                { 10.0 * M_PI / 180,    1.80,    0.082,  0.25,   -0.290 },
+                { 12.0 * M_PI / 180,    1.79,    0.112,  0.25,   -0.275 }
+            */
             Table(
             {
-                { -8.0 * M_PI / 180,    0.90,    0.022,  0.25,   -0.287 },
-                { -6.0 * M_PI / 180,    1.12,    0.014,  0.25,   -0.297 },
-                { -4.0 * M_PI / 180,    1.34,    0.012,  0.25,   -0.302 },
-                { -2.0 * M_PI / 180,    1.56,    0.010,  0.25,   -0.305 },
-                {  0.0 * M_PI / 180,    1.75,    0.010,  0.25,   -0.305 },
-                {  2.0 * M_PI / 180,    1.95,    0.010,  0.25,   -0.305 },
-                {  4.0 * M_PI / 180,    2.14,    0.012,  0.25,   -0.305 },
-                {  6.0 * M_PI / 180,    2.43,    0.014,  0.25,   -0.302 },
-                {  8.0 * M_PI / 180,    2.50,    0.017,  0.25,   -0.300 },
-                { 10.0 * M_PI / 180,    2.65,    0.022,  0.25,   -0.290 },
-                { 12.0 * M_PI / 180,    2.63,    0.030,  0.25,   -0.275 }
+                { -8.0 * M_PI / 180,    0.55,    0.082,  0.25,   -0.287 },
+                { -6.0 * M_PI / 180,    0.68,    0.052,  0.25,   -0.297 },
+                { -4.0 * M_PI / 180,    0.81,    0.045,  0.25,   -0.302 },
+                { -2.0 * M_PI / 180,    0.95,    0.037,  0.25,   -0.305 },
+                {  0.0 * M_PI / 180,    1.07,    0.037,  0.25,   -0.305 },
+                {  2.0 * M_PI / 180,    1.19,    0.037,  0.25,   -0.305 },
+                {  4.0 * M_PI / 180,    1.31,    0.045,  0.25,   -0.305 },
+                {  6.0 * M_PI / 180,    1.49,    0.052,  0.25,   -0.302 },
+                {  8.0 * M_PI / 180,    1.70,    0.064,  0.25,   -0.300 },
+                { 10.0 * M_PI / 180,    1.53,    0.082,  0.25,   -0.290 },
+                { 12.0 * M_PI / 180,    1.52,    0.112,  0.25,   -0.275 }
             }), // take-off flaps position coeffs
             103, // area
             0.0523598775, // angle
@@ -185,7 +234,7 @@ Plane Plane::getDefaultPlane() {
         Vec2(2, -1), // wingsPoint
         std::move(elevators),
         Vec2(-15, 1), // elevatorsPoint
-        Engine(105000), // engine
+        Engine(210000), // engine
         Wheels(72467, 10, 10000, Vec2(15, -3)), // Front wheels
         Wheels(434802, 400, 40000, Vec2(-2, -3)) // Main wheels
     );

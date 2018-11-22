@@ -28,9 +28,9 @@ std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const V
         cout << "Crash Position: " << relativePosition + planePosition << endl;
         cout << "Crash Speed: " << relativeSpeed + velocity << endl;
         if (position.getX() < 0) {
-            cout << "Front wheels" << endl;
-        } else {
             cout << "Main wheels" << endl;
+        } else {
+            cout << "Front wheels" << endl;
         }
         throw std::runtime_error("Wheels break");
     }
@@ -51,18 +51,27 @@ std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const V
         frictionForceDirection = 1;
     }
     if (velocity.getX() != 0) {
+
+        double gravitationalForceMagnitude = mass * GRAVITATIONAL_ACCELERATION;
+        double rollingFrictionMagnitude =  gravitationalForceMagnitude * rollingFrictionCoefficient / wheelsRadius;
+
+        double axleFrictionCoefficient = 0.039; // Experimental value
+        double numberOfWheels = 8; // TODO: refactor (move this somewhere else)
+        // Divide the number of wheels by two because we have two Wheels objects which in sum will give the correct value (TODO: refactor this)
+        double axleFrictionMagnitude = gravitationalForceMagnitude * (numberOfWheels / 2) * axleFrictionCoefficient;
         // TODO: Refactor somehow to eliminate the need of (dividing the rolling friction by so for the front wheels and main wheels in sum give the correct magnitude)
-        // 
-        force.setX( frictionForceDirection * mass * GRAVITATIONAL_ACCELERATION * rollingFrictionCoefficient / (wheelsRadius * 2));
+        double frictionForceMagnitude = (rollingFrictionMagnitude + axleFrictionMagnitude) / 2;
         if (brakesOn > 0) {
             // TODO: Temp storage of friction coeffs, probably refactor?
             double slipFrictionCoefficient = 0.7;
             // ABS braking gives friciton which is not greater than friction from slipping
             // Assumption: Ideal ABS gives the same friction as slipping (without damaging tires)
             double brakesFrictionMagnitude = normalForceMagnitude * slipFrictionCoefficient;
-
-            force.setX(force.getX() + (frictionForceDirection * brakesFrictionMagnitude));
+            
+            // 0.8 is the proportion of main wheels to all wheels (ask Alisher)
+            frictionForceMagnitude += brakesFrictionMagnitude - (axleFrictionMagnitude * 0.8);
         }
+        force.setX(frictionForceDirection * frictionForceMagnitude);
     }
 
     // absolutePosition.getY() returns the deformation

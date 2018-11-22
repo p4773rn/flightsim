@@ -7,7 +7,8 @@
 std::tuple<Vec2, double> Airfoil::getForceAndTorque(
     const Vec2& velocity, 
     double angle, 
-    double airDensity) const {
+    double airDensity,
+    double height) const {
     
     Table::Entry coefficients = tableDefaultFlaps.get(getAngleOfAttack(velocity, angle));
     // TODO: add default constructor to avoid double function call
@@ -21,7 +22,7 @@ std::tuple<Vec2, double> Airfoil::getForceAndTorque(
     double dynamicPressure = 0.5 * airDensity * velocity.lengthSquared();
 
 
-    double liftMagnitude = dynamicPressure * area * coefficients.lift;
+    double liftMagnitude = dynamicPressure * area * coefficients.lift * getGroundEffect(height);
     double dragMagnitude = dynamicPressure * area * coefficients.drag;
 
     Vec2 lift = velocity.tangent().normalized() * liftMagnitude;
