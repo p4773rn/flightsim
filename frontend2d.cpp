@@ -62,7 +62,7 @@ void Frontend2d::drawTrail(sf::RenderWindow& window) {
 
         int i = positions.size() - vertexCount - 1;
         vertices[i].position = *iter;
-        vertices[i].color = sf::Color::Red;
+        vertices[i].color = sf::Color(54, 205, 196, 255);
         vertexCount++;
     }
 
@@ -95,7 +95,7 @@ void Frontend2d::drawGrid(sf::RenderWindow& window) {
     
     for (int i = 0; i < gridSize.y; ++i) {
         sf::Vector2f v1(0, cellSize * i);
-        sf::Vector2f v2(cellSize * gridSize.y, cellSize * i);
+        sf::Vector2f v2(cellSize * gridSize.x, cellSize * i);
 
         vertices.append(sf::Vertex(corner + v1, color));
         vertices.append(sf::Vertex(corner + v2, color));
