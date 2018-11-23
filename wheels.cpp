@@ -73,11 +73,17 @@ std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const V
         }
         force.setX(frictionForceDirection * frictionForceMagnitude);
     }
+    double frictionTorque = position.cross(force);
 
     // absolutePosition.getY() returns the deformation
     force.setY(normalForceMagnitude);
 
-    torque = force.getY() * position.getX();
+    torque = force.getY() * position.getX() + frictionTorque;
+
+    // If main wheels, produce braking torque
+    if (position.getX() < 0) {
+
+    }
 
     return { force, torque };
 }

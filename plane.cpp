@@ -224,19 +224,19 @@ Plane Plane::getDefaultPlane() {
     );
 
     Plane plane = Plane(
-        Vec2(0, 5), // pos
+        Vec2(0, 1), // pos
         Vec2(1, 0),// velocity
         0, // angle
         51710, // mass
         2027731, // inertia
         
         std::move(wings),
-        Vec2(2, -1), // wingsPoint
+        Vec2(2, 0), // wingsPoint
         std::move(elevators),
         Vec2(-15, 1), // elevatorsPoint
         Engine(210000), // engine
-        Wheels(72467, 10, 10000, Vec2(15, -3)), // Front wheels
-        Wheels(434802, 400, 40000, Vec2(-2, -3)) // Main wheels
+        Wheels(72467, 10, 10000, Vec2(15, -2)), // Front wheels
+        Wheels(434802, 400, 40000, Vec2(-2, -2)) // Main wheels
     );
 
     return plane;
