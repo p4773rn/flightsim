@@ -16,13 +16,16 @@
 #include "camera/camera.h"
 #include "core/quaternion.h"
 #include "terrain/terrain.h"
+#include "terrain/sky.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
 //const float SENSITIVITY = 0.125;
 
 Terrain* terrain;
+Sky* sky;
 Shader* mainShader;
 Model* model;
 Camera* camera;
@@ -33,7 +36,7 @@ glm::mat4 modelt;
 
 void renderScene(sf::Window& win) {
     glm::mat4 view = camera->get_view();
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 2000.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 4096.0f);
     glm::vec4 light(800.0f, 800.0f, 1.0f, 1.0f);
     light = view * light;
   
@@ -41,6 +44,7 @@ void renderScene(sf::Window& win) {
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
+	sky->render(camera->get_view_no_translate(), projection);
     model->draw(glm::scale(modelt, glm::vec3(10,10,10)), view, projection, glm::vec3(light.x, light.y, light.z));
     terrain->draw(camera->get_position(), view, projection);
     
@@ -75,19 +79,6 @@ int main(int argc, char** argv) {
     settings.majorVersion = 3;
     settings.minorVersion = 3;
 
-    sf::Font font;
-    if (!font.loadFromFile("assets/fonts/comme_bold.ttf")) {
-        std::cout << "Could't load font" << std::endl;
-        return -1; 
-    }
-    sf::Text fpsCounter;
-    fpsCounter.setFont(font);
-    fpsCounter.setCharacterSize(24);
-    fpsCounter.setFillColor(sf::Color::Red);
-    fpsCounter.setStyle(sf::Text::Bold | sf::Text::Underlined);
-    fpsCounter.setString("TEST");
-
-
     sf::RenderWindow window(sf::VideoMode(800, 600), "OpenGL Demo", sf::Style::Default, settings);
     window.setFramerateLimit(60);
     window.setActive(true);
@@ -103,13 +94,15 @@ int main(int argc, char** argv) {
     mainShader->use();
 
 
-    camera = new Camera(glm::vec3(1.0f, 500.0f, 0.5f));
+    camera = new Camera(glm::vec3(0.0, 200.0f, 0.0));
 
-    model = new Model("assets/models/BGEAR_plane.obj");
+    model = new Model("assets/models/tree.obj");
   
-    modelt = glm::translate(glm::mat4(1.0), glm::vec3(0, 400.0, -100));
+    modelt = glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, -1024.0));
 
     terrain = new Terrain("assets/terrain/hm.png", camera->get_position());
+
+	sky = new Sky("assets/terrain/textures/sky");
 
     sf::Clock clock;
     bool running = true;
@@ -128,6 +121,9 @@ int main(int argc, char** argv) {
         renderScene(window);
         int fps = int(1.0f/clock.getElapsedTime().asSeconds());
         //window.draw(fpsCounter);
+		/*std::cout << "\r" << camera->get_position().x 
+				  << ", " << camera->get_position().y
+				  << ", " << camera->get_position().z << std::flush;*/
         window.display();
         clock.restart().asSeconds();
     }

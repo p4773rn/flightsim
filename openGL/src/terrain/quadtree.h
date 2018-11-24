@@ -49,10 +49,12 @@ private:
 	TreeNode* nodes;
 	TreeNode* root;
 	TreeNode* current;
+
 	Shader* shader;
 	GLuint VAO, VBO;
 	Texture heightmap;
 	Texture splatmap;
+	//Texture lightmap;
 	Texture textures[MAX_TEXTURES];
 };
 #endif

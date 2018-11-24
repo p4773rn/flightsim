@@ -1,5 +1,5 @@
 #version 420 core
-layout (quads, fractional_odd_spacing, ccw) in;
+layout (quads, fractional_even_spacing, ccw) in;
 
 uniform mat4 model;
 uniform mat4 view;

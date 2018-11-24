@@ -2,6 +2,7 @@
 
 uniform sampler2D textures[4];
 uniform sampler2D splatmap;
+//uniform sampler2D lightmap;
 in vec4 UVU;
 out vec4 FragColor;
 
@@ -52,15 +53,13 @@ vec4 textureNoTile( sampler2D samp, in vec2 uv )
 
 void main()
 {
-	//FragColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
-	//FragColor = texture(textures[int(UVU.z)], UVU.xy);
-	//FragColor.w = UVU.w;
 	vec4 alpha = texture(splatmap, UVU.zw);
+    //vec4 light = texture(lightmap, UVU.zw);
+    //float gray = 0.299 * light.r +  0.587 * light.g + 0.114 * light.b;
 	vec4 t1 = textureNoTile(textures[0], UVU.xy); //texture(textures[0], UVU.xy);
 	vec4 t2 = textureNoTile(textures[1], UVU.xy); //texture(textures[1], UVU.xy);
 	vec4 t3 = textureNoTile(textures[2], UVU.xy); //texture(textures[2], UVU.xy);
 	vec4 t4 = textureNoTile(textures[3], UVU.xy); //texture(textures[3], UVU.xy);
 	FragColor = t1 * alpha.r + t2 * alpha.g + t3 * alpha.b + t4 * alpha.a;
-	//FragColor = UVU;
-	//FragColor = texture(textures[0], UVU.xy);
+    //FragColor = gray * FragColor;
 }

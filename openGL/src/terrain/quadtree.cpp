@@ -56,10 +56,10 @@ Quadtree::Quadtree(const glm::vec3& _camera_position, const std::string& path, c
 
 	// create patch
 	GLfloat patch[] = {
-		-1.0f, 1.0f,
-		 1.0f, 1.0f,
-		 1.0f, -1.0f,
 		-1.0f, -1.0f,
+		 1.0f, -1.0f,
+		 1.0f, 1.0f,
+		-1.0f, 1.0f
 	};
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -79,6 +79,8 @@ Quadtree::Quadtree(const glm::vec3& _camera_position, const std::string& path, c
 Quadtree::~Quadtree() {
 	if (nodes)
 		delete[] nodes;
+	if (shader)
+		delete shader;
 }
 
 TreeNode* Quadtree::create_node(TreeNode* p, const glm::vec2& origin) {
@@ -106,7 +108,8 @@ TreeNode* Quadtree::create_node(TreeNode* p, const glm::vec2& origin) {
 }
 
 bool Quadtree::isDivisible(TreeNode* node) {
-	float dist = sqrt(pow(node->origin.x - camera_position.x, 2) + pow(node->origin.y - camera_position.z, 2));
+	float cameraZ = -camera_position.z; // opengl's z axis is reversed y axis on 2d
+	float dist = sqrt(pow(node->origin.x - camera_position.x, 2) + pow(node->origin.y - cameraZ, 2));
 	float diagonal = sqrt(pow(node->width,2) + pow(node->height,2));
 	return dist < diagonal && node->width > MIN_NODE_WIDTH && node->height > MIN_NODE_HEIGHT;
 }
@@ -164,8 +167,9 @@ void Quadtree::divide(TreeNode* node) {
 void Quadtree::renderNode(TreeNode* node) {
 	calcTess(node);
 	glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(node->width/2.0f, 1.0f, node->height/2.0f));
-	glm::mat4 trans = glm::translate(glm::mat4(1.0f), glm::vec3(node->origin.x, 0.0f, node->origin.y));
-
+	glm::mat4 trans = glm::translate(glm::mat4(1.0f), glm::vec3(node->origin.x, 0.0f, -node->origin.y));
+	if (node->width == 1024)
+	std::cout << "\r" << node->origin.x << "x:" << node->origin.y << "y"<< std::flush;
 	glm::mat4 model = trans * scale;
 	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glUniform1f(glGetUniformLocation(shader->getID(), "tesselation_right"), node->tesselation_right);
@@ -173,7 +177,7 @@ void Quadtree::renderNode(TreeNode* node) {
 	glUniform1f(glGetUniformLocation(shader->getID(), "tesselation_top"), node->tesselation_top);
 	glUniform1f(glGetUniformLocation(shader->getID(), "tesselation_bottom"), node->tesselation_bottom);
 	glBindVertexArray(VAO);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glPatchParameteri(GL_PATCH_VERTICES, 4);
 	glDrawArrays(GL_PATCHES, 0, 4);
 }
@@ -208,15 +212,17 @@ void Quadtree::render(const glm::vec3 _camera_position, const glm::mat4& view, c
   	heightmap.activate(GL_TEXTURE0);
   	glUniform1i(glGetUniformLocation(shader->getID(), "splatmap"), 1);
   	splatmap.activate(GL_TEXTURE1);
+  	//glUniform1i(glGetUniformLocation(shader->getID(), "lightmap"), 2);
+  	//lightmap.activate(GL_TEXTURE2);
   	glUniform1iv(glGetUniformLocation(shader->getID(), "textures"), MAX_TEXTURES, t_units);
   	for(size_t i = 0; i < MAX_TEXTURES; ++i) {
   		textures[i].activate(GL_TEXTURE2 + i);
   	}
 
 	construct_tree();
-	glEnable(GL_BLEND);
+	//glEnable(GL_BLEND);
 	render_rec(root);
-	glDisable(GL_BLEND);
+	//glDisable(GL_BLEND);
 }
 
 void Quadtree::set_wh(const float w, const float h) {
@@ -226,7 +232,7 @@ void Quadtree::set_wh(const float w, const float h) {
 
 void Quadtree::load_textures() {
 	splatmap = Texture("assets/terrain/alpha.png");
-
+	//lightmap = Texture("assets/terrain/light.png");
 	std::string path = "assets/terrain/alphamap.txt";
 	std::string line;
 	std::ifstream texture_files(path);

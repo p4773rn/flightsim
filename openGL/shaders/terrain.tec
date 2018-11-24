@@ -4,6 +4,8 @@ layout (vertices = 4) out;
 
 uniform mat4 model;
 uniform mat4 view;
+uniform mat4 projection;
+uniform sampler2D heightmap;
 
 uniform float tesselation_left;
 uniform float tesselation_right;
@@ -16,14 +18,25 @@ const float maxDistance = 2048;
 vec4 camera = inverse(view) * vec4(0.0, 0.0, 0.0, 1.0);
 
 float calcTessLevel(vec4 v0, vec4 v1) {
-	
-	float d_mean = ( distance(vec3(model * v0), vec3(camera)) + distance(vec3(model * v1), vec3(camera)) )/2.0;
-	//vec4 v = (v0 + v1)/2.0f;
-	//float d_mean = (distance((model * v).xyz, camera.xyz));
-	const float s = max(0.1, 1.0 - d_mean/maxDistance);
+	/*vec4 tex = model * v0;
+	vec2 texcoord = vec2(tex.x/2048.0 + 0.5, tex.z/2048.0 + 0.5);
+	vec4 color = texture(heightmap, texcoord);
+	float gray = 0.299 * color.r +  0.587 * color.g + 0.114 * color.b;
+	v0.y = gray * 300;
+
+	tex = model * v1;
+	texcoord = vec2(tex.x/2048.0 + 0.5, tex.z/2048.0 + 0.5);
+	color = texture(heightmap, texcoord);
+	gray = 0.299 * color.r +  0.587 * color.g + 0.114 * color.b;
+	v1.y = gray * 300;*/
+
+	//float d_mean = ( distance(vec3(model * v0), vec3(camera)) + distance(vec3(model * v1), vec3(camera)) )/2.0;
+	vec4 v = (v0 + v1)/2.0f;
+	float d_mean = (distance((model * v).xyz, camera.xyz));
+	float s = max(0.1, 1.0 - d_mean/maxDistance);
 	float tess = s * maxTessLevel;
-	//if (tess <= 2.0f)
-	//	return 2.0f;
+	if (tess <= 2.0f)
+		return 2.0f;
 	if (tess <= 4.0)
 		return 4.0f;
 	if (tess <= 8.0f)
@@ -40,17 +53,20 @@ void main()
 	#define id gl_InvocationID
 	gl_out[id].gl_Position = gl_in[id].gl_Position;
 	if (id == 0) {
-		float e0 = calcTessLevel(gl_in[0].gl_Position, gl_in[1].gl_Position);
-		float e1 = calcTessLevel(gl_in[1].gl_Position, gl_in[2].gl_Position);
-		float e2 = calcTessLevel(gl_in[2].gl_Position, gl_in[3].gl_Position);
-		float e3 = calcTessLevel(gl_in[3].gl_Position, gl_in[0].gl_Position);
+		float e0 = calcTessLevel(gl_in[1].gl_Position, gl_in[2].gl_Position);
+		float e1 = calcTessLevel(gl_in[2].gl_Position, gl_in[3].gl_Position);
+		float e2 = calcTessLevel(gl_in[3].gl_Position, gl_in[0].gl_Position);
+		float e3 = calcTessLevel(gl_in[0].gl_Position, gl_in[1].gl_Position);
+		//right
+		//top
+		//left
+		//bottom
+		gl_TessLevelOuter[0] = e0 / tesselation_right;
+		gl_TessLevelOuter[1] = e1 / tesselation_top;
+		gl_TessLevelOuter[2] = e2 / tesselation_left;
+		gl_TessLevelOuter[3] = e3 / tesselation_bottom;
 
-		gl_TessLevelOuter[0] = max(2.0, e0 / tesselation_right);// tesselation_top;
-		gl_TessLevelOuter[1] = max(2.0, e1 / tesselation_top);// tesselation_right;
-		gl_TessLevelOuter[2] = max(2.0, e2 / tesselation_left);// tesselation_top;
-		gl_TessLevelOuter[3] = max(2.0, e3 / tesselation_bottom);// tesselation_top;
-
-		gl_TessLevelInner[0] = 0.25 * (gl_TessLevelOuter[0] + gl_TessLevelOuter[1] + gl_TessLevelOuter[2] + gl_TessLevelOuter[3]);
-		gl_TessLevelInner[1] = 0.25 * (gl_TessLevelOuter[0] + gl_TessLevelOuter[1] + gl_TessLevelOuter[2] + gl_TessLevelOuter[3]);
+		gl_TessLevelInner[0] = 0.5 * (e1 + e3);
+		gl_TessLevelInner[1] = 0.5 * (e0 + e2);
 	}
 }
