@@ -177,7 +177,7 @@ void Quadtree::renderNode(TreeNode* node) {
 	glUniform1f(glGetUniformLocation(shader->getID(), "tesselation_top"), node->tesselation_top);
 	glUniform1f(glGetUniformLocation(shader->getID(), "tesselation_bottom"), node->tesselation_bottom);
 	glBindVertexArray(VAO);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glPatchParameteri(GL_PATCH_VERTICES, 4);
 	glDrawArrays(GL_PATCHES, 0, 4);
 }
@@ -199,10 +199,12 @@ void Quadtree::construct_tree() {
 	divide(root);
 }
 
-void Quadtree::render(const glm::vec3 _camera_position, const glm::mat4& view, const glm::mat4& proj) {
+void Quadtree::render(const glm::vec3 _camera_position, const glm::mat4& view, const glm::mat4& proj, const glm::vec3& sun) {
 	shader->use();
 	camera_position = _camera_position;
-	int t_units[MAX_TEXTURES] = {2, 3, 4, 5};
+	int t_units[MAX_TEXTURES] = {3, 4, 5, 6};
+	glUniform3fv(glGetUniformLocation(shader->getID(), "sun"),
+					 1, glm::value_ptr(sun));
 	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "view"),
                      1, GL_FALSE, glm::value_ptr(view));
   	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "projection"),
@@ -212,11 +214,11 @@ void Quadtree::render(const glm::vec3 _camera_position, const glm::mat4& view, c
   	heightmap.activate(GL_TEXTURE0);
   	glUniform1i(glGetUniformLocation(shader->getID(), "splatmap"), 1);
   	splatmap.activate(GL_TEXTURE1);
-  	//glUniform1i(glGetUniformLocation(shader->getID(), "lightmap"), 2);
-  	//lightmap.activate(GL_TEXTURE2);
+  	glUniform1i(glGetUniformLocation(shader->getID(), "lightmap"), 2);
+  	lightmap.activate(GL_TEXTURE2);
   	glUniform1iv(glGetUniformLocation(shader->getID(), "textures"), MAX_TEXTURES, t_units);
   	for(size_t i = 0; i < MAX_TEXTURES; ++i) {
-  		textures[i].activate(GL_TEXTURE2 + i);
+  		textures[i].activate(GL_TEXTURE3 + i);
   	}
 
 	construct_tree();
@@ -232,7 +234,7 @@ void Quadtree::set_wh(const float w, const float h) {
 
 void Quadtree::load_textures() {
 	splatmap = Texture("assets/terrain/alpha.png");
-	//lightmap = Texture("assets/terrain/light.png");
+	lightmap = Texture("assets/terrain/normal.png");
 	std::string path = "assets/terrain/alphamap.txt";
 	std::string line;
 	std::ifstream texture_files(path);

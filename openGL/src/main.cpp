@@ -38,6 +38,7 @@ void renderScene(sf::Window& win) {
     glm::mat4 view = camera->get_view();
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 4096.0f);
     glm::vec4 light(800.0f, 800.0f, 1.0f, 1.0f);
+	glm::vec3 sun(0.2f, 1.0f, 0.3f);
     light = view * light;
   
   
@@ -46,7 +47,7 @@ void renderScene(sf::Window& win) {
     
 	sky->render(camera->get_view_no_translate(), projection);
     model->draw(glm::scale(modelt, glm::vec3(10,10,10)), view, projection, glm::vec3(light.x, light.y, light.z));
-    terrain->draw(camera->get_position(), view, projection);
+    terrain->draw(camera->get_position(), view, projection, sun);
     
     win.display();
 }

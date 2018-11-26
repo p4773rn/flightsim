@@ -32,7 +32,7 @@ class Quadtree {
 public:
 	Quadtree(const glm::vec3& _camera_position, const std::string& path, const float width, const float height);
 	~Quadtree();
-	void render(const glm::vec3 _camera_position, const glm::mat4& view, const glm::mat4& proj);
+	void render(const glm::vec3 _camera_position, const glm::mat4& view, const glm::mat4& proj, const glm::vec3& sun);
 	void set_wh(const float width, const float height);
 private:
 	bool isDivisible(TreeNode* node);
@@ -54,7 +54,7 @@ private:
 	GLuint VAO, VBO;
 	Texture heightmap;
 	Texture splatmap;
-	//Texture lightmap;
+	Texture lightmap;
 	Texture textures[MAX_TEXTURES];
 };
 #endif

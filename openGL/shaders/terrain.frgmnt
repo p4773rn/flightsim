@@ -2,8 +2,11 @@
 
 uniform sampler2D textures[4];
 uniform sampler2D splatmap;
-//uniform sampler2D lightmap;
-in vec4 UVU;
+uniform sampler2D lightmap;
+uniform sampler2D heightmap;
+uniform vec3 	  sun;
+in vec2 UV;
+in vec3 Pos;
 out vec4 FragColor;
 
 //link: https://www.shadertoy.com/view/4djSRW
@@ -51,15 +54,20 @@ vec4 textureNoTile( sampler2D samp, in vec2 uv )
                      textureGrad( samp, uvd, ddxd, ddyd ), b.x), b.y );
 }
 
+
 void main()
 {
-	vec4 alpha = texture(splatmap, UVU.zw);
-    //vec4 light = texture(lightmap, UVU.zw);
-    //float gray = 0.299 * light.r +  0.587 * light.g + 0.114 * light.b;
-	vec4 t1 = textureNoTile(textures[0], UVU.xy); //texture(textures[0], UVU.xy);
-	vec4 t2 = textureNoTile(textures[1], UVU.xy); //texture(textures[1], UVU.xy);
-	vec4 t3 = textureNoTile(textures[2], UVU.xy); //texture(textures[2], UVU.xy);
-	vec4 t4 = textureNoTile(textures[3], UVU.xy); //texture(textures[3], UVU.xy);
+	vec2 tex = vec2(Pos.x/2048.0 + 0.5, Pos.z/2048.0 + 0.5);
+	vec4 alpha = texture(splatmap, tex);
+    vec3 normal = texture(lightmap, tex).rgb;
+	//normal = normalize(normal);
+	//vec3 hm = texture(heightmap, tex).rgb;
+	vec3 lightDir = normalize(sun);
+	float diff = max(dot(normal, lightDir), 0.0f);
+	vec4 t1 = textureNoTile(textures[0], UV); //texture(textures[0], UVU.xy);
+	vec4 t2 = textureNoTile(textures[1], UV); //texture(textures[1], UVU.xy);
+	vec4 t3 = textureNoTile(textures[2], UV); //texture(textures[2], UVU.xy);
+	vec4 t4 = textureNoTile(textures[3], UV); //texture(textures[3], UVU.xy);
 	FragColor = t1 * alpha.r + t2 * alpha.g + t3 * alpha.b + t4 * alpha.a;
-    //FragColor = gray * FragColor;
+	FragColor = diff * FragColor;
 }
