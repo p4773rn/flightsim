@@ -63,8 +63,12 @@ void Plane::update(double delta) {
     // Torque update
     double torque = 0;
     
+    // Airfoil torque
     torque += wingsTorque + wingsPoint.cross(wingsForce);
     torque += elevatorsTorque + elevatorsPoint.cross(elevatorsForce);
+
+    // Engine torque
+    // torque += - thrust.getX() * enginePoint.getY();
 
     // Wheels torque
     torque += frontWheelsTorque + mainWheelsTorque;
@@ -89,7 +93,7 @@ void Plane::update(double delta) {
     cout << "--------------------------------------" << endl;
     cout << "Gravity: " << weight << endl;
     cout << "Wings: " << wingsForce << " " << wingsTorque + wingsPoint.cross(wingsForce) << endl;
-    cout << "Engines: " << thrust << endl;
+    cout << "Engines: " << thrust << " " << enginePoint << endl;
     cout << "Elevators: " << elevatorsForce << " " << elevatorsTorque + elevatorsPoint.cross(elevatorsForce) << endl;
     cout << "Fuselage: " << fuselageDrag << endl;
     cout << "Total: " << netForce << " " << torque << endl;
@@ -177,7 +181,7 @@ Plane Plane::getDefaultPlane() {
                 { 12.0 * M_PI / 180,    1.52,    0.112,  0.25,   -0.275 }
             }), // take-off flaps position coeffs
             103, // area
-            0.0523598775, // angle
+            0.0223598775, // angle
             3.6 // chordLength
     );
 
@@ -225,16 +229,17 @@ Plane Plane::getDefaultPlane() {
 
     Plane plane = Plane(
         Vec2(0, 1), // pos
-        Vec2(1, 0),// velocity
+        Vec2(0.1, 0),// velocity
         0, // angle
         51710, // mass
         2027731, // inertia
         
         std::move(wings),
-        Vec2(2, 0), // wingsPoint
+        Vec2(-0.5, -0.5), // wingsPoint
         std::move(elevators),
-        Vec2(-15, 1), // elevatorsPoint
+        Vec2(-20, 0.4), // elevatorsPoint
         Engine(210000), // engine
+        Vec2(-200, 400), // enginePoint
         Wheels(72467, 10, 10000, Vec2(15, -2)), // Front wheels
         Wheels(434802, 400, 40000, Vec2(-2, -2)) // Main wheels
     );

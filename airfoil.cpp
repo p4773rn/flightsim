@@ -22,7 +22,7 @@ std::tuple<Vec2, double> Airfoil::getForceAndTorque(
     double dynamicPressure = 0.5 * airDensity * velocity.lengthSquared();
 
 
-    double liftMagnitude = dynamicPressure * area * coefficients.lift * getGroundEffect(height);
+    double liftMagnitude = dynamicPressure * area * coefficients.lift * getGroundEffect(height) * 1.1;
     double dragMagnitude = dynamicPressure * area * coefficients.drag;
 
     Vec2 lift = velocity.tangent().normalized() * liftMagnitude;

@@ -19,6 +19,7 @@ public:
           Airfoil elevators,
           Vec2 elevatorsPoint,
           Engine engine,
+          Vec2 enignePoint,
           Wheels frontWheels,
           Wheels mainWheels) :
           
@@ -33,6 +34,7 @@ public:
           elevators{elevators},
           elevatorsPoint{elevatorsPoint},
           engine{engine},
+          enginePoint{enginePoint},
           frontWheels{frontWheels},
           mainWheels{mainWheels}
     {}
@@ -68,12 +70,13 @@ private:
     double mass;
     double inertia;
 
-    Vec2 wingsPoint; // distance from wingss' force to the mass center
+    Vec2 wingsPoint; // distance from wings' force point to the gravity center
     Airfoil wings;
 
     Vec2 elevatorsPoint;
     Airfoil elevators;
 
+    Vec2 enginePoint;
     Engine engine;
 
     Wheels frontWheels;
