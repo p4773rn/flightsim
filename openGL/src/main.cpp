@@ -36,8 +36,8 @@ glm::mat4 modelt;
 
 void renderScene(sf::Window& win) {
     glm::mat4 view = camera->get_view();
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 4096.0f);
-    glm::vec4 light(800.0f, 800.0f, 1.0f, 1.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(90.0f), 800.0f/600.0f, 0.1f, 4096.0f);
+    glm::vec4 light(-500.0f, 800.0f, 2048.0f, 1.0f);
   
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -45,7 +45,6 @@ void renderScene(sf::Window& win) {
 
 
 	sky->render(camera->get_view_no_translate(), projection);
-
     terrain->draw(camera->get_position(), view, projection, glm::vec3(light));
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -104,7 +103,7 @@ int main(int argc, char** argv) {
 
     model = new Model("assets/models/BGEAR_plane.obj");
   
-    modelt = glm::translate(glm::mat4(1.0), glm::vec3(0.0, 180.0, -100.0));
+    modelt = glm::translate(glm::mat4(1.0), glm::vec3(0.0f, 300.0f, 0.0f));
 
     terrain = new Terrain("assets/terrain/hm.png", camera->get_position());
 
@@ -125,11 +124,6 @@ int main(int argc, char** argv) {
         mouseInput(window);
         mainShader->use();
         renderScene(window);
-        int fps = int(1.0f/clock.getElapsedTime().asSeconds());
-        //window.draw(fpsCounter);
-		/*std::cout << "\r" << camera->get_position().x 
-				  << ", " << camera->get_position().y
-				  << ", " << camera->get_position().z << std::flush;*/
         window.display();
         clock.restart().asSeconds();
     }
