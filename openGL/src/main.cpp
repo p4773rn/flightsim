@@ -117,6 +117,15 @@ int main(int argc, char** argv) {
                 case sf::Event::Closed:
                     running = false;
                     break;
+                case sf::Event::KeyPressed:
+                    switch (event.key.code) {
+                        case sf::Keyboard::O:
+                            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                            break;
+                        case sf::Keyboard::P:
+                            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                            break;
+                    }
             }
         }
         keyInput();
