@@ -16,6 +16,6 @@ private:
 	sf::Image height_map;
 public:
 	Terrain(const std::string& fname, const glm::vec3& camera_position);
-	void draw(const glm::vec3& camera_position, const glm::mat4& view, const glm::mat4& proj);
+	void draw(const glm::vec3& camera_position, const glm::mat4& view, const glm::mat4& proj, const glm::vec3& sun);
 };
 #endif

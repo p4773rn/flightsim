@@ -1,12 +1,13 @@
 #version 420 core
-layout (quads, fractional_odd_spacing, ccw) in;
+layout (quads, fractional_even_spacing, ccw) in;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform sampler2D heightmap;
 
-out vec4 UVU;
+out vec2 UV;
+out vec3 Pos;
 
 void main() {
 	float width = model[0][0];
@@ -21,11 +22,13 @@ void main() {
 	vec4 color = texture(heightmap, texcoord);
 	float gray = 0.299 * color.r +  0.587 * color.g + 0.114 * color.b;
 
-	gl_Position.y = gray * 300;
-	gl_Position = projection * view * model * gl_Position;
+	gl_Position.y = gray * 280;
+	gl_Position = model * gl_Position;
+	Pos.x = gl_Position.x;
+	Pos.y = gl_Position.y;
+	Pos.z = gl_Position.z;
+	gl_Position = projection * view * gl_Position;
 
-	UVU.x = gl_TessCoord.x * max(width/4.0f, 1.0f);
-	UVU.y = gl_TessCoord.y * max(width/4.0f, 1.0f);
-	UVU.z = texcoord.x;
-	UVU.w = texcoord.y;
+	UV.x = gl_TessCoord.x * max(width/4.0f, 1.0f);
+	UV.y = gl_TessCoord.y * max(width/4.0f, 1.0f);
 }

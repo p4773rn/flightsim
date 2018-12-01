@@ -51,6 +51,12 @@ void Camera::move_position(unsigned int dir) {
 }
 
 glm::mat4 Camera::get_view() {
+  glm::mat4 M = glm::mat4(1.0f);
+  M = glm::translate(M, -position);
+  return get_view_no_translate() * M;
+}
+
+glm::mat4 Camera::get_view_no_translate() {
   glm::vec3 up = glm::cross(direction, right);
   double mat4[16] = {
     right.x,  up.x, direction.x,  0,
@@ -58,11 +64,7 @@ glm::mat4 Camera::get_view() {
     right.z,  up.z, direction.z,  0,
           0,     0,           0,  1
   };
-  glm::mat4 M = glm::mat4(1.0f);
-  glm::mat4 C;
-  M = glm::translate(M, -position);
-  C = glm::make_mat4(mat4);
-  return C * M;
+  return glm::make_mat4(mat4);
 }
 
 glm::vec3 Camera::get_position(){

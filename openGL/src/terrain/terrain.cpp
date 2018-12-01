@@ -13,6 +13,6 @@ Terrain::Terrain(const std::string& fname, const glm::vec3& camera_position) :
 	terrain_renderer.set_wh(height_map.getSize().x, height_map.getSize().y);
 }
 
-void Terrain::draw(const glm::vec3& camera_position, const glm::mat4& view, const glm::mat4& proj) {
-	terrain_renderer.render(camera_position, view, proj);
+void Terrain::draw(const glm::vec3& camera_position, const glm::mat4& view, const glm::mat4& proj, const glm::vec3& sun) {
+	terrain_renderer.render(camera_position, view, proj, sun);
 }
