@@ -35,7 +35,7 @@ void main() {
 	gl_Position = view * gl_Position;
 
 	//Fog
-	float b = 1.0 / (1024.0);
+	float b = 1.0 / (512.0+256.0);
 	fogAmount = 1.0 - exp(-distance(vec3(0.0f, 0.0f, 0.0f), gl_Position.xyz) * b);
 	gl_Position = projection * gl_Position;
 	UV.x = gl_TessCoord.x * max(width/4.0f, 1.0f);

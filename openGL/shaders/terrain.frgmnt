@@ -73,6 +73,6 @@ void main()
 	FragColor = t1 * alpha.r + t2 * alpha.g + t3 * alpha.b + t4 * alpha.a;
 	FragColor = diff * FragColor;
 
-	vec4 fogColor = vec4(0.5, 0.6, 0.7, 1.0);
+	vec4 fogColor = vec4(0.51, 0.473, 0.463, 1.0);
 	FragColor = mix(FragColor, fogColor, fogAmount);
 }
