@@ -238,6 +238,8 @@ void Frontend2d::drawSky(sf::RenderWindow& window) {
 
 
 void Frontend2d::drawHud(sf::RenderWindow& window) {
+    hudView.setSize(window.getSize().x, window.getSize().y);
+    hudView.setCenter(hudView.getSize() * 0.5f);
     window.setView(hudView);
     
     std::ostringstream sout;
