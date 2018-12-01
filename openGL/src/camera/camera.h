@@ -10,6 +10,7 @@ public:
   Camera();
   Camera(const glm::vec3& _position);
   glm::mat4 get_view();
+  glm::mat4 get_view_no_translate();
   glm::vec3 get_position();
   void move_mouse(float x_offset, float y_offset);
   void move_position(unsigned int dir);

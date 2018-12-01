@@ -7,7 +7,7 @@ OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 DEP = $(OBJ:.o=.d)
 BUILD_TREE = $(shell dirname $(OBJ))
 
-LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lGLEW -lGLU -lGL 
+LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lGLEW -lGLU -lGL
 CXXFLAGS = -g
 
 
