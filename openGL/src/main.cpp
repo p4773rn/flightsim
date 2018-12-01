@@ -36,18 +36,21 @@ glm::mat4 modelt;
 
 void renderScene(sf::Window& win) {
     glm::mat4 view = camera->get_view();
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 4096.0f);
-    glm::vec4 light(800.0f, 800.0f, 1.0f, 1.0f);
-	glm::vec3 sun(0.2f, 1.0f, 0.3f);
-    light = view * light;
+    glm::mat4 projection = glm::perspective(glm::radians(90.0f), 800.0f/600.0f, 0.1f, 4096.0f);
+    glm::vec4 light(-500.0f, 800.0f, 2048.0f, 1.0f);
+  
+    glEnable(GL_DEPTH_TEST);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_DEPTH_TEST);
-    
+
+
 	sky->render(camera->get_view_no_translate(), projection);
-    //model->draw(glm::scale(modelt, glm::vec3(10,10,10)), view, projection, glm::vec3(light.x, light.y, light.z));
-    terrain->draw(camera->get_position(), view, projection, sun);
+    terrain->draw(camera->get_position(), view, projection, glm::vec3(light));
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    model->draw(glm::scale(modelt, glm::vec3(10,10,10)), view, projection, 
+                camera->get_position(), glm::vec3(view * light));
+    glDisable(GL_BLEND);
     
     win.display();
 }
@@ -97,8 +100,9 @@ int main(int argc, char** argv) {
 
     camera = new Camera(glm::vec3(0.0, 200.0f, 0.0));
 
-    model = new Model("assets/models/tree.obj");
-    modelt = glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, -1024.0));
+    model = new Model("assets/models/BGEAR_plane.obj");
+  
+    modelt = glm::translate(glm::mat4(1.0), glm::vec3(0.0f, 300.0f, 0.0f));
 
     terrain = new Terrain("assets/terrain/hm.png", camera->get_position());
 
@@ -119,11 +123,6 @@ int main(int argc, char** argv) {
         mouseInput(window);
         mainShader->use();
         renderScene(window);
-        int fps = int(1.0f/clock.getElapsedTime().asSeconds());
-        //window.draw(fpsCounter);
-		/*std::cout << "\r" << camera->get_position().x 
-				  << ", " << camera->get_position().y
-				  << ", " << camera->get_position().z << std::flush;*/
         window.display();
         clock.restart().asSeconds();
     }

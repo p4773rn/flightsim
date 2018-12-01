@@ -8,7 +8,7 @@
 
 class Plot {
 public: 
-    void draw(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window, float angle);
     void add(std::pair<double, double> value);
     Plot(unsigned int width, unsigned int height);
     void setPosition(unsigned int x, unsigned int y);
@@ -20,7 +20,10 @@ private:
     double interval; // time interval in seconds
     std::vector< std::pair<double, double> > values; // queue of points(time, y-value)
     sf::VertexArray vertices; //array of vertices that will be drawn
-    double maxY; // Used to dynamicly resize the plot window 
+    double maxY; // Used to dynamicly resize the plot window
+
+    sf::Texture texture;
+    sf::Sprite sprite;
 };
 
 inline void Plot::setPosition(unsigned int _x, unsigned _y) {x = _x; y = _y;}

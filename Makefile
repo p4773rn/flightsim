@@ -1,4 +1,4 @@
-CC=g++
+CC=g++ -g
 LIBS=-lsfml-graphics -lsfml-window -lsfml-system
 
 all:

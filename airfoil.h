@@ -8,11 +8,14 @@
 
 class Airfoil {
 public:
-    Airfoil(const Table& table, double area, double airfoilAngle, double chordLength) : 
-        table{table},
+    Airfoil(const Table& tableDefaultFlaps, const Table& tableTakeOffFlaps, double area, double airfoilAngle, double chordLength) : 
+        tableDefaultFlaps{tableDefaultFlaps},
+        tableTakeOffFlaps{tableTakeOffFlaps},
         area{area},
         airfoilAngle{airfoilAngle},
-        chordLength{chordLength}
+        chordLength{chordLength},
+        deflection{0},
+        flaps{0}
     {}
 
     Airfoil(const Airfoil& other) = default;
@@ -30,18 +33,21 @@ public:
 
     double getDeflection() const {return deflection;}
     void setDeflection(double deflection);
+    double getFlaps() const {return flaps;}
+    void setFlaps(double flapsPosition);
 
-    // double getWingsArea() {return this->area;}
-    // double getWingsChordLength() {return this->chordLength;}
-    // Table getTable() {return this->table;}
 private:
-    Table table;
+    Table tableDefaultFlaps;
+    Table tableTakeOffFlaps;
     double area;
     double airfoilAngle;
     double chordLength;
 
     // TODO: come up with better controls
-    double deflection; // a number between -1 and 1.
+    // TODO: make the deflections change continiously with time
+    // TODO: come up with better names for deflection and flaps
+    double deflection; // a number between -1 and 1
+    double flaps; // [0, 0.25, 0.5, 0.75, 1] where 0 is minimal drag and 1 is take-off position
 };
 
 #endif
