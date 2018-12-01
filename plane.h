@@ -43,6 +43,8 @@ public:
     double getHeight() const {return pos.getY();}
     const Vec2& getPos() const {return pos;}
     float getAngle() const {return angle;}
+    Vec2 getVelocity() const {return velocity;}
+    
     void update(double delta);
 
     int getThrottle() const {return engine.getThrottle();}
@@ -57,6 +59,7 @@ public:
         mainWheels.toggleBrakes();
         frontWheels.toggleBrakes();
     }
+    bool getBrakesStatus() const {return mainWheels.getBrakesStatus();}
 
     static Plane getDefaultPlane();
 

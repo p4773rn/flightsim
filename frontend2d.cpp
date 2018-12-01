@@ -1,8 +1,10 @@
 #include "frontend2d.h"
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 #include <glm/gtc/noise.hpp>
 #include "misc.h"
+#include <sstream>
 
 using std::cout;
 using std::endl;
@@ -16,13 +18,24 @@ Frontend2d::Frontend2d() {
     sf::Vector2f size(planeTexture.getSize().x, planeTexture.getSize().y);
     planeSprite.setOrigin(size/2.0f);
 
-
+    std::string fontFilepath = "openGL/assets/DejaVuSansMono.ttf";
+    if(!font.loadFromFile(fontFilepath)) {
+        std::cerr << "ERROR: font at " << fontFilepath << " not loaded" << std::endl;
+    }
+    hudText.setFont(font);
 }
 
 void Frontend2d::update(const Plane& plane) {
-    // TODO: remove old positions
-    positions.push_back({float(plane.getPos().getX()), -float(plane.getPos().getY())});
+    // TODO: remove old points
+    points.push_back({float(plane.getPos().getX()), -float(plane.getPos().getY())});
     pitch = plane.getAngle();
+
+    altitude = plane.getPos().getY();
+    velocity = plane.getVelocity();
+    throttle = plane.getThrottle();
+    elevatorDeflection = plane.getElevatorDeflection();
+    flaps = plane.getFlaps();
+    brakes = plane.getBrakesStatus();
 }
 
 
@@ -33,7 +46,7 @@ void Frontend2d::updateCamera(sf::RenderWindow& window) {
     cameraSize.x = 100 * scale;
     cameraSize.y = cameraSize.x / aspectRatio;
     
-    cameraPos = positions.back();
+    cameraPos = points.back();
     cameraPos.x -= cameraSize.x * 0.3;
 
     sf::View view = window.getView();
@@ -48,26 +61,27 @@ void Frontend2d::draw(sf::RenderWindow& window) {
     drawGround(window);
     drawTrail(window);
     drawSprites(window);
+    drawHud(window);
 }
 
 
 void Frontend2d::drawTrail(sf::RenderWindow& window) {
-    sf::Vertex vertices[positions.size()];
+    sf::Vertex vertices[points.size()];
     int vertexCount = 0;
    
 
-    for (auto iter = positions.rbegin(); iter != positions.rend(); ++iter) {
-        if (iter != positions.rbegin() && std::prev(iter)->x < (cameraPos.x - cameraSize.x/2))
+    for (auto iter = points.rbegin(); iter != points.rend(); ++iter) {
+        if (iter != points.rbegin() && std::prev(iter)->x < (cameraPos.x - cameraSize.x/2))
             break;
 
-        int i = positions.size() - vertexCount - 1;
+        int i = points.size() - vertexCount - 1;
         vertices[i].position = *iter;
         vertices[i].color = sf::Color(54, 205, 196, 255);
         vertexCount++;
     }
 
 
-    window.draw(&vertices[positions.size() - vertexCount], vertexCount, sf::LineStrip);
+    window.draw(&vertices[points.size() - vertexCount], vertexCount, sf::LineStrip);
 }
 
 
@@ -106,7 +120,7 @@ void Frontend2d::drawGrid(sf::RenderWindow& window) {
 
 
 void Frontend2d::drawSprites(sf::RenderWindow& window) {
-    planeSprite.setPosition(positions.back());
+    planeSprite.setPosition(points.back());
     planeSprite.setRotation(-pitch / M_PI * 180);
     window.draw(planeSprite);
 
@@ -221,6 +235,32 @@ void Frontend2d::drawSky(sf::RenderWindow& window) {
     
     window.draw(vertices);
 }
+
+
+void Frontend2d::drawHud(sf::RenderWindow& window) {
+    window.setView(hudView);
+    
+    std::ostringstream sout;
+    sout.precision(2);
+    sout.flags(std::ios_base::fixed);
+
+    sout << "Altitude: " << altitude << endl;
+    sout << "Vel: " << velocity << endl;
+    sout << "Pitch: " << rad2deg(pitch) << endl;
+    sout << endl;
+    sout << "Throttle: " << throttle << endl;
+    sout << "Elevator: " << elevatorDeflection << endl;
+    sout << "Flaps: " << flaps << endl;
+    sout << "Brakes: " << brakes << endl;
+
+    hudText.setString(sout.str());
+    window.draw(hudText);
+
+    window.setView(window.getDefaultView());
+}
+
+
+
 
 
 

@@ -19,13 +19,21 @@ public:
     void drawSprites(sf::RenderWindow& window);
     void drawGround(sf::RenderWindow& window);
     void drawSky(sf::RenderWindow& window);
+    void drawHud(sf::RenderWindow& window);
 
     float getScale() const { return scale; }
     void setScale(float scale) { this->scale = clamp<float>(scale, 1, 10); }
 
 private:
-    std::list<sf::Vector2f> positions;
+    std::list<sf::Vector2f> points;
     float pitch;
+
+    float altitude;
+    Vec2 velocity;
+    int throttle;
+    float elevatorDeflection;
+    float flaps;
+    bool brakes;
 
     float scale = 1;
     sf::Vector2f cameraPos; // meters
@@ -35,6 +43,10 @@ private:
     sf::Sprite planeSprite;
 
     sf::Texture cloudTexture;
+
+    sf::Font font;
+    sf::Text hudText;
+    sf::View hudView;
 };
 
 

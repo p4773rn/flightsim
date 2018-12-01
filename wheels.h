@@ -17,7 +17,7 @@ public:
     std::tuple<Vec2, double> getForceAndTorque(const Vec2& velocity, const Vec2& planePosition, double angularVelocity, double angle, double mass) const;
 
     void toggleBrakes() {brakesOn = !brakesOn;};
-    bool getBrakesStatus() {return brakesOn;}
+    bool getBrakesStatus() const {return brakesOn;}
 
 private:
     double stiffness; // stiffness of amortization spring
