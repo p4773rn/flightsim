@@ -1,13 +1,18 @@
 #version 420 core
 layout (quads, fractional_even_spacing, ccw) in;
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-uniform sampler2D heightmap;
+uniform mat4 		model;
+uniform mat4 		view;
+uniform mat4 		projection;
+uniform sampler2D 	heightmap;
+uniform vec3 	  	sun;
 
-out vec2 UV;
-out vec3 Pos;
+out vec2 			UV;
+out vec3 			Pos;
+out float 			fogAmount;
+out float			sunAmount;
+
+vec4 camera = inverse(view) * vec4(0.0, 0.0, 0.0, 1.0);
 
 void main() {
 	float width = model[0][0];
@@ -27,8 +32,12 @@ void main() {
 	Pos.x = gl_Position.x;
 	Pos.y = gl_Position.y;
 	Pos.z = gl_Position.z;
-	gl_Position = projection * view * gl_Position;
+	gl_Position = view * gl_Position;
 
+	//Fog
+	float b = 1.0 / (1024.0);
+	fogAmount = 1.0 - exp(-distance(vec3(0.0f, 0.0f, 0.0f), gl_Position.xyz) * b);
+	gl_Position = projection * gl_Position;
 	UV.x = gl_TessCoord.x * max(width/4.0f, 1.0f);
 	UV.y = gl_TessCoord.y * max(width/4.0f, 1.0f);
 }

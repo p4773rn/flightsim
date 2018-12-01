@@ -102,8 +102,6 @@ TreeNode* Quadtree::create_node(TreeNode* p, const glm::vec2& origin) {
 
 	current->width = p->width/2.0f;
 	current->height = p->height/2.0f;
-	//std::cout << nodes_count << std::endl;
-	//std::cout << p->width << std::endl;
 	return current;
 }
 
