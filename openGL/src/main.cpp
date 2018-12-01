@@ -46,18 +46,16 @@ void renderScene(sf::Window& win) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
+
+	sky->render(camera->get_view_no_translate(), projection);
+
+    terrain->draw(camera->get_position(), view, projection, sun);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-
-
     model->draw(glm::scale(modelt, glm::vec3(10,10,10)), view, projection, 
                 camera->get_position(), glm::vec3(light.x, light.y, light.z));
+    glDisable(GL_BLEND);
 	
-	glDisable(GL_BLEND);
-	
-	sky->render(camera->get_view_no_translate(), projection);
-    terrain->draw(camera->get_position(), view, projection, sun);
     
     win.display();
 }
