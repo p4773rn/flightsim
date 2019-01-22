@@ -47,6 +47,16 @@ private:
     sf::Font font;
     sf::Text hudText;
     sf::View hudView;
+
+    sf::Texture speedometerTexture;
+    sf::Texture pointerTexture;
+    sf::Sprite speedometerSprite;
+    sf::Sprite pointerSprite;
+
+    sf::Texture attitudeIndicatorTexture;
+    sf::Texture attitudeBackgroundTexture;
+    sf::Sprite attitudeIndicatorSprite;
+    sf::Sprite attitudeBackgroundSprite;
 };
 
 

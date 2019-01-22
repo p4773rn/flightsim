@@ -11,18 +11,40 @@ using std::endl;
 
 Frontend2d::Frontend2d() {
     if (!planeTexture.loadFromFile("openGL/assets/plane.png"))
-        std::cerr << "Error: plane planeTexture not loaded" << std::endl;
+        std::cerr << "Error: planeTexture not loaded" << std::endl;
     planeSprite.setTexture(planeTexture);
     planeSprite.scale(sf::Vector2f(0.08, 0.08));
 
-    sf::Vector2f size(planeTexture.getSize().x, planeTexture.getSize().y);
-    planeSprite.setOrigin(size/2.0f);
+    sf::Vector2f pSize(planeTexture.getSize().x, planeTexture.getSize().y);
+    planeSprite.setOrigin(pSize/2.0f);
 
     std::string fontFilepath = "openGL/assets/DejaVuSansMono.ttf";
     if(!font.loadFromFile(fontFilepath)) {
         std::cerr << "ERROR: font at " << fontFilepath << " not loaded" << std::endl;
     }
     hudText.setFont(font);
+
+    if (!speedometerTexture.loadFromFile("openGL/assets/speedometer.png"))
+        std::cerr << "Error: speedometerTexture not loaded" << std::endl;
+    if (!pointerTexture.loadFromFile("openGL/assets/pointer.png"))
+        std::cerr << "Error: pointerTexture not loaded" << std::endl;
+    speedometerSprite.setTexture(speedometerTexture);
+    sf::Vector2f sSize(speedometerTexture.getSize().x, speedometerTexture.getSize().y);
+    speedometerSprite.setOrigin(sSize/2.0f);
+    pointerSprite.setTexture(pointerTexture);
+    pointerSprite.setOrigin(sSize/2.0f);
+    
+    if (!attitudeIndicatorTexture.loadFromFile("openGL/assets/attitude_indicator.png"))
+        std::cerr << "Error: attitudeIndicatorTexture not loaded" << std::endl;
+    if (!attitudeBackgroundTexture.loadFromFile("openGL/assets/attitude_indicator_background.png"))
+        std::cerr << "Error: attitudeBackgroundTexture not loaded" << std::endl;
+    attitudeIndicatorSprite.setTexture(attitudeIndicatorTexture);
+    sf::Vector2f aSize(attitudeIndicatorTexture.getSize().x, attitudeIndicatorTexture.getSize().y);
+    attitudeIndicatorSprite.setOrigin(aSize/2.0f);
+    attitudeBackgroundSprite.setTexture(attitudeBackgroundTexture);
+    attitudeBackgroundSprite.setOrigin(aSize/2.0f);
+
+
 }
 
 void Frontend2d::update(const Plane& plane) {
@@ -121,7 +143,7 @@ void Frontend2d::drawGrid(sf::RenderWindow& window) {
 
 void Frontend2d::drawSprites(sf::RenderWindow& window) {
     planeSprite.setPosition(points.back());
-    planeSprite.setRotation(-pitch / M_PI * 180);
+    planeSprite.setRotation(-rad2deg(pitch));
     window.draw(planeSprite);
 
 
@@ -257,6 +279,25 @@ void Frontend2d::drawHud(sf::RenderWindow& window) {
 
     hudText.setString(sout.str());
     window.draw(hudText);
+
+    sf::IntRect rect = speedometerSprite.getTextureRect();
+    sf::Vector2f pos(rect.width, hudView.getSize().y - rect.height);
+    speedometerSprite.setPosition(pos);
+    pointerSprite.setPosition(pos);
+    float maxSpeed = 200;
+    pointerSprite.setRotation(velocity.length()/maxSpeed * 360);
+    window.draw(speedometerSprite);
+    window.draw(pointerSprite);
+
+    rect = attitudeIndicatorSprite.getTextureRect();
+    pos = sf::Vector2f(pos.x + rect.width, hudView.getSize().y - rect.height);
+    // 10 degrees map to 30 pixels on indicator sprite
+    float yOffset = rad2deg(pitch) * 3;
+    attitudeIndicatorSprite.setPosition(pos + sf::Vector2f(0, yOffset));
+    attitudeBackgroundSprite.setPosition(pos);
+    window.draw(attitudeIndicatorSprite);
+    window.draw(attitudeBackgroundSprite);
+
 
     window.setView(window.getDefaultView());
 }
