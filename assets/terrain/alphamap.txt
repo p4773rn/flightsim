@@ -1,0 +1,4 @@
+assets/terrain/textures/Cliffface.png
+assets/terrain/textures/Drygrass.png
+assets/terrain/textures/Steepdrygrass.png
+assets/terrain/textures/Steepcliffs.png
