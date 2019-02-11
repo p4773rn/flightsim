@@ -57,11 +57,11 @@ void Camera::move_position(unsigned int dir) {
 
 void Camera::orbit(float x_offset, float y_offset, float distance, const glm::vec3& center) {
     phi += x_offset;
-    theta = clamp(theta - y_offset, float(-M_PI/2), float(M_PI/2));
+    theta = clamp(theta - y_offset, 0.1f, float(M_PI-0.1));
 
-    direction = glm::normalize(glm::vec3(cos(phi), sin(theta), sin(phi)));
+    direction = glm::normalize(glm::vec3(sin(theta)*cos(phi), cos(theta), sin(theta)*sin(phi)));
     position = center + direction * distance;
-    right = glm::cross(glm::vec3(0, 1, 0), direction);
+    right = glm::normalize(glm::cross(glm::vec3(0, 1, 0), direction));
 }
 
 glm::mat4 Camera::get_view() {

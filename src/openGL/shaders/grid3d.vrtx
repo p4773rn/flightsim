@@ -7,7 +7,6 @@ uniform mat4 model2;
 uniform mat4 view;
 uniform mat4 projection;
 
-uniform vec3 cameraPos;
 
 out vec2 pos;
 
@@ -22,5 +21,5 @@ void main()
     mat4 iv = inverse(v);
     mat4 ip = inverse(p);
 	gl_Position = p * v * m1 * pos4;
-    pos = ((m2 * pos4).xz) * 0.01;
+    pos = ((m2 * pos4).xz) * 0.00125;
 }

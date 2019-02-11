@@ -24,8 +24,8 @@ private:
   float yaw;
 
   // for orbiting
-  float phi = 0; // 0 < phi < 2*PI
-  float theta = 0;
+  float phi = 0; 
+  float theta = 3.14/2;
 };
 
 #endif

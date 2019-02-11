@@ -38,6 +38,7 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
+            frontend.input(event);
             switch (event.type) {
                 case sf::Event::Closed:
                     window.close();

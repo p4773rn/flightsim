@@ -10,7 +10,7 @@
 class Grid3d {
 public:
 	Grid3d();
-	void render(const glm::vec3& cameraPos, const glm::mat4& view, const glm::mat4& projection);
+	void render(const glm::vec3& pos, const glm::mat4& view, const glm::mat4& projection);
 private:
 	GLuint texture;
 	std::unique_ptr<Shader> shader;

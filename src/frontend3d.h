@@ -24,13 +24,14 @@ public:
     
     void keyInput();
     void mouseInput(sf::Window& window);
-
+    void input(const sf::Event& event);
+    
 private:
     glm::vec3 planePos;
     glm::vec3 yawPitchRoll;
     
     Camera camera;
-    float cameraDistance = 50; // distance from plane
+    float cameraDistance = 200; // distance from plane
     std::unique_ptr<Shader> mainShader;
     std::unique_ptr<Model> planeModel;
     std::unique_ptr<Sky> sky;

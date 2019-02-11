@@ -16,7 +16,7 @@ Frontend3d::Frontend3d() :
     };
     mainShader = std::make_unique<Shader>(paths);
    
-    planeModel = std::make_unique<Model>("assets/models/BGEAR_plane.obj");
+    planeModel = std::make_unique<Model>("assets/models/boeing.obj");
     sky = std::make_unique<Sky>("assets/terrain/textures/sky");
     terrain = std::make_unique<Terrain>("assets/terrain/hm.png", camera.get_position());
 
@@ -45,7 +45,7 @@ void Frontend3d::draw(sf::RenderWindow& window) {
 
 
 	sky->render(camera.get_view_no_translate(), projection);
-	grid->render(camera.get_position(), camera.get_view(), projection);
+	grid->render(planePos, camera.get_view(), projection);
     //terrain->draw(camera.get_position(), view, projection, glm::vec3(light));
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -78,8 +78,11 @@ void Frontend3d::mouseInput(sf::Window& window){
     
     
     //camera.move_mouse(offset_x, offset_y);
-    cameraDistance = clamp(cameraDistance, 20.0f, 90.0f);
-    camera.orbit(offset_x, offset_y, 100, planePos); 
+    cameraDistance = clamp(cameraDistance, 100.0f, 1500.0f);
+    camera.orbit(offset_x, offset_y, cameraDistance, planePos); 
 }
 
-
+void Frontend3d::input(const sf::Event& event) {
+    if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
+        cameraDistance += event.mouseWheelScroll.delta * -20;
+}
