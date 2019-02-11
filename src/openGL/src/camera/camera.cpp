@@ -1,6 +1,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "camera.h"
+#include "../../../misc.h"
+#include <iostream>
 
 Camera::Camera() : 
 pitch{0}, yaw{0}
@@ -50,6 +52,16 @@ void Camera::move_position(unsigned int dir) {
     position += direction * (m * 0.06f);
     break;
   }
+}
+
+
+void Camera::orbit(float x_offset, float y_offset, float distance, const glm::vec3& center) {
+    phi += x_offset;
+    theta = clamp(theta - y_offset, float(-M_PI/2), float(M_PI/2));
+
+    direction = glm::normalize(glm::vec3(cos(phi), sin(theta), sin(phi)));
+    position = center + direction * distance;
+    right = glm::cross(glm::vec3(0, 1, 0), direction);
 }
 
 glm::mat4 Camera::get_view() {

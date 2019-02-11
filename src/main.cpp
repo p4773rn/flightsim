@@ -7,11 +7,12 @@
 #include "table.h"
 #include "plane.h"
 #include "frontend3d.h"
+#include <glm/glm.hpp>
 
 int main()
 {
-    const int SPEED = 1; // simulation speed; 1 = real time; 10 = 10 times faster;
-    const int FPS = 30; 
+    const int SPEED = 3; // simulation speed; 1 = real time; 10 = 10 times faster;
+    const int FPS = 60; 
     
     sf::ContextSettings settings;
     settings.depthBits = 24;
@@ -20,13 +21,13 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "FlightSim", sf::Style::Default, settings);
     window.setFramerateLimit(FPS);
+    window.setMouseCursorVisible(false);
 
     sf::Clock clock;
     double lastUpdateTime = clock.getElapsedTime().asSeconds();
 
     sf::View view = window.getDefaultView();
     
-    // Plane height plot
     Frontend3d frontend;
 
     Plane plane = Plane::getDefaultPlane();
@@ -78,7 +79,13 @@ int main()
         plane.update((clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED);
         lastUpdateTime = clock.getElapsedTime().asSeconds();
 
-        frontend.update(plane);
+        frontend.mouseInput(window);
+        frontend.keyInput();
+
+        // negative z axis is forward
+        glm::vec3 planePos(0, plane.getPos().getY(), -plane.getPos().getX());
+        glm::vec3 yawPitchRoll(0, plane.getAngle(), 0);
+        frontend.update(planePos, yawPitchRoll);
 
         window.clear();
         frontend.draw(window);

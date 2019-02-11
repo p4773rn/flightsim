@@ -1,0 +1,30 @@
+#version 330 core
+
+out vec4 FragColor;
+
+in vec2 pos;
+
+uniform vec3 cameraPos;
+
+#define MAX_HEIGHT 10000.
+
+void main()
+{
+    vec2 coord = pos.xy * 1.;
+
+
+
+
+    // source: http://madebyevan.com/shaders/grid/
+    // Compute anti-aliased world-space grid lines
+    vec2 grid = abs(fract(coord - 0.5) - 0.5) / fwidth(coord);
+    float line = min(grid.x, grid.y);
+    line = 1 - clamp(line, 0, 1);
+   
+    vec3 bg_color = vec3(cameraPos.y / MAX_HEIGHT);
+    vec3 l_color = vec3(0, 0, 1.);
+    vec3 color = bg_color * (1 - line) + l_color * line;
+
+    gl_FragColor = vec4(color, 1.);
+//    gl_FragColor = vec4(fract(coord.x*10.), fract(coord.y*10.), 0. , 1.);
+}

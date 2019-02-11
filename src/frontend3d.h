@@ -11,33 +11,32 @@
 #include "openGL/src/terrain/sky.h"
 #include "openGL/src/model/model.h"
 #include "openGL/src/shaders/shader.h"
+#include "openGL/src/grid3d.h"
 
 
 class Frontend3d {
 public:
     Frontend3d();
 
-    void update(const Plane& plane);
+    void update(const glm::vec3& planePos, const glm::vec3& yawPitchRoll);
 
     void draw(sf::RenderWindow& window);
     
+    void keyInput();
+    void mouseInput(sf::Window& window);
 
 private:
-    Vec2 position;
-    float pitch;
-
-    float altitude;
-    Vec2 velocity;
-    int throttle;
-    float elevatorDeflection;
-    float flaps;
-    bool brakes;
-
+    glm::vec3 planePos;
+    glm::vec3 yawPitchRoll;
+    
     Camera camera;
+    float cameraDistance = 50; // distance from plane
     std::unique_ptr<Shader> mainShader;
     std::unique_ptr<Model> planeModel;
     std::unique_ptr<Sky> sky;
     std::unique_ptr<Terrain> terrain;
+
+    std::unique_ptr<Grid3d> grid;
 };
 
 
