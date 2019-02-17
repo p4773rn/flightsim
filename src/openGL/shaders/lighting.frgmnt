@@ -1,0 +1,149 @@
+#version 330 core
+
+out vec4 FragColor;
+
+in vec2 tex_coord;
+in vec3 ray;
+
+uniform sampler2D gPosition;
+uniform sampler2D gNormal;
+uniform sampler2D gAlbedo;
+uniform sampler2D gSpec;
+uniform isampler2D gFlag;
+
+uniform mat4 view;
+uniform vec3 camera_pos;
+uniform vec3 light_dir;
+uniform vec3 light_color;
+
+
+#define PI 3.141592
+
+// copied with modifications from
+// https://www.scratchapixel.com/lessons/procedural-generation-virtual-worlds/simulating-sky
+
+bool rsi(in vec3 r0, in vec3 rd, in float sr, out float t0, out float t1) {
+    // ray-sphere intersection that assumes
+    // the sphere is centered at the origin.
+    // No intersection when result.x > result.y
+    float a = dot(rd, rd);
+    float b = 2.0 * dot(rd, r0);
+    float c = dot(r0, r0) - (sr * sr);
+    float d = (b*b) - 4.0*a*c;
+    if (d < 0.0) return false;
+    
+    t0 = (-b - sqrt(d))/(2.0*a);
+    t1 = (-b + sqrt(d))/(2.0*a);
+    
+    return true;
+}
+
+
+vec3 sky(in vec3 orig, in vec3 dir, in float tmin, in float tmax)
+{
+    vec3 sunDirection = normalize(light_dir);
+    float atmosphereRadius = 6471e3;
+    float earthRadius = 6371e3;
+    float Hr = 7994;
+    float Hm = 1200;
+    vec3 betaR = vec3(5.8e-6f, 13.5e-6f, 33.1e-6f);
+    vec3 betaM = vec3(21e-6f);
+    
+    
+    float t0, t1;
+    if (!rsi(orig, dir, atmosphereRadius, t0, t1) || t1 < 0) return vec3(0);
+    if (t0 > tmin && t0 > 0) tmin = t0;
+    if (t1 < tmax) tmax = t1;
+    int numSamples = 16;
+    int numSamplesLight = 8;
+    float segmentLength = (tmax - tmin) / numSamples;
+    float tCurrent = tmin;
+    vec3 sumR = vec3(0);
+    vec3 sumM = vec3(0); // mie and rayleigh contribution
+    float opticalDepthR = 0, opticalDepthM = 0;
+    float mu = dot(dir, sunDirection); // mu in the paper which is the cosine of the angle between the sun direction and the ray direction
+    float phaseR = 3.f / (16.f * PI) * (1 + mu * mu);
+    float g = 0.76f;
+    float phaseM = 3.f / (8.f * PI) * ((1.f - g * g) * (1.f + mu * mu)) / ((2.f + g * g) * pow(1.f + g * g - 2.f * g * mu, 1.5f));
+    
+    for (int i = 0; i < numSamples; ++i) {
+        vec3 samplePosition = orig + (tCurrent + segmentLength * 0.5f) * dir;
+        float height = length(samplePosition) - earthRadius;
+        // compute optical depth for light
+        float hr = exp(-height / Hr) * segmentLength;
+        float hm = exp(-height / Hm) * segmentLength;
+        opticalDepthR += hr;
+        opticalDepthM += hm;
+        // light optical depth
+        float t0Light, t1Light;
+        rsi(samplePosition, sunDirection, atmosphereRadius, t0Light, t1Light);
+        float segmentLengthLight = t1Light / numSamplesLight, tCurrentLight = 0;
+        float opticalDepthLightR = 0, opticalDepthLightM = 0;
+        int j;
+        for (j = 0; j < numSamplesLight; ++j) {
+            vec3 samplePositionLight = samplePosition + (tCurrentLight + segmentLengthLight * 0.5f) * sunDirection;
+            float heightLight = length(samplePositionLight) - earthRadius;
+            if (heightLight < 0) break;
+            opticalDepthLightR += exp(-heightLight / Hr) * segmentLengthLight;
+            opticalDepthLightM += exp(-heightLight / Hm) * segmentLengthLight;
+            tCurrentLight += segmentLengthLight;
+        }
+        if (j == numSamplesLight) {
+            vec3 tau = betaR * (opticalDepthR + opticalDepthLightR) + betaM * 1.1f * (opticalDepthM + opticalDepthLightM);
+            vec3 attenuation = vec3(exp(-tau.x), exp(-tau.y), exp(-tau.z));
+            sumR += attenuation * hr;
+            sumM += attenuation * hm;
+        }
+        tCurrent += segmentLength;
+    }
+
+    // We use a magic number here for the intensity of the sun (22). We will make it more
+    // scientific in a future revision of this lesson/code
+    return (sumR * betaR * phaseR + sumM * betaM * phaseM) * 22;
+}
+
+
+void main()
+{
+    vec3 world_pos = texture(gPosition, tex_coord).rgb;
+    vec3 normal = texture(gNormal, tex_coord).rgb;
+    vec3 albedo = texture(gAlbedo, tex_coord).rgb;
+    float shininess = texture(gSpec, tex_coord).r;
+    float specular_strength = texture(gSpec, tex_coord).g;
+
+    int flag = texture(gFlag, tex_coord).r;
+    bool drawn = bool(flag & 1);
+
+	float ambient_strength = 0.1;
+
+
+	vec3 norm = normalize(normal);
+	vec3 dir = normalize(light_dir);
+	float diff = max(dot(norm, dir), 0.0);
+
+	vec3 diffuse = diff * light_color;
+	vec3 ambient = (ambient_strength * light_color);
+
+    vec3 view_dir = normalize(camera_pos - world_pos);
+	vec3 reflect_dir = reflect(-dir, norm);
+	float spec = pow(max(dot(view_dir, reflect_dir), 0.0), shininess * 1000);
+	vec3 specular = specular_strength * spec * light_color;
+
+
+	vec3 result = (ambient + diffuse + specular) * albedo;
+    
+    vec3 origin = camera_pos + vec3(0, 6371e3, 0);
+	if (drawn) {
+	    float dist = distance(world_pos, camera_pos);
+        
+        vec3 color = sky(origin, normalize(ray), 0, dist);
+        float extinction = 1e-4; // 1e-2:thick atmosphere, 1e-5:realisticish atmosphere
+        float transmittance = exp(-extinction*dist);
+        result = mix(color, result, transmittance);
+	    FragColor = vec4(result, 1.);
+    } else {
+        vec3 color = sky(origin, normalize(ray), 0, 1e5);
+        color = 1.0 - exp(-1.0 * color);
+        FragColor = vec4(color,1);
+    }
+}

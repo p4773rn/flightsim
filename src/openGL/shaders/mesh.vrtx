@@ -9,14 +9,14 @@ uniform mat4 view;
 uniform mat4 projection;
 
 out vec3 normal;
-out vec3 vertexPos;
-out vec2 texCoord;
+out vec3 world_pos;
+out vec2 tex_coord;
 
 void main()
 {
 	gl_Position = projection * view * model * vec4(aPos, 1.0f);
-	vertexPos = vec3(view * model * vec4(aPos, 1.0f));
-	normal = mat3(transpose(inverse(view * model))) * aNorm;
+	world_pos = vec3(model * vec4(aPos, 1.0f));
+	normal = mat3(transpose(inverse(model))) * aNorm;
 
-	texCoord = vec2(aTexCoord.x, 1-aTexCoord.y);
+	tex_coord = vec2(aTexCoord.x, 1-aTexCoord.y);
 }

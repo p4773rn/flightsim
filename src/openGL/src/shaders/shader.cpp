@@ -1,6 +1,8 @@
 #include <iostream>
 #include "shader.h"
 #include <sstream>
+#include <fstream>
+#include <glm/gtc/type_ptr.hpp>
 
 Shader::Shader(const std::vector<std::pair<std::string, GLuint>>& paths){
 	program = glCreateProgram();
@@ -64,7 +66,42 @@ bool Shader::check_error(GLuint program, bool isShader,const std::string& error_
 	return true;
 }
 
-void Shader::use(){
+void Shader::use() {
 	glUseProgram(Shader::program);
 }
+
+
+
+void Shader::set(const std::string& name, bool p) {
+    glUniform1i(glGetUniformLocation(program, name.c_str()), p);
+}
+
+void Shader::set(const std::string& name, int p) {
+    glUniform1i(glGetUniformLocation(program, name.c_str()), p);
+}
+
+
+void Shader::set(const std::string& name, float p) {
+    glUniform1f(glGetUniformLocation(program, name.c_str()), p);
+}
+
+void Shader::set(const std::string& name, const glm::vec2& p) {
+    glUniform2fv(glGetUniformLocation(program, name.c_str()), 1, glm::value_ptr(p));
+}
+
+void Shader::set(const std::string& name, const glm::vec3& p) {
+    glUniform3fv(glGetUniformLocation(program, name.c_str()), 1, glm::value_ptr(p));
+}
+
+void Shader::set(const std::string& name, const glm::mat4& p) {
+    glUniformMatrix4fv(glGetUniformLocation(program, name.c_str()), 1, GL_FALSE, glm::value_ptr(p));
+}
+
+void Shader::setv(const std::string& name, int* p, int count) {
+  	glUniform1iv(glGetUniformLocation(program, name.c_str()), count, p);
+}
+
+
+
+
 

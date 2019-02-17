@@ -1,17 +1,27 @@
 #version 420 core
 
-uniform sampler2D 	textures[4];
-uniform sampler2D 	splatmap;
-uniform sampler2D 	lightmap;
-uniform sampler2D 	heightmap;
-uniform vec3 	  	sun;
+layout (location = 0) out vec3 gPosition;
+layout (location = 1) out vec3 gNormal;
+layout (location = 2) out vec3 gAlbedo;
+layout (location = 3) out vec2 gSpec;
+layout (location = 4) out ivec4 gFlag;
 
-in vec2 			UV;
-in vec3 			Pos;
-in float 			fogAmount;
-in float 			sunAmount;
+uniform sampler2D textures[4];
+uniform sampler2D splatmap;
+uniform sampler2D lightmap;
+uniform sampler2D heightmap;
+
+uniform float terrain_size;
+uniform mat4 model;
+uniform vec3 camera_pos;
+uniform int depth;
 
 out vec4 			FragColor;
+
+in vec3 world_pos;
+in vec2 tex_coord;
+
+in vec2 UV;
 
 //link: https://www.shadertoy.com/view/4djSRW
 #define HASHSCALE4 vec4(443.897, 441.423, 437.195, 444.129)
@@ -59,20 +69,101 @@ vec4 textureNoTile( sampler2D samp, in vec2 uv )
 }
 
 
-void main()
+//noise from https://www.shadertoy.com/view/XdXGW8
+vec2 hash( vec2 x )  // replace this by something better
 {
-	vec2 tex = vec2(Pos.x/2048.0 + 0.5, Pos.z/2048.0 + 0.5);
-	vec4 alpha = texture(splatmap, tex);
-    vec3 normal = texture(lightmap, tex).rgb;
-	vec3 lightDir = normalize(sun);
-	float diff = max(dot(normal, lightDir), 0.0f);
-	vec4 t1 = textureNoTile(textures[0], UV); //texture(textures[0], UVU.xy);
-	vec4 t2 = textureNoTile(textures[1], UV); //texture(textures[1], UVU.xy);
-	vec4 t3 = textureNoTile(textures[2], UV); //texture(textures[2], UVU.xy);
-	vec4 t4 = textureNoTile(textures[3], UV); //texture(textures[3], UVU.xy);
-	FragColor = t1 * alpha.r + t2 * alpha.g + t3 * alpha.b + t4 * alpha.a;
-	FragColor = diff * FragColor;
+    const vec2 k = vec2( 0.3183099, 0.3678794 );
+    x = x*k + k.yx;
+    return -1.0 + 2.0*fract( 16.0 * k*fract( x.x*x.y*(x.x+x.y)) );
+}
 
-	vec4 fogColor = vec4(0.51, 0.473, 0.463, 1.0);
-	FragColor = mix(FragColor, fogColor, fogAmount);
+float gradient_noise( in vec2 p )
+{
+    vec2 i = floor( p );
+    vec2 f = fract( p );
+	
+	vec2 u = f*f*(3.0-2.0*f);
+
+    return mix( mix( dot( hash( i + vec2(0.0,0.0) ), f - vec2(0.0,0.0) ), 
+                     dot( hash( i + vec2(1.0,0.0) ), f - vec2(1.0,0.0) ), u.x),
+                mix( dot( hash( i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ), 
+                     dot( hash( i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);
+}
+
+float height(in vec2 p) {
+    return mix(texture(heightmap, p).r,
+               0.5+0.5*gradient_noise(terrain_size*0.05*p), 
+               0.01);
+}
+
+
+
+mat3 sx = mat3( 
+    1.0, 2.0, 1.0, 
+    0.0, 0.0, 0.0, 
+   -1.0, -2.0, -1.0 
+);
+
+mat3 sy = mat3( 
+    1.0, 0.0, -1.0, 
+    2.0, 0.0, -2.0, 
+    1.0, 0.0, -1.0 
+);
+
+void main()
+{   
+    vec3 norm = vec3(0);
+    
+    mat3 samples;
+    float eps = 8 / terrain_size;
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            vec2 coord = tex_coord + eps * vec2(i-1,j-1);
+            samples[i][j] = height(coord);
+        }
+    }
+    float dx = dot(sx[0], samples[0]) + dot(sx[1], samples[1]) + dot(sx[2], samples[2]);
+    float dy = dot(sy[0], samples[0]) + dot(sy[1], samples[1]) + dot(sy[2], samples[2]);
+    norm = normalize(vec3(dx, .1, dy)*100);
+
+
+	vec4 alpha = texture(splatmap, tex_coord);
+	vec4 t1 = textureNoTile(textures[0], UV);
+	vec4 t2 = textureNoTile(textures[1], UV);
+	vec4 t3 = textureNoTile(textures[2], UV);
+	vec4 t4 = textureNoTile(textures[3], UV);
+	vec4 albedo = t1 * alpha.r + t2 * alpha.g + t3 * alpha.b + t4 * alpha.a;
+
+    int debug = 0;
+    vec3 debug_color;
+    switch (debug) {
+        case 1:
+            debug_color = vec3(0,0,1);
+            break;
+        case 2:
+            debug_color = vec3(1,0,1);
+            break;
+        case 3:
+            debug_color = vec3(1,0,0);
+            break;
+        case 4:
+            debug_color = vec3(1,1,0);
+            break;
+        case 5:
+            debug_color = vec3(0,1,0);
+            break;
+        default:
+            debug_color = vec3(0,1,1);
+    }
+
+
+    //albedo = vec4(vec3(mix(h, g_h, .1)), 0);
+    //norm = vec3(0, 1, 0);
+    //float dist = min(1,distance(camera_pos, world_pos.xyz)/1000);
+    gPosition = world_pos;
+    gNormal = norm;
+    gAlbedo = albedo.rgb;
+    gSpec.r = 0.01;
+    gSpec.g = 0.1;
+    gFlag.r = 1; 
 }

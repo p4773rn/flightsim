@@ -20,4 +20,8 @@ std::ostream& operator << (std::ostream& stream, const std::vector<T>& v) {
     return stream;
 }
 
+// returns the same vao every time
+// think of this as a global constant
+unsigned int get_quad_vao();
+
 #endif

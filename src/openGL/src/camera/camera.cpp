@@ -10,13 +10,14 @@ pitch{0}, yaw{0}
 
 Camera::Camera(const glm::vec3& _position) : pitch{0}, yaw{0}, position{_position}
 {
-    move_mouse(0, 0);   
+    move_mouse(0, 0, 0);   
 }
 
-void Camera::move_mouse(float x_offset, float y_offset) {
+void Camera::move_mouse(float x_offset, float y_offset, float delta_time) {
   //if (pitch + y_offset < 90.0f && pitch + y_offset > 0)
-  pitch += 90 * y_offset;
-  yaw -= 90 * x_offset;
+  pitch += 90 * y_offset * sqrt(delta_time) * 10.0;
+  pitch = clamp(pitch, -89.0f, 89.0f);
+  yaw -= 90 * x_offset * sqrt(delta_time) * 10.0;
   if (yaw > 360) {
     yaw -= 360;
   }
@@ -36,20 +37,20 @@ void Camera::move_mouse(float x_offset, float y_offset) {
 }
 
 
-void Camera::move_position(unsigned int dir) {
-  const int m = 20;
+void Camera::move_position(unsigned int dir, float delta_time) {
+  const float m = 400 * delta_time;
   switch(dir) {
   case 0:
-    position -= right * (m * 0.06f);
+    position -= right * (m);
     break;
   case 1:
-    position += right * (m * 0.06f);
+    position += right * (m);
     break;
   case 2:
-    position -= direction * (m * 0.06f);
+    position -= direction * (m);
     break;
   case 3:
-    position += direction * (m * 0.06f);
+    position += direction * (m);
     break;
   }
 }

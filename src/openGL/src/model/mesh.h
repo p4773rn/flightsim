@@ -1,13 +1,11 @@
-#ifndef AZMESH
-#define AZMESH
-#include <vector>
-#include <glm/glm.hpp>
-#include <GL/glew.h>
-#include <ostream>
-#include "../shaders/shader.h"
-#include <memory>
-#include "texture.h"
+#ifndef MESH_H
+#define MESH_H
 
+#include "../renderer.h"
+#include <glm/glm.hpp>
+#include "../shaders/shader.h"
+#include "texture.h"
+#include <memory>
 
 struct Vertex{
 	glm::vec3 position;
@@ -28,32 +26,37 @@ struct Material{
     float alpha = 1; 
 };
 
-class Mesh{
+
+class Mesh : public Renderable {
 public:
-	Mesh(const std::vector<Vertex>& vertices, Material&& material);
-	Mesh(const Mesh& other) = delete;
-	Mesh& operator=(const Mesh& other) = delete;
-	Mesh(Mesh&& other);
-	//Mesh(const std::vector<Vertex>& vectors, const std::vector<unsigned int>& indices);
-	~Mesh();
+    Mesh(const std::vector<Vertex>& vertices, Material&& material);
+    Mesh(const Mesh& other) = delete;
+    Mesh& operator=(const Mesh other) = delete;
+    Mesh(Mesh&& other) = default;
+    Mesh& operator=(Mesh&& other) = default;
+    //TODO: delete buffers
 
-    bool transparent() const { return material.alpha != 1; }
-    void sortByZ(glm::mat4 model, glm::vec3 cameraPos);
+    Shader& get_shader() { return get_mesh_shader(); }
+    void render(const glm::vec3& camera_pos);
 
-	void setup();
-	void draw(Shader& shader);
 private:
-	GLuint vao;
-	GLuint vbo;
-	GLuint ebo;
+    GLuint vao;
+    GLuint vbo;
+    GLuint ebo;
 
-	Material material;
-
-	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
+    int num_indices;
+    Material material;
+    
+    // singleton
+    // we use 1 shader for all meshes
+    // can't be a static field because it can't be constructed on program initialization
+    static Shader& get_mesh_shader() {
+        static Shader shader({
+            std::pair<std::string, GLuint>("src/openGL/shaders/mesh.vrtx", GL_VERTEX_SHADER),
+            std::pair<std::string, GLuint>("src/openGL/shaders/mesh.frgmnt", GL_FRAGMENT_SHADER)
+        });
+        return shader;
+    }
 };
-
-
-std::ostream& operator << (std::ostream& stream, const Vertex& v);
 
 #endif

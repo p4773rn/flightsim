@@ -1,0 +1,16 @@
+#version 330 core
+
+layout (location = 0) in vec3 aPos;
+
+uniform mat4 view;
+
+out vec2 tex_coord;
+out vec3 ray;
+
+void main()
+{
+	gl_Position = vec4(aPos, 1.0f);
+	tex_coord = (aPos.xy + 1.) * 0.5;
+
+    ray = vec3(inverse(view) * vec4(gl_Position.x, gl_Position.y, -1, 0.));
+}

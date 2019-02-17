@@ -1,5 +1,6 @@
 #include "../shaders/shader.h"
 #include "texture.h"
+#include <iostream>
 
 Texture::Texture(const std::string& path, bool generateMipmap){
 	sf::Image image;

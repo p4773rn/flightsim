@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <algorithm>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,11 +15,7 @@ using std::cout;
 using std::endl;
 
 Model::Model(const std::string& fname) : 
-    file_name{fname},
-    shader({
-               std::pair<std::string, GLuint>("src/openGL/shaders/basic.vrtx", GL_VERTEX_SHADER),
-               std::pair<std::string, GLuint>("src/openGL/shaders/basic.frgmnt", GL_FRAGMENT_SHADER)
-           })
+    file_name{fname}
 { 
     load_obj(file_name);
 }
@@ -169,22 +166,3 @@ void Model::load_mtl(const std::string& file_name) {
     cout << "Loaded materials: " << materials.size() << endl;
 }
 
-void Model::draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection, 
-                 const glm::vec3& cameraPos, const glm::vec3& light){
-    shader.use();
-    glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "model"),
-                       1, GL_FALSE, glm::value_ptr(model));
-    glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "view"),
-                       1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "projection"),
-                       1, GL_FALSE, glm::value_ptr(projection));
-    glUniform3fv(glGetUniformLocation(shader.getID(), "lightSource"), 
-                       1, glm::value_ptr(light));
-    
-    for (auto& mesh : meshes) {
-        if (mesh.transparent()) {
-            mesh.sortByZ(model, cameraPos);
-        }
-        mesh.draw(shader);
-    }
-}

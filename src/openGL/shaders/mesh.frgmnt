@@ -1,0 +1,36 @@
+#version 330 core
+
+layout (location = 0) out vec3 gPosition;
+layout (location = 1) out vec3 gNormal;
+layout (location = 2) out vec3 gAlbedo;
+layout (location = 3) out vec2 gSpec;
+layout (location = 4) out ivec4 gFlag;
+
+in vec3 normal;
+in vec3 world_pos;
+in vec2 tex_coord;
+
+uniform sampler2D texture0;
+
+uniform vec3 diffuse_color;
+uniform bool use_texture;
+
+uniform float shininess;
+
+
+void main()
+{
+    vec3 albedo;
+    if (use_texture)
+        albedo = texture(texture0, tex_coord).xyz;
+    else
+        albedo = diffuse_color;
+    
+    
+    gPosition = world_pos;
+    gNormal = normalize(normal);
+    gAlbedo = albedo;
+    gSpec.r = shininess;
+    gSpec.g = 0.8;
+    gFlag.r = 1;
+}
