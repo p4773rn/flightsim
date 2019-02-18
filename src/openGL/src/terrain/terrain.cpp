@@ -45,8 +45,8 @@ void Terrain::render(const glm::vec3& camera_pos) {
     shader.set("splatmap", 1);
   	splatmap.activate(GL_TEXTURE1);
     
-    shader.set("lightmap", 2);
-  	lightmap.activate(GL_TEXTURE2);
+    shader.set("normalmap", 2);
+  	normalmap.activate(GL_TEXTURE2);
     
     int t_units[MAX_TEXTURES] = {3, 4, 5, 6};
     shader.setv("textures", t_units, MAX_TEXTURES);
@@ -241,9 +241,9 @@ void Terrain::render_node(Node* node, const glm::vec3& camera_pos) {
 
 
 void Terrain::load_textures() {
-    heightmap = Texture("assets/terrain/hm.png");
-    splatmap = Texture("assets/terrain/alpha.png");
-    lightmap = Texture("assets/terrain/normal.png");
+    heightmap = Texture("assets/terrain/hm.png", false);
+    splatmap = Texture("assets/terrain/alpha.png", false);
+    normalmap = Texture("assets/terrain/normal.png", false);
 	
 	std::string line;
 	std::ifstream texture_files("assets/terrain/alphamap.txt");
@@ -253,4 +253,46 @@ void Terrain::load_textures() {
 			textures[i] = Texture(line);
 		}
 	}
+
+    
 }
+
+
+
+
+
+float Terrain::get_height(const glm::vec2& world_pos) const {
+    auto to_pos = world_pos - glm::vec2(origin.x, origin.z);
+    auto tex_coord = to_pos/size+0.5f;
+
+    float h = heightmap.sample(tex_coord.x, tex_coord.y).x;
+
+    return h * 4000 - 3000;
+}
+
+std::vector<glm::vec3> Terrain::get_forest_positions(const glm::vec3& camera_pos) {
+
+
+    std::vector<glm::vec3> positions;
+
+    for (int x = 0; x < 10; ++x) {
+        for (int z = 0; z < 10; ++z) {
+            glm::vec3 pos(x, 0, z);
+            pos *= 500;
+            pos.y = get_height(glm::vec2(pos.x,pos.z));
+            positions.push_back(pos);
+        }
+    }
+
+
+    return positions;
+}
+
+
+
+
+
+
+
+
+

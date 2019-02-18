@@ -48,7 +48,7 @@ int main()
     settings.depthBits = 24;
     settings.majorVersion = 3;
     settings.minorVersion = 3;
-    
+   
     
     const glm::ivec2 SCREEN_SIZE(800, 600); 
     sf::RenderWindow window(sf::VideoMode(SCREEN_SIZE.x, SCREEN_SIZE.y), "FlightSim", sf::Style::Default, settings);
@@ -57,6 +57,8 @@ int main()
 
     
     if (GLEW_OK != glewInit()) std::cerr << "GLEW INIT Error";
+    
+    
 
     // renderer loses precision after 100K meters (try setting x-pos of camera,model,terrain to 2^20)
     // offset physics outputs to be not too far from origin
@@ -70,7 +72,7 @@ int main()
     Model model("assets/models/BGEAR_plane.obj");
     glm::mat4 model_model = glm::rotate(glm::translate(glm::mat4(1), glm::vec3(0, 10, -6)), 1.0f, glm::vec3(0, 1, 0));
     
-    Terrain terrain(glm::vec3(0, 0, 0), 1<<14);
+    Terrain terrain(glm::vec3(0, 0, 0), 20000);
     while (window.isOpen())
     {
         sf::Event event;
@@ -89,11 +91,15 @@ int main()
         keyInput(camera, deltaTime);
         mouseInput(camera, window, deltaTime);
 
-
+        terrain.set_origin(terrain.get_origin() + glm::vec3(1000, 0, 0)*deltaTime);
         window.clear();
     
         model_model = glm::rotate(model_model, .01f, glm::vec3(0, 1, 0));
         
+        for (const glm::vec3& pos : terrain.get_forest_positions(camera.get_position())) {
+            glm::mat4 m = glm::translate(glm::mat4(1), pos) * glm::scale(glm::mat4(1), glm::vec3(20));
+            renderer.queue_render(&(model.get_meshes()[0]), m);
+        }
         for (Mesh& mesh : model.get_meshes()) {
             renderer.queue_render(&mesh, model_model);
         }

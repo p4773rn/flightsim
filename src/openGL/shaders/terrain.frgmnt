@@ -8,7 +8,7 @@ layout (location = 4) out ivec4 gFlag;
 
 uniform sampler2D textures[4];
 uniform sampler2D splatmap;
-uniform sampler2D lightmap;
+uniform sampler2D normalmap;
 uniform sampler2D heightmap;
 
 uniform float terrain_size;
@@ -157,7 +157,7 @@ void main()
     }
 
 
-    //albedo = vec4(vec3(mix(h, g_h, .1)), 0);
+    //albedo = vec4(vec3(texture(heightmap, tex_coord).r), 1.0);
     //norm = vec3(0, 1, 0);
     //float dist = min(1,distance(camera_pos, world_pos.xyz)/1000);
     gPosition = world_pos;

@@ -41,6 +41,11 @@ public:
     void set_origin(const glm::vec3& origin) { this->origin = origin; }
     //const glm::vec2& get_tex_coord_offset() const { return tex_coord_offset; }
     //void set_tex_coord_offset(const glm::vec2& tex_coord_offset) { this->tex_coord_offset = tex_coord_offset; }
+
+
+
+    float get_height(const glm::vec2& world_pos) const;
+    std::vector<glm::vec3> get_forest_positions(const glm::vec3& camera_pos);
 private:
     struct Node {
         float tl;//tesselation_left;
@@ -92,7 +97,7 @@ private:
     GLuint vao, vbo;
     Texture heightmap;
     Texture splatmap;
-    Texture lightmap;
+    Texture normalmap;
     Texture textures[MAX_TEXTURES];
     glm::vec2 tex_coord_offset;
 };
