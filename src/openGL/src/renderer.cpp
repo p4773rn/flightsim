@@ -2,6 +2,7 @@
 #include <iostream>
 #include "misc.h"
 
+
 /*
 Deferred shading
 -----------------------------------------------
@@ -15,6 +16,9 @@ Author: Joey de Vries
 Twitter: https://twitter.com/JoeyDeVriez
 License: https://github.com/JoeyDeVries/LearnOpenGL/blob/master/LICENSE.md
 */
+
+
+
 
 
 Renderer::Renderer(const glm::ivec2& screen_size) {
@@ -81,7 +85,8 @@ Renderer::Renderer(const glm::ivec2& screen_size) {
 
 
 void Renderer::queue_render(Renderable* renderable, const glm::mat4& model) {
-    opaque_renderables.push_back({renderable, model});
+    opaque_renderables[renderable->get_shader().getID()][renderable]
+        .push_back(model);
 }
 
 
@@ -96,26 +101,37 @@ void Renderer::render(const glm::vec3& light_dir, const glm::vec3& light_color,
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   
-    for (std::pair<Renderable*, glm::mat4>& r_m : opaque_renderables) {
-        Renderable *r = r_m.first;
-        glm::mat4& model = r_m.second;
-        
-        glm::vec3 pos = glm::vec3(model * glm::vec4(0,0,0,1));
-        if (glm::distance(pos, camera_pos) > r->get_max_render_dist())
-            continue;
 
-        Shader& shader = r->get_shader();
+    for (auto& srm : opaque_renderables) {
+        auto& rms = srm.second;
+        
+        Shader& shader = rms.begin()->first->get_shader();
         shader.use();
         shader.set("projection", projection);
         shader.set("view", view);
-        shader.set("model", model);
         
-        r->render(camera_pos);
+        for (auto& rm : rms) {
+            auto& models = rm.second;
+            Renderable *r = rm.first;
+            r->on_renderable_iter_start();
+
+            for (auto& model : models) {
+                glm::vec3 pos = glm::vec3(model * glm::vec4(0,0,0,1));
+                if (glm::distance(pos, camera_pos) > r->get_max_render_dist())
+                    continue;
+
+                shader.set("model", model);
+                
+                r->render(camera_pos);
+            }
+            models.clear();
+            r->on_renderable_iter_stop();
+        }
     }
+        
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    opaque_renderables.clear();
+    //opaque_renderables.clear();
    
 
     // lighting pass

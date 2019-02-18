@@ -39,6 +39,8 @@ public:
     Shader& get_shader() { return get_mesh_shader(); }
     void render(const glm::vec3& camera_pos);
     float get_max_render_dist() const { return 8000; }
+    void on_renderable_iter_start();
+    void on_renderable_iter_stop();
 
 private:
     GLuint vao;

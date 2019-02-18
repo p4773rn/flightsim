@@ -2,6 +2,7 @@
 #define RENDERER_H
 
 #include <vector>
+#include <map>
 #include <utility>
 #include <memory>
 #include <GL/glew.h>
@@ -15,6 +16,9 @@ public:
 
     virtual void render(const glm::vec3& camera_pos) = 0;
     virtual float get_max_render_dist() const = 0;
+    
+    virtual void on_renderable_iter_start() {};
+    virtual void on_renderable_iter_stop() {};
 };
 
 
@@ -30,8 +34,8 @@ public:
                 const glm::vec3& camera_pos);
 
 private:
-    // TODO: minimize some function calls by sorting
-    std::vector<std::pair<Renderable*, glm::mat4>> opaque_renderables;
+    // <shader_id, renderable, model matrix>
+    std::map<GLuint, std::map<Renderable*, std::vector<glm::mat4>>> opaque_renderables;
 
     GLuint g_buffer;
     GLuint g_position;

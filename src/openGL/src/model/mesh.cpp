@@ -35,7 +35,8 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, Material&& material) :
     glBindVertexArray(0);
 }
 
-void Mesh::render(const glm::vec3& camera_pos) {
+
+void Mesh::on_renderable_iter_start() {
     Shader& shader = get_shader();
     
     bool useTexture = material.texture != nullptr;
@@ -50,6 +51,12 @@ void Mesh::render(const glm::vec3& camera_pos) {
     shader.set("shininess", material.shininess);
     
     glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, 0);
+}
+
+void Mesh::on_renderable_iter_stop() {
     glBindVertexArray(0);
+}
+
+void Mesh::render(const glm::vec3& camera_pos) {
+   glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, 0);
 }
