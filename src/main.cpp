@@ -91,15 +91,15 @@ int main()
         keyInput(camera, deltaTime);
         mouseInput(camera, window, deltaTime);
 
-        terrain.set_origin(terrain.get_origin() + glm::vec3(1000, 0, 0)*deltaTime);
+        //terrain.set_origin(terrain.get_origin() + glm::vec3(1000, 0, 0)*deltaTime);
         window.clear();
     
         model_model = glm::rotate(model_model, .01f, glm::vec3(0, 1, 0));
         
-        for (const glm::vec3& pos : terrain.get_forest_positions(camera.get_position())) {
-            glm::mat4 m = glm::translate(glm::mat4(1), pos) * glm::scale(glm::mat4(1), glm::vec3(20));
-            renderer.queue_render(&(model.get_meshes()[0]), m);
-        }
+        //for (const glm::vec3& pos : terrain.get_forest_positions(camera.get_position())) {
+        //    glm::mat4 m = glm::translate(glm::mat4(1), pos) * glm::scale(glm::mat4(1), glm::vec3(20));
+        //    renderer.queue_render(&(model.get_meshes()[0]), m);
+        //}
         for (Mesh& mesh : model.get_meshes()) {
             renderer.queue_render(&mesh, model_model);
         }

@@ -109,8 +109,7 @@ Terrain::Node* Terrain::create_node(Terrain::Node* parent, const glm::vec2& orig
 
 
 bool Terrain::is_divisible(Node* node, const glm::vec3& camera_pos) {
-    // TODO: get node height from heightmap for them tall mountains
-    glm::vec3 node_pos(node->origin.x, origin.y, -node->origin.y);
+    glm::vec3 node_pos(node->origin.x, get_height(glm::vec2(node->origin.x, -node->origin.y)), -node->origin.y);
     //glm::vec3 node_pos(node->origin.x, camera_pos.y + 10.0, -node->origin.y);
     float dist = glm::distance(node_pos, camera_pos);
     float diag = glm::length(glm::vec3(node->size));
