@@ -101,6 +101,10 @@ void Renderer::render(const glm::vec3& light_dir, const glm::vec3& light_color,
         Renderable *r = r_m.first;
         glm::mat4& model = r_m.second;
         
+        glm::vec3 pos = glm::vec3(model * glm::vec4(0,0,0,1));
+        if (glm::distance(pos, camera_pos) > r->get_max_render_dist())
+            continue;
+
         Shader& shader = r->get_shader();
         shader.use();
         shader.set("projection", projection);

@@ -14,6 +14,7 @@ public:
     //virtual Shader& get_shadow_shader() = 0;
 
     virtual void render(const glm::vec3& camera_pos) = 0;
+    virtual float get_max_render_dist() const = 0;
 };
 
 
