@@ -36,7 +36,7 @@ public:
     
     Shader& get_shader() { return shader; }
     void render(const glm::vec3& camera_pos);
-    float get_max_render_dist() const { return 16000; }
+    float get_max_render_dist() const { return 1e10; }
     
     const glm::vec3& get_origin() const { return origin; }
     void set_origin(const glm::vec3& origin) { this->origin = origin; }
