@@ -9,6 +9,8 @@
 #include <glm/glm.hpp>
 #include "shaders/shader.h"
 
+
+// TODO: remove render dist culling from here
 class Renderable {
 public:
     virtual Shader& get_shader() = 0;

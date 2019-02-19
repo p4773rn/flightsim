@@ -8,6 +8,7 @@
 #include "openGL/src/camera/camera.h"
 #include "openGL/src/model/model.h"
 #include "openGL/src/terrain/terrain.h"
+#include "openGL/src/terrain/multimesh.h"
 #include "openGL/src/misc.h"
 
 void keyInput(Camera& camera, float deltaTime) {
@@ -63,7 +64,7 @@ int main()
     // renderer loses precision after 100K meters (try setting x-pos of camera,model,terrain to 2^20)
     // offset physics outputs to be not too far from origin
     Renderer renderer(SCREEN_SIZE);
-    Camera camera(glm::vec3(0, 200.0f, 0.0));
+    Camera camera(glm::vec3(0, -1000.0f, 0.0));
     camera.move_mouse(0, -1000, 1);
     glm::mat4 projection = glm::perspective(glm::radians(90.0f), float(SCREEN_SIZE.x)/SCREEN_SIZE.y, 0.1f, 16000.0f);
    
@@ -71,8 +72,15 @@ int main()
 
     Model model("assets/models/BGEAR_plane.obj");
     glm::mat4 model_model = glm::rotate(glm::translate(glm::mat4(1), glm::vec3(0, 10, -6)), 1.0f, glm::vec3(0, 1, 0));
+   
+
+    Terrain terrain(glm::vec3(0, 0, 0), 1<<13);
+   
+    Model grass_model("assets/models/grass.obj");
+    Model tree_model("assets/models/pine.obj");
+    MultiMesh grass(grass_model.get_meshes()[0], terrain, 600, 250, 1);
+    MultiMesh trees(tree_model.get_meshes()[0], terrain, 40, 1000, 2);
     
-    Terrain terrain(glm::vec3(0, 0, 0), 20000);
     while (window.isOpen())
     {
         sf::Event event;
@@ -91,18 +99,24 @@ int main()
         keyInput(camera, deltaTime);
         mouseInput(camera, window, deltaTime);
 
+        grass.update(camera.get_position());
+        trees.update(camera.get_position());
+
         //terrain.set_origin(terrain.get_origin() + glm::vec3(1000, 0, 0)*deltaTime);
         window.clear();
     
-        model_model = glm::rotate(model_model, .01f, glm::vec3(0, 1, 0));
-        
+        //model_model = glm::rotate(model_model, .01f, glm::vec3(0, 1, 0));
+       
+        renderer.queue_render(&(grass), glm::mat4(0));
+        renderer.queue_render(&(trees), glm::mat4(0));
+
         //for (const glm::vec3& pos : terrain.get_forest_positions(camera.get_position())) {
         //    glm::mat4 m = glm::translate(glm::mat4(1), pos) * glm::scale(glm::mat4(1), glm::vec3(20));
         //    renderer.queue_render(&(model.get_meshes()[0]), m);
         //}
-        for (Mesh& mesh : model.get_meshes()) {
-            renderer.queue_render(&mesh, model_model);
-        }
+        //for (Mesh& mesh : model.get_meshes()) {
+        //    renderer.queue_render(&mesh, model_model);
+        //}
 
         renderer.queue_render(&terrain, glm::mat4(0));
         //std::cerr << camera.get_position() << std::endl;

@@ -46,7 +46,11 @@ public:
 
 
     float get_height(const glm::vec2& world_pos) const;
-    std::vector<glm::vec3> get_forest_positions(const glm::vec3& camera_pos);
+    glm::vec2 get_tex_coord(const glm::vec2 world_pos) const;
+    Texture& get_heightmap() { return heightmap; }
+    Texture& get_splatmap() { return splatmap; }
+    
+    float get_size() const { return size; }
 private:
     struct Node {
         float tl;//tesselation_left;

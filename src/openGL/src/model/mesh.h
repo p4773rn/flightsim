@@ -27,6 +27,9 @@ struct Material{
 };
 
 
+
+// TODO: make one mesh use multiple materials
+// switching vaos is expensive
 class Mesh : public Renderable {
 public:
     Mesh(const std::vector<Vertex>& vertices, Material&& material);
@@ -42,6 +45,8 @@ public:
     void on_renderable_iter_start();
     void on_renderable_iter_stop();
 
+    // TODO: rethink Mesh
+    friend class MultiMesh;
 private:
     GLuint vao;
     GLuint vbo;

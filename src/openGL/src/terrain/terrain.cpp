@@ -261,36 +261,18 @@ void Terrain::load_textures() {
 
 
 float Terrain::get_height(const glm::vec2& world_pos) const {
-    auto to_pos = world_pos - glm::vec2(origin.x, origin.z);
-    auto tex_coord = to_pos/size+0.5f;
-
+    auto tex_coord = get_tex_coord(world_pos);
     float h = heightmap.sample(tex_coord.x, tex_coord.y).x;
 
     return h * 4000 - 3000;
 }
 
-std::vector<glm::vec3> Terrain::get_forest_positions(const glm::vec3& camera_pos) {
+glm::vec2 Terrain::get_tex_coord(const glm::vec2 world_pos) const {
+    auto to_pos = world_pos - glm::vec2(origin.x, origin.z);
+    auto tex_coord = to_pos/size+0.5f;
 
-
-    std::vector<glm::vec3> positions;
-
-    for (int x = 0; x < 100; ++x) {
-        for (int z = 0; z < 100; ++z) {
-            glm::vec3 pos(x, 0, z);
-            pos *= 500;
-            pos.y = get_height(glm::vec2(pos.x,pos.z));
-            positions.push_back(pos);
-        }
-    }
-
-
-    return positions;
+    return tex_coord;
 }
-
-
-
-
-
 
 
 

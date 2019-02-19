@@ -117,11 +117,11 @@ void main()
     vec3 atmosphere_color = vec3(0.8);
     vec3 atmosphere_origin = camera_pos + vec3(0, 6371e3, 0);
 	float dist = distance(world_pos, camera_pos);
-    if (drawn) {
-        atmosphere_color = sky(atmosphere_origin, normalize(ray), 0, dist);
-    } else {
-        atmosphere_color = sky(atmosphere_origin, normalize(ray), 0, 1e5);
-    }
+    //if (drawn) {
+    //    atmosphere_color = sky(atmosphere_origin, normalize(ray), 0, dist);
+    //} else {
+    //    atmosphere_color = sky(atmosphere_origin, normalize(ray), 0, 1e5);
+    //}
     atmosphere_color = 1.0 - exp(-1.0 * atmosphere_color);
     // TODO: calculate atmosphere color at world_pos properly
 
@@ -144,7 +144,7 @@ void main()
 	vec3 result = (ambient + diffuse + specular) * albedo;
    
     if (drawn) {
-        float extinction = 1e-5; // 1e-2:thick atmosphere, 1e-5:realisticish atmosphere
+        float extinction = 1e-4; // 1e-2:thick atmosphere, 1e-5:realisticish atmosphere
         float transmittance = exp(-extinction*dist);
         result = mix(atmosphere_color, result, transmittance);
 	    FragColor = vec4(result, 1.);

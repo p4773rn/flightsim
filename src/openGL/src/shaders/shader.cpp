@@ -101,6 +101,10 @@ void Shader::setv(const std::string& name, int* p, int count) {
   	glUniform1iv(glGetUniformLocation(program, name.c_str()), count, p);
 }
 
+void Shader::setv(const std::string& name, const glm::ivec2* p, int count) {
+  	glUniform2iv(glGetUniformLocation(program, name.c_str()), count, glm::value_ptr(*p));
+}
+
 
 
 

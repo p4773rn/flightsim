@@ -26,6 +26,7 @@ public:
     void set(const std::string& name, const glm::vec3& p);
     void set(const std::string& name, const glm::mat4& p);
     void setv(const std::string& name, int* p, int count);
+    void setv(const std::string& name, const glm::ivec2* p, int count);
 };
 
 #endif

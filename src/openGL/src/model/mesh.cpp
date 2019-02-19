@@ -60,3 +60,5 @@ void Mesh::on_renderable_iter_stop() {
 void Mesh::render(const glm::vec3& camera_pos) {
    glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, 0);
 }
+
+
