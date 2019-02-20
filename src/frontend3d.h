@@ -6,12 +6,12 @@
 #include <list>
 #include "misc.h"
 #include <memory>
-#include "openGL/src/camera/camera.h"
-#include "openGL/src/terrain/terrain.h"
-#include "openGL/src/terrain/sky.h"
-#include "openGL/src/model/model.h"
-#include "openGL/src/shaders/shader.h"
-#include "openGL/src/grid3d.h"
+#include "openGL/camera/camera.h"
+#include "openGL/terrain/terrain.h"
+#include "openGL/terrain/sky.h"
+#include "openGL/model/model.h"
+#include "openGL/shaders/shader.h"
+#include "openGL/grid3d.h"
 
 
 class Frontend3d {

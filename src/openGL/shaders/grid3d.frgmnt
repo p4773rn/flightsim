@@ -7,10 +7,14 @@ in vec2 pos;
 uniform float height;
 
 #define MAX_HEIGHT 10000.
+#define HEIGHT_COEF 20
+
+const float FogDensity = 0.05;	
+const vec4 fogColor = vec4(0.51, 0.473, 0.463, 1.0);
 
 void main()
 {
-    vec2 coord = pos.xy * 1.;
+    vec2 coord = pos.xy;// * max(1.0f, HEIGHT_COEF * height / MAX_HEIGHT); //height;//1.;
 
 
 
@@ -18,12 +22,20 @@ void main()
     // source: http://madebyevan.com/shaders/grid/
     // Compute anti-aliased world-space grid lines
     vec2 grid = abs(fract(coord - 0.5) - 0.5) / fwidth(coord);
+	//grid.x *= 1.0f - height / MAX_HEIGHT;
+	//grid.y *= 1.0f - height / MAX_HEIGHT;
     float line = min(grid.x, grid.y);
     line = 1 - clamp(line, 0, 1);
    
-    vec3 bg_color = vec3(height / MAX_HEIGHT);
+    vec3 bg_color = vec3(0.0f);//MAX_HEIGHT);
     vec3 l_color = vec3(0, 0, 1.);
     vec3 color = bg_color * (1 - line) + l_color * line;
 
-    gl_FragColor = vec4(color, 1.);
+	
+	//float fogAmount = 1.0 - exp(-distance(vec3(0.0f, height, 0.0f), vec3(pos.x, 0.0, pos.y)));//gl_Position.xyz) * b);
+	float dist = gl_FragCoord.z/(gl_FragCoord.w * 350);	
+	float fogAmount = 1.0 / exp(dist * FogDensity);
+	fogAmount = clamp(fogAmount, 0.0, 1.0);
+	gl_FragColor = mix(fogColor, vec4(color, 1.0f), fogAmount);
+    //gl_FragColor = vec4(color, 1.);
 }

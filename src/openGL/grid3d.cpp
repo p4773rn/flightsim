@@ -5,10 +5,11 @@
 #include <vector>
 #include <utility>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <tuple>
 
-#define HALF_SIZE 4000
-#define Y_INCREMENT 500
+#define HALF_SIZE 8000
+#define Y_INCREMENT 19
 
 Grid3d::Grid3d() {
     std::vector<std::pair<std::string, GLuint>> paths = {
@@ -18,10 +19,10 @@ Grid3d::Grid3d() {
 	shader = std::make_unique<Shader>(paths);
 
     vertices = {
-         HALF_SIZE, -Y_INCREMENT, HALF_SIZE, 
-         HALF_SIZE, -Y_INCREMENT,-HALF_SIZE, 
-        -HALF_SIZE, -Y_INCREMENT, HALF_SIZE, 
-        -HALF_SIZE, -Y_INCREMENT,-HALF_SIZE 
+         HALF_SIZE, -Y_INCREMENT, HALF_SIZE,
+         HALF_SIZE, -Y_INCREMENT,-HALF_SIZE,
+        -HALF_SIZE, -Y_INCREMENT, HALF_SIZE,
+        -HALF_SIZE, -Y_INCREMENT,-HALF_SIZE
     };
     indices = {3, 1, 2, 1, 0, 2};
 
@@ -51,11 +52,11 @@ void Grid3d::render(const glm::vec3& pos, const glm::mat4& view, const glm::mat4
 	frame++;
 	glm::mat4 model1 = glm::translate(glm::mat4(1.), 
 	                    glm::vec3(  pos.x, 
-	                                int(pos.y/Y_INCREMENT) * Y_INCREMENT, 
+	                                0, //pos.y, //int(pos.y/Y_INCREMENT) * Y_INCREMENT, 
 	                                pos.z));
 	glm::mat4 model2 = glm::translate(glm::mat4(1.), 
 	                    glm::vec3(  pos.x, 
-	                                0, 
+	                                0,
 	                                pos.z));
 
 	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "model1"),

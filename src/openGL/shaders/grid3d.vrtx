@@ -12,14 +12,15 @@ out vec2 pos;
 
 void main()
 {
-    vec4 pos4 = vec4(aPos, 1.);
-    vec4 tpos4 = projection * view * pos4;
-    mat4 m1 = model1;
-    mat4 m2 = model2;
-    mat4 v = view;
-    mat4 p = projection;
-    mat4 iv = inverse(v);
-    mat4 ip = inverse(p);
-	gl_Position = p * v * m1 * pos4;
-    pos = ((m2 * pos4).xz) * 0.00125;
+    vec4 pos4 = vec4(aPos, 1.0f);
+    //vec4 tpos4 = projection * view * pos4;
+    //mat4 m1 = model1;
+    //mat4 m2 = model2;
+    //mat4 v = view;
+    //mat4 p = projection;
+    //mat4 iv = inverse(v);
+    //mat4 ip = inverse(p);
+	//gl_Position = p * v * m1 * pos4;
+	gl_Position = projection * view * model1 * pos4;
+    pos = ((model2 * pos4).xz) * 0.00125;
 }
