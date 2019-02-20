@@ -1,0 +1,55 @@
+#version 330 core
+
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNorm;
+layout (location = 2) in vec2 aTexCoord;
+
+#define TILE_DIM 10
+#define TILE_SIZE 100
+
+
+uniform mat4 view;
+uniform mat4 projection;
+uniform ivec2 tiles[TILE_DIM * TILE_DIM];
+uniform int count_per_tile;
+uniform sampler2D heightmap;
+uniform float terrain_size;
+
+out vec3 normal;
+out vec3 world_pos;
+out vec2 tex_coord;
+
+float rand(float n){return fract(sin(n) * 43758.5453123);}
+
+
+void main()
+{
+    int tile_i = gl_InstanceID / count_per_tile;
+    int tile_ii = gl_InstanceID % count_per_tile;
+    ivec2 tile = tiles[tile_i];
+
+
+    int side = int(sqrt(count_per_tile));
+    int x = tile_ii / side - side/2;
+    int y = tile_ii % side - side/2;
+    int ds = TILE_SIZE / side;
+    vec2 offset = vec2(x + rand(x*tile.x*tile.y), y + rand(y*tile.x*tile.y)) * ds * 5;
+    float angle = rand(x*y*tile.x*tile.y)*10;
+
+    vec3 pos;
+    pos.xz = vec2(tile) + offset;
+    pos.y = texture(heightmap, pos.xz/terrain_size + 0.5).r * 4000 - 3000;
+
+    
+    mat4 rotation = mat4(cos(angle), 0, sin(angle), 0,
+                         0, 1, 0, 0,
+                         -sin(angle), 0, cos(angle), 0,
+                         0, 0, 0, 1);
+
+    pos = pos + vec3(rotation * vec4(aPos, 1.0));
+
+	gl_Position = projection * view * vec4(pos, 1.0f);
+	normal = mat3(transpose(inverse(rotation))) * aNorm;
+	world_pos = pos;
+	tex_coord = vec2(aTexCoord.x, 1-aTexCoord.y);
+}
