@@ -24,17 +24,18 @@ std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const V
     Vec2 relativeSpeed = Vec2( -angularVelocity * relativePosition.getY(), angularVelocity * relativePosition.getX());
 
     // Check for crash
+    /*
     if (relativePosition.getY() + planePosition.getY() < position.getY()) {
         cout << "Crash Position: " << relativePosition + planePosition << endl;
         cout << "Crash Speed: " << relativeSpeed + velocity << endl;
         if (position.getX() < 0) {
-            cout << "Main wheels" << endl;
+            cout << "Main wheels crashed" << endl;
         } else {
-            cout << "Front wheels" << endl;
+            cout << "Front wheels crashed" << endl;
         }
         throw std::runtime_error("Wheels break");
     }
-
+*/
     Vec2 absolutePosition = relativePosition + planePosition;
     Vec2 absoluteSpeed = relativeSpeed + velocity;
 
@@ -53,12 +54,12 @@ std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const V
     if (velocity.getX() != 0) {
 
         double gravitationalForceMagnitude = mass * GRAVITATIONAL_ACCELERATION;
-        double rollingFrictionMagnitude =  gravitationalForceMagnitude * rollingFrictionCoefficient / wheelsRadius;
+        double rollingFrictionMagnitude =  normalForceMagnitude * rollingFrictionCoefficient / wheelsRadius;
 
-        double axleFrictionCoefficient = 0.039; // Experimental value
+        double axleFrictionCoefficient = 0.009; // Experimental value
         double numberOfWheels = 8; // TODO: refactor (move this somewhere else)
         // Divide the number of wheels by two because we have two Wheels objects which in sum will give the correct value (TODO: refactor this)
-        double axleFrictionMagnitude = gravitationalForceMagnitude * (numberOfWheels / 2) * axleFrictionCoefficient;
+        double axleFrictionMagnitude = normalForceMagnitude * (numberOfWheels / 2) * axleFrictionCoefficient;
         // TODO: Refactor somehow to eliminate the need of (dividing the rolling friction by so for the front wheels and main wheels in sum give the correct magnitude)
         double frictionForceMagnitude = (rollingFrictionMagnitude + axleFrictionMagnitude) / 2;
         if (brakesOn > 0) {

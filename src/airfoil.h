@@ -25,8 +25,9 @@ public:
     std::tuple<Vec2, double> getForceAndTorque(const Vec2& velocity, double angle, double airDensity, double height) const;
     
     double getAngleOfAttack(const Vec2& velocity, double angle) const {
+        double maxElevatorsDeflection = 12.0; // in degrees, total deflection range is twice as big however
         return airfoilAngle 
-               + deflection * (5.0 * M_PI / 180)
+               + deflection * (maxElevatorsDeflection * M_PI / 180)
                + angle
                + atan2(-velocity.getY(), velocity.getX());
     }

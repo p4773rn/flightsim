@@ -23,6 +23,10 @@ int main()
     window.setFramerateLimit(FPS);
     window.setMouseCursorVisible(false);
 
+    sf::Vector2<int> windowPosition(1920-800, 0);
+
+    window.setPosition(windowPosition);
+
     sf::Clock clock;
     double lastUpdateTime = clock.getElapsedTime().asSeconds();
 
@@ -32,7 +36,8 @@ int main()
 
     Plane plane = Plane::getDefaultPlane();
     // plane.setThrottle(75);
-
+    // TODO: put this inside plane somewhere
+    double elevatorsDevlectionStep = 0.05;
     while (window.isOpen())
     {
         sf::Event event;
@@ -53,10 +58,10 @@ int main()
                             plane.setThrottle(plane.getThrottle() + 5);
                             break;
                         case sf::Keyboard::Q:
-                            plane.setElevatorDeflection(plane.getElevatorDeflection() - 0.1);
+                            plane.setElevatorDeflection(plane.getElevatorDeflection() - elevatorsDevlectionStep);
                             break;
                         case sf::Keyboard::W:
-                            plane.setElevatorDeflection(plane.getElevatorDeflection() + 0.1);
+                            plane.setElevatorDeflection(plane.getElevatorDeflection() + elevatorsDevlectionStep);
                             break;
                         case sf::Keyboard::F:
                             plane.setFlaps(plane.getFlaps() - 0.25);

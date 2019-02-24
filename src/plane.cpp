@@ -72,7 +72,12 @@ void Plane::update(double delta) {
     double angularAcceleration = torque / inertia;
     angularVelocity += angularAcceleration * delta;   
     angle += angularVelocity * delta;
-   
+
+    // Making sure angle stays within [-pi, pi] rads
+    if (angle > M_PI)
+        angle -= 2 * M_PI;
+    if (angle < -M_PI)
+        angle += 2 * M_PI;
 
     // Final calculations
     Vec2 acceleration = netForce / mass;
@@ -177,7 +182,7 @@ Plane Plane::getDefaultPlane() {
                 { 12.0 * M_PI / 180,    1.52,    0.112,  0.25,   -0.275 }
             }), // take-off flaps position coeffs
             103, // area
-            0.0523598775, // angle
+            0.0623598775, // angle
             3.6 // chordLength
     );
 
@@ -224,17 +229,17 @@ Plane Plane::getDefaultPlane() {
     );
 
     Plane plane = Plane(
-        Vec2(0, 1), // pos
+        Vec2(1, 4), // pos
         Vec2(1, 0),// velocity
-        0, // angle
+        0, // angle in rads
         51710, // mass
         2027731, // inertia
         
         std::move(wings),
-        Vec2(2, 0), // wingsPoint
+        Vec2(-1, 0), // wingsPoint
         std::move(elevators),
         Vec2(-15, 1), // elevatorsPoint
-        Engine(210000), // engine
+        Engine(105000), // engine
         Wheels(72467, 10, 10000, Vec2(15, -2)), // Front wheels
         Wheels(434802, 400, 40000, Vec2(-2, -2)) // Main wheels
     );
