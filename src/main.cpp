@@ -90,7 +90,7 @@ int main()
 
         // negative z axis is forward
         glm::vec3 planePos(0, plane.getPos().getY(), -plane.getPos().getX());
-        glm::vec3 yawPitchRoll(0, plane.getAngle(), 0);
+        glm::vec3 yawPitchRoll(0, plane.getPitchAngle(), 0);
         frontend.update(planePos, yawPitchRoll);
 
         window.clear();

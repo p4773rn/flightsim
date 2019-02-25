@@ -6,15 +6,15 @@
 
 std::tuple<Vec2, double> Airfoil::getForceAndTorque(
     const Vec2& velocity, 
-    double angle, 
+    double pitchAngle, 
     double airDensity,
     double height) const {
     
-    Table::Entry coefficients = tableDefaultFlaps.get(getAngleOfAttack(velocity, angle));
+    Table::Entry coefficients = tableDefaultFlaps.get(getAngleOfAttack(velocity, pitchAngle));
     // TODO: add default constructor to avoid double function call
     if (flaps > 0) {
         // TODO: Ask guys how to make it better
-        Table::Entry maxCoefficients = tableTakeOffFlaps.get(getAngleOfAttack(velocity, angle));
+        Table::Entry maxCoefficients = tableTakeOffFlaps.get(getAngleOfAttack(velocity, pitchAngle));
         coefficients.lift = coefficients.lift + ((maxCoefficients.lift - coefficients.lift) * flaps);
         coefficients.moment = coefficients.moment + ((maxCoefficients.moment - coefficients.moment) * flaps);
     }

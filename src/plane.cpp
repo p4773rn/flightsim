@@ -1,5 +1,6 @@
 #include "plane.h" 
 #include "environment.h"
+#include "misc.h"
 #include <iostream>
 #include <tuple>
 
@@ -13,15 +14,15 @@ void Plane::update(double delta) {
     double wingsTorque, elevatorsTorque;
     
     double height = getHeight();
-    std::tie(wingsForce, wingsTorque) = wings.getForceAndTorque(velocity, angle, airDensity, height);
+    std::tie(wingsForce, wingsTorque) = wings.getForceAndTorque(velocity, pitchAngle, airDensity, height);
 
     Vec2 elevatorsVelocity = {
-        velocity.getX() - angularVelocity * (elevatorsPoint.getX() * sin(angle) + 
-                                             elevatorsPoint.getY() * cos(angle)),
-        velocity.getY() + angularVelocity * (elevatorsPoint.getX() * cos(angle) - 
-                                             elevatorsPoint.getY() * sin(angle))};
+        velocity.getX() - angularVelocity * (elevatorsPoint.getX() * sin(pitchAngle) + 
+                                             elevatorsPoint.getY() * cos(pitchAngle)),
+        velocity.getY() + angularVelocity * (elevatorsPoint.getX() * cos(pitchAngle) - 
+                                             elevatorsPoint.getY() * sin(pitchAngle))};
     
-    std::tie(elevatorsForce, elevatorsTorque) = elevators.getForceAndTorque(elevatorsVelocity, angle, airDensity, height);
+    std::tie(elevatorsForce, elevatorsTorque) = elevators.getForceAndTorque(elevatorsVelocity, pitchAngle, airDensity, height);
     
     // Forces update
     Vec2 netForce;
@@ -35,15 +36,15 @@ void Plane::update(double delta) {
     netForce += elevatorsForce;
 
     // Thrust
-    Vec2 thrust = engine.getThrust(angle);
+    Vec2 thrust = engine.getThrust(pitchAngle);
     netForce += thrust;
    
     // Wheels force
     Vec2 frontWheelsForce, mainWheelsForce;
     double frontWheelsTorque, mainWheelsTorque;
 
-    std::tie(frontWheelsForce, frontWheelsTorque) = frontWheels.getForceAndTorque(velocity, pos, angularVelocity, angle, mass);
-    std::tie(mainWheelsForce, mainWheelsTorque) = mainWheels.getForceAndTorque(velocity, pos, angularVelocity, angle, mass);
+    std::tie(frontWheelsForce, frontWheelsTorque) = frontWheels.getForceAndTorque(velocity, pos, angularVelocity, pitchAngle, mass);
+    std::tie(mainWheelsForce, mainWheelsTorque) = mainWheels.getForceAndTorque(velocity, pos, angularVelocity, pitchAngle, mass);
 
     cout << endl << "FRONT WHEELS FORCE: " << frontWheelsForce << endl << endl;
     cout << endl << "MAIN WHEELS FORCE: " << mainWheelsForce << endl << endl;
@@ -55,7 +56,7 @@ void Plane::update(double delta) {
     // dynamicPressure * area * coefficients.drag;
     double dynamicPressure = 0.5 * airDensity * velocity.lengthSquared();
     double fuselageArea = 4 * 4; // Simple square for now
-    double fuselageDragCoef = 1.4; // Experimentally obtained
+    double fuselageDragCoef = 1.0; // Experimentally obtained
     double fuselageDragMagnitude = dynamicPressure * fuselageArea * fuselageDragCoef;
     Vec2 fuselageDrag = - velocity.normalized() * fuselageDragMagnitude;
     netForce += fuselageDrag;
@@ -71,13 +72,13 @@ void Plane::update(double delta) {
 
     double angularAcceleration = torque / inertia;
     angularVelocity += angularAcceleration * delta;   
-    angle += angularVelocity * delta;
+    pitchAngle += angularVelocity * delta;
 
-    // Making sure angle stays within [-pi, pi] rads
-    if (angle > M_PI)
-        angle -= 2 * M_PI;
-    if (angle < -M_PI)
-        angle += 2 * M_PI;
+    // Making sure pitch angle stays within [-pi, pi] rads
+    if (pitchAngle > M_PI)
+        pitchAngle -= 2 * M_PI;
+    if (pitchAngle < -M_PI)
+        pitchAngle += 2 * M_PI;
 
     // Final calculations
     Vec2 acceleration = netForce / mass;
@@ -87,10 +88,10 @@ void Plane::update(double delta) {
     //cout << pos.getX() << " " << pos.getY() << endl;
     cout << "Pos: " << pos << endl;
     cout << "Vel: " << velocity << endl;
-    cout << "Angle: " << angle / M_PI * 180 << " deg" << endl;
+    cout << "Pitch Angle: " << pitchAngle / M_PI * 180 << " deg" << endl;
     cout << "AngVel: " << angularVelocity / M_PI * 180 << " deg/sec" << endl;
-    cout << "Wings AoA: " << wings.getAngleOfAttack(velocity, angle) / M_PI * 180 << " deg" << endl;
-    cout << "Elevators AoA: " << elevators.getAngleOfAttack(velocity, angle) / M_PI * 180 << " deg"  << endl;
+    cout << "Wings AoA: " << wings.getAngleOfAttack(velocity, pitchAngle) / M_PI * 180 << " deg" << endl;
+    cout << "Elevators AoA: " << elevators.getAngleOfAttack(velocity, pitchAngle) / M_PI * 180 << " deg"  << endl;
     cout << "--------------------------------------" << endl;
     cout << "Gravity: " << weight << endl;
     cout << "Wings: " << wingsForce << " " << wingsTorque + wingsPoint.cross(wingsForce) << endl;
@@ -111,6 +112,7 @@ void Plane::update(double delta) {
 
 Plane Plane::getDefaultPlane() {
     Airfoil wings(
+        /*
             Table(
             {
                 { -8.0 * M_PI / 180, -0.45, 0.022, 0.246, -0.097 },
@@ -126,7 +128,25 @@ Plane Plane::getDefaultPlane() {
                 { 12.0 * M_PI / 180,  1.36, 0.030, 0.246, -0.092 },
                 { 14.0 * M_PI / 180,  1.35, 0.042, 0.246, -0.092 },
                 { 16.0 * M_PI / 180,  1.25, 0.059, 0.246, -0.095 }
-            }), // default flaps position 
+            }), // default flaps position OLD
+        */
+
+            // OFFICIAL DATA OF MIDSPAN AIRFOIL OF BOEING-737
+            Table(
+            {
+                { deg2rad(-8.0),  -0.5,  0.08, 0.25, -0.033},
+                { deg2rad(-6.0), -0.42,  0.05, 0.25, -0.028},
+                { deg2rad(-4.0),  -0.4,  0.02, 0.25,  -0.02},
+                { deg2rad(-2.0), -0.05,  0.01, 0.25,  -0.02},
+                {  deg2rad(0.0), -0.05,  0.01, 0.25, -0.025},
+                {  deg2rad(2.0),  0.05,  0.01, 0.25,  -0.03},
+                {  deg2rad(4.0),  0.55,  0.01, 0.25, -0.028},
+                {  deg2rad(6.0),  0.78, 0.018, 0.25, -0.018},
+                {  deg2rad(8.0),  0.93, 0.025, 0.25, -0.008},
+                { deg2rad(10.0),   1.0,  0.04, 0.25,      0},
+                { deg2rad(12.0),   0.8,  0.06, 0.25,   0.01},
+                { deg2rad(14.0),   0.2,  0.18, 0.25,  -0.01},
+            }),
             /*
                 Original lift old drag
                 { -8.0 * M_PI / 180,    0.90,    0.055,  0.25,   -0.287 },
@@ -140,32 +160,6 @@ Plane Plane::getDefaultPlane() {
                 {  8.0 * M_PI / 180,    2.50,    0.043,  0.25,   -0.300 },
                 { 10.0 * M_PI / 180,    2.65,    0.055,  0.25,   -0.290 },
                 { 12.0 * M_PI / 180,    2.63,    0.075,  0.25,   -0.275 }
-                
-                Old lift new drag
-                { -8.0 * M_PI / 180,    0.81,    0.082,  0.25,   -0.287 },
-                { -6.0 * M_PI / 180,    1.00,    0.052,  0.25,   -0.297 },
-                { -4.0 * M_PI / 180,    1.20,    0.045,  0.25,   -0.302 },
-                { -2.0 * M_PI / 180,    1.40,    0.037,  0.25,   -0.305 },
-                {  0.0 * M_PI / 180,    1.57,    0.037,  0.25,   -0.305 },
-                {  2.0 * M_PI / 180,    1.75,    0.037,  0.25,   -0.305 },
-                {  4.0 * M_PI / 180,    1.92,    0.045,  0.25,   -0.305 },
-                {  6.0 * M_PI / 180,    2.19,    0.052,  0.25,   -0.302 },
-                {  8.0 * M_PI / 180,    2.50,    0.064,  0.25,   -0.300 },
-                { 10.0 * M_PI / 180,    2.25,    0.082,  0.25,   -0.290 },
-                { 12.0 * M_PI / 180,    2.24,    0.112,  0.25,   -0.275 }
-
-                Second lift, drag unchanged from previous
-                { -8.0 * M_PI / 180,    0.65,    0.082,  0.25,   -0.287 },
-                { -6.0 * M_PI / 180,    0.80,    0.052,  0.25,   -0.297 },
-                { -4.0 * M_PI / 180,    0.96,    0.045,  0.25,   -0.302 },
-                { -2.0 * M_PI / 180,    1.12,    0.037,  0.25,   -0.305 },
-                {  0.0 * M_PI / 180,    1.26,    0.037,  0.25,   -0.305 },
-                {  2.0 * M_PI / 180,    1.4,    0.037,  0.25,   -0.305 },
-                {  4.0 * M_PI / 180,    1.54,    0.045,  0.25,   -0.305 },
-                {  6.0 * M_PI / 180,    1.75,    0.052,  0.25,   -0.302 },
-                {  8.0 * M_PI / 180,    2.00,    0.064,  0.25,   -0.300 },
-                { 10.0 * M_PI / 180,    1.80,    0.082,  0.25,   -0.290 },
-                { 12.0 * M_PI / 180,    1.79,    0.112,  0.25,   -0.275 }
             */
             Table(
             {
@@ -182,7 +176,7 @@ Plane Plane::getDefaultPlane() {
                 { 12.0 * M_PI / 180,    1.52,    0.112,  0.25,   -0.275 }
             }), // take-off flaps position coeffs
             103, // area
-            0.0623598775, // angle
+            0.0623598775, // construction pitch angle
             3.6 // chordLength
     );
 
@@ -224,14 +218,14 @@ Plane Plane::getDefaultPlane() {
                 {  14.0 * M_PI / 180,  0.87, 0.036, 0.25, -0.012 }
             }), // temp solution TODO: refactor airfoil constructor to allow creating airfoils with no flaps
             33, // area
-            -0.0104719755, // angle
+            -0.0104719755, // construction pitch angle
             2.6 // chordLength
     );
 
     Plane plane = Plane(
-        Vec2(1, 4), // pos
+        Vec2(1, 1), // pos
         Vec2(1, 0),// velocity
-        0, // angle in rads
+        0, // pitch angle in rads
         51710, // mass
         2027731, // inertia
         
@@ -241,7 +235,7 @@ Plane Plane::getDefaultPlane() {
         Vec2(-15, 1), // elevatorsPoint
         Engine(105000), // engine
         Wheels(72467, 10, 10000, Vec2(15, -2)), // Front wheels
-        Wheels(434802, 400, 40000, Vec2(-2, -2)) // Main wheels
+        Wheels(434802, 400, 40000, Vec2(-3, -2)) // Main wheels
     );
 
     return plane;

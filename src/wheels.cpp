@@ -5,14 +5,14 @@
 using std::cout;
 using std::endl;
 
-std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const Vec2& planePosition, double angularVelocity, double angle, double mass) const {
+std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const Vec2& planePosition, double angularVelocity, double pitchAngle, double mass) const {
     Vec2 force;
     double torque;
 
     // Position relative to the plane
     Vec2 relativePosition = Vec2(
-        position.getX() * cos(angle) - position.getY() * sin(angle),
-        position.getX() * sin(angle) + position.getY() * cos(angle)
+        position.getX() * cos(pitchAngle) - position.getY() * sin(pitchAngle),
+        position.getX() * sin(pitchAngle) + position.getY() * cos(pitchAngle)
     );
 
     // Check contact with ground (no contact = no force)

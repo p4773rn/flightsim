@@ -50,7 +50,7 @@ Frontend2d::Frontend2d() {
 void Frontend2d::update(const Plane& plane) {
     // TODO: remove old points
     points.push_back({float(plane.getPos().getX()), -float(plane.getPos().getY())});
-    pitch = plane.getAngle();
+    pitch = plane.getPitchAngle();
 
     altitude = plane.getPos().getY();
     velocity = plane.getVelocity();

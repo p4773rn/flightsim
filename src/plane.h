@@ -10,7 +10,7 @@ class Plane {
 public:
     Plane(Vec2 pos,
           Vec2 velocity,
-          double angle,
+          double pitchAngle,
           double mass,
           double inertia,
 
@@ -24,7 +24,7 @@ public:
           
           pos{pos},
           velocity{velocity},
-          angle{angle},
+          pitchAngle{pitchAngle},
           angularVelocity{0},
           mass{mass},
           inertia{inertia},
@@ -42,7 +42,7 @@ public:
 
     double getHeight() const {return pos.getY();}
     const Vec2& getPos() const {return pos;}
-    float getAngle() const {return angle;}
+    float getPitchAngle() const {return pitchAngle;}
     Vec2 getVelocity() const {return velocity;}
     
     void update(double delta);
@@ -66,7 +66,7 @@ public:
 private:
     Vec2 pos; // For now, xy coordinates of the plane
     Vec2 velocity;
-    double angle; // angle of plane relative to horizon
+    double pitchAngle; // pitchAngle of plane relative to horizon
     double angularVelocity;
     double mass;
     double inertia;
