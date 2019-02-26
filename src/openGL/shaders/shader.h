@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <utility>
+#include <initializer_list>
 
 class Shader {
 	private:
@@ -16,6 +17,7 @@ class Shader {
 		bool check_error(GLuint program, bool isShader, const std::string& error_msg);
 	public:
 		Shader(const std::vector<std::pair<std::string, GLuint>>& paths);
+		Shader(std::initializer_list<std::pair<std::string, GLuint>> paths);
 		~Shader();
 		void use();
 		GLuint getID() const { return program; }

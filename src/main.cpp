@@ -24,14 +24,17 @@ int main()
     window.setMouseCursorVisible(false);
 
     sf::Clock clock;
-    double lastUpdateTime = clock.getElapsedTime().asSeconds();
 
     sf::View view = window.getDefaultView();
-    
+    std::cout << "TEST" << std::endl;
+
+	//WE INIT GLEW BEFORE FRONTEND
+	if (GLEW_OK != glewInit()) std::cerr << "GLEW INIT Error";
     Frontend3d frontend;
 
     Plane plane = Plane::getDefaultPlane();
     // plane.setThrottle(75);
+    double lastUpdateTime = clock.getElapsedTime().asSeconds();
 
     while (window.isOpen())
     {
@@ -75,7 +78,7 @@ int main()
             }
         }
 
-        std::cout << clock.getElapsedTime().asSeconds() * SPEED << " " << std::endl;
+        //std::cout << clock.getElapsedTime().asSeconds() * SPEED << " " << std::endl;
 
         plane.update((clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED);
         lastUpdateTime = clock.getElapsedTime().asSeconds();

@@ -9,15 +9,12 @@
 #include <tuple>
 
 #define HALF_SIZE 8000
-#define Y_INCREMENT 19
+#define Y_INCREMENT 0
 
-Grid3d::Grid3d() {
-    std::vector<std::pair<std::string, GLuint>> paths = {
-      std::pair<std::string, GLuint>("src/openGL/shaders/grid3d.vrtx", GL_VERTEX_SHADER),
-      std::pair<std::string, GLuint>("src/openGL/shaders/grid3d.frgmnt", GL_FRAGMENT_SHADER)
-    };
-	shader = std::make_unique<Shader>(paths);
-
+Grid3d::Grid3d() : 
+	shader({{"src/openGL/shaders/grid3d.vrtx", GL_VERTEX_SHADER},
+			{"src/openGL/shaders/grid3d.frgmnt", GL_FRAGMENT_SHADER}})
+{
     vertices = {
          HALF_SIZE, -Y_INCREMENT, HALF_SIZE,
          HALF_SIZE, -Y_INCREMENT,-HALF_SIZE,
@@ -42,14 +39,17 @@ Grid3d::Grid3d() {
 	glEnableVertexAttribArray(0);
 }
 
+Grid3d::~Grid3d() {
+	if (VAO) glDeleteVertexArrays(1, &VAO);
+	if (VBO) glDeleteBuffers(1, &VBO);
+	if (EBO) glDeleteBuffers(1, &EBO);
+}
 
-int frame = 0;
 void Grid3d::render(const glm::vec3& pos, const glm::mat4& view, const glm::mat4& projection) {
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glBindVertexArray(VAO);
 	//glDepthMask(GL_FALSE);
-	shader->use();
-	frame++;
+	shader.use();
 	glm::mat4 model1 = glm::translate(glm::mat4(1.), 
 	                    glm::vec3(  pos.x, 
 	                                0, //pos.y, //int(pos.y/Y_INCREMENT) * Y_INCREMENT, 
@@ -59,16 +59,16 @@ void Grid3d::render(const glm::vec3& pos, const glm::mat4& view, const glm::mat4
 	                                0,
 	                                pos.z));
 
-	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "model1"),
+	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "model1"),
                      1, GL_FALSE, glm::value_ptr(model1));
-	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "model2"),
+	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "model2"),
                      1, GL_FALSE, glm::value_ptr(model2));
-	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "view"),
+	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "view"),
                      1, GL_FALSE, glm::value_ptr(view));
-  	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "projection"),
+  	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "projection"),
                      1, GL_FALSE,
                      glm::value_ptr(projection));
-    glUniform1f(glGetUniformLocation(shader->getID(), "height"), pos.y);
+    glUniform1f(glGetUniformLocation(shader.getID(), "height"), pos.y);
     
 
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);

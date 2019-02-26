@@ -36,16 +36,12 @@ void print_tree(TreeNode* n, int i) {
 }
 
 Quadtree::Quadtree(const glm::vec3& _camera_position, const std::string& path, const float width, const float height) :
-	camera_position{_camera_position}
+	camera_position(_camera_position),
+	shader({{"src/openGL/shaders/terrain.vrtx", GL_VERTEX_SHADER},
+		  {"src/openGL/shaders/terrain.tec", GL_TESS_CONTROL_SHADER},
+		  {"src/openGL/shaders/terrain.tse", GL_TESS_EVALUATION_SHADER},
+		  {"src/openGL/shaders/terrain.frgmnt", GL_FRAGMENT_SHADER}})
 {
-	std::vector<std::pair<std::string, GLuint>> paths = {
-      std::pair<std::string, GLuint>("src/openGL/shaders/terrain.vrtx", GL_VERTEX_SHADER),
-      std::pair<std::string, GLuint>("src/openGL/shaders/terrain.tec", GL_TESS_CONTROL_SHADER),
-      std::pair<std::string, GLuint>("src/openGL/shaders/terrain.tse", GL_TESS_EVALUATION_SHADER),
-      std::pair<std::string, GLuint>("src/openGL/shaders/terrain.frgmnt", GL_FRAGMENT_SHADER)
-    };
-    shader = new Shader(paths);
-
 	nodes = new TreeNode[MAX_NODES];
 	root = nodes;
 	root->origin.x = 0.0f;
@@ -79,8 +75,8 @@ Quadtree::Quadtree(const glm::vec3& _camera_position, const std::string& path, c
 Quadtree::~Quadtree() {
 	if (nodes)
 		delete[] nodes;
-	if (shader)
-		delete shader;
+	if (VAO) glDeleteVertexArrays(1, &VAO);
+	if (VBO) glDeleteBuffers(1, &VBO);
 }
 
 TreeNode* Quadtree::create_node(TreeNode* p, const glm::vec2& origin) {
@@ -169,11 +165,11 @@ void Quadtree::renderNode(TreeNode* node) {
 	if (node->width == 1024)
 	std::cout << "\r" << node->origin.x << "x:" << node->origin.y << "y"<< std::flush;
 	glm::mat4 model = trans * scale;
-	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-	glUniform1f(glGetUniformLocation(shader->getID(), "tesselation_right"), node->tesselation_right);
-	glUniform1f(glGetUniformLocation(shader->getID(), "tesselation_left"), node->tesselation_left);
-	glUniform1f(glGetUniformLocation(shader->getID(), "tesselation_top"), node->tesselation_top);
-	glUniform1f(glGetUniformLocation(shader->getID(), "tesselation_bottom"), node->tesselation_bottom);
+	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glUniform1f(glGetUniformLocation(shader.getID(), "tesselation_right"), node->tesselation_right);
+	glUniform1f(glGetUniformLocation(shader.getID(), "tesselation_left"), node->tesselation_left);
+	glUniform1f(glGetUniformLocation(shader.getID(), "tesselation_top"), node->tesselation_top);
+	glUniform1f(glGetUniformLocation(shader.getID(), "tesselation_bottom"), node->tesselation_bottom);
 	glBindVertexArray(VAO);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glPatchParameteri(GL_PATCH_VERTICES, 4);
@@ -198,23 +194,23 @@ void Quadtree::construct_tree() {
 }
 
 void Quadtree::render(const glm::vec3 _camera_position, const glm::mat4& view, const glm::mat4& proj, const glm::vec3& sun) {
-	shader->use();
+	shader.use();
 	camera_position = _camera_position;
 	int t_units[MAX_TEXTURES] = {3, 4, 5, 6};
-	glUniform3fv(glGetUniformLocation(shader->getID(), "sun"),
+	glUniform3fv(glGetUniformLocation(shader.getID(), "sun"),
 					 1, glm::value_ptr(sun));
-	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "view"),
+	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "view"),
                      1, GL_FALSE, glm::value_ptr(view));
-  	glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "projection"),
+  	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "projection"),
                      1, GL_FALSE,
                      glm::value_ptr(proj));
-  	glUniform1i(glGetUniformLocation(shader->getID(), "heightmap"), 0);
+  	glUniform1i(glGetUniformLocation(shader.getID(), "heightmap"), 0);
   	heightmap.activate(GL_TEXTURE0);
-  	glUniform1i(glGetUniformLocation(shader->getID(), "splatmap"), 1);
+  	glUniform1i(glGetUniformLocation(shader.getID(), "splatmap"), 1);
   	splatmap.activate(GL_TEXTURE1);
-  	glUniform1i(glGetUniformLocation(shader->getID(), "lightmap"), 2);
+  	glUniform1i(glGetUniformLocation(shader.getID(), "lightmap"), 2);
   	lightmap.activate(GL_TEXTURE2);
-  	glUniform1iv(glGetUniformLocation(shader->getID(), "textures"), MAX_TEXTURES, t_units);
+  	glUniform1iv(glGetUniformLocation(shader.getID(), "textures"), MAX_TEXTURES, t_units);
   	for(size_t i = 0; i < MAX_TEXTURES; ++i) {
   		textures[i].activate(GL_TEXTURE3 + i);
   	}

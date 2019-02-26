@@ -50,7 +50,7 @@ private:
 	TreeNode* root;
 	TreeNode* current;
 
-	Shader* shader;
+	Shader shader;
 	GLuint VAO, VBO;
 	Texture heightmap;
 	Texture splatmap;

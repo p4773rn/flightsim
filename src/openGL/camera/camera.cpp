@@ -10,7 +10,8 @@ pitch{0}, yaw{0}
 
 Camera::Camera(const glm::vec3& _position) : pitch{0}, yaw{0}, position{_position}
 {
-    move_mouse(0, 0);   
+    move_mouse(0, 0);
+	std::cout << "Camera was created...\n";
 }
 
 void Camera::move_mouse(float x_offset, float y_offset) {

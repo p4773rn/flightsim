@@ -2,21 +2,28 @@
 #define FRONTEND3D_H
 
 #include <SFML/Graphics.hpp>
-#include "plane.h"
 #include <list>
-#include "misc.h"
 #include <memory>
+#include "plane.h"
+#include "misc.h"
 #include "openGL/camera/camera.h"
 #include "openGL/terrain/terrain.h"
 #include "openGL/terrain/sky.h"
 #include "openGL/model/model.h"
 #include "openGL/shaders/shader.h"
 #include "openGL/grid3d.h"
+#include "openGL/arrow.h"
 
 
 class Frontend3d {
 public:
-    Frontend3d();
+    Frontend3d () :
+		camera(glm::vec3(0.0, 40.0f, 0.0)),
+		mainShader({{"src/openGL/shaders/basic.vrtx", GL_VERTEX_SHADER},
+					{"src/openGL/shaders/basic.frgmnt", GL_FRAGMENT_SHADER}}),
+		planeModel("assets/models/boeing.obj"),
+		sky("assets/terrain/textures/sky")
+	{std::cout << "Frontend3D was created...\n";};
 
     void update(const glm::vec3& planePos, const glm::vec3& yawPitchRoll);
 
@@ -31,13 +38,13 @@ private:
     glm::vec3 yawPitchRoll;
     
     Camera camera;
-    float cameraDistance = 200; // distance from plane
-    std::unique_ptr<Shader> mainShader;
-    std::unique_ptr<Model> planeModel;
-    std::unique_ptr<Sky> sky;
-    std::unique_ptr<Terrain> terrain;
-
-    std::unique_ptr<Grid3d> grid;
+    Shader mainShader;
+    Model planeModel;
+    Sky sky;
+	Grid3d grid;
+	Arrow arrow;
+    float cameraDistance = 50; // distance from plane
+    //Terrain terrain;
 };
 
 

@@ -15,12 +15,12 @@ using std::endl;
 
 Model::Model(const std::string& fname) : 
     file_name{fname},
-    shader({
-               std::pair<std::string, GLuint>("src/openGL/shaders/basic.vrtx", GL_VERTEX_SHADER),
-               std::pair<std::string, GLuint>("src/openGL/shaders/basic.frgmnt", GL_FRAGMENT_SHADER)
+    shader({{"src/openGL/shaders/basic.vrtx", GL_VERTEX_SHADER},
+            {"src/openGL/shaders/basic.frgmnt", GL_FRAGMENT_SHADER}
            })
 { 
     load_obj(file_name);
+	std::cout << "Model " << fname << " was created...\n";
 }
 
 void Model::load_obj(const std::string& file_name) {

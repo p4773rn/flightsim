@@ -2,19 +2,21 @@
 #include "shader.h"
 #include <sstream>
 
-Shader::Shader(const std::vector<std::pair<std::string, GLuint>>& paths){
+
+Shader::Shader(std::initializer_list<std::pair<std::string, GLuint>> paths){
+	std::cout << "Creating Shader...\n";
 	program = glCreateProgram();
 	std::vector<GLuint> shaders;
-	for (const auto& p : paths) {
-		GLuint sh = create_shader(p.first, p.second);
-		glAttachShader(program, sh);
-		shaders.push_back(sh);
+	for (auto& path : paths) {
+		std::cout << path.first << " " << path.second << std::endl;
+		GLuint shader = create_shader(path.first, path.second);
+		glAttachShader(program, shader);
+		shaders.push_back(shader);
 	}
 	glLinkProgram(program);
 	check_error(program, false, "LINKING::ERROR");
-
-	for (auto sh : shaders)
-	    glDeleteShader(sh);
+	for (auto& shader : shaders)
+		glDeleteShader(shader);
 }
 
 Shader::~Shader() {

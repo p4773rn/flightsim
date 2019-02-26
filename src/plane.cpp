@@ -45,8 +45,8 @@ void Plane::update(double delta) {
     std::tie(frontWheelsForce, frontWheelsTorque) = frontWheels.getForceAndTorque(velocity, pos, angularVelocity, angle, mass);
     std::tie(mainWheelsForce, mainWheelsTorque) = mainWheels.getForceAndTorque(velocity, pos, angularVelocity, angle, mass);
 
-    cout << endl << "FRONT WHEELS FORCE: " << frontWheelsForce << endl << endl;
-    cout << endl << "MAIN WHEELS FORCE: " << mainWheelsForce << endl << endl;
+    //cout << endl << "FRONT WHEELS FORCE: " << frontWheelsForce << endl << endl;
+    //cout << endl << "MAIN WHEELS FORCE: " << mainWheelsForce << endl << endl;
     netForce += frontWheelsForce;
     netForce += mainWheelsForce;
 
@@ -79,29 +79,29 @@ void Plane::update(double delta) {
     velocity += acceleration * delta;
     pos += velocity * delta;
 
-    //cout << pos.getX() << " " << pos.getY() << endl;
-    cout << "Pos: " << pos << endl;
-    cout << "Vel: " << velocity << endl;
-    cout << "Angle: " << angle / M_PI * 180 << " deg" << endl;
-    cout << "AngVel: " << angularVelocity / M_PI * 180 << " deg/sec" << endl;
-    cout << "Wings AoA: " << wings.getAngleOfAttack(velocity, angle) / M_PI * 180 << " deg" << endl;
-    cout << "Elevators AoA: " << elevators.getAngleOfAttack(velocity, angle) / M_PI * 180 << " deg"  << endl;
-    cout << "--------------------------------------" << endl;
-    cout << "Gravity: " << weight << endl;
-    cout << "Wings: " << wingsForce << " " << wingsTorque + wingsPoint.cross(wingsForce) << endl;
-    cout << "Engines: " << thrust << endl;
-    cout << "Elevators: " << elevatorsForce << " " << elevatorsTorque + elevatorsPoint.cross(elevatorsForce) << endl;
-    cout << "Fuselage: " << fuselageDrag << endl;
-    cout << "Total: " << netForce << " " << torque << endl;
-    cout << "--------------------------------------" << endl;
-    cout << "Air density: " << airDensity << endl;
-    cout << "Ground effect multiplier: " << getGroundEffect(height) << endl;
-    cout << "--------------------------------------" << endl;
-    cout << "Throttle: " << engine.getThrottle() << endl;
-    cout << "Elevator Deflection: " << elevators.getDeflection() << endl;
-    cout << "Flaps position: " << wings.getFlaps() << endl;
-    cout << "Brakes on/off: " << mainWheels.getBrakesStatus() << endl;
-    cout << endl;
+    ////cout << pos.getX() << " " << pos.getY() << endl;
+    //cout << "Pos: " << pos << endl;
+    //cout << "Vel: " << velocity << endl;
+    //cout << "Angle: " << angle / M_PI * 180 << " deg" << endl;
+    //cout << "AngVel: " << angularVelocity / M_PI * 180 << " deg/sec" << endl;
+    //cout << "Wings AoA: " << wings.getAngleOfAttack(velocity, angle) / M_PI * 180 << " deg" << endl;
+    //cout << "Elevators AoA: " << elevators.getAngleOfAttack(velocity, angle) / M_PI * 180 << " deg"  << endl;
+    //cout << "--------------------------------------" << endl;
+    //cout << "Gravity: " << weight << endl;
+    //cout << "Wings: " << wingsForce << " " << wingsTorque + wingsPoint.cross(wingsForce) << endl;
+    //cout << "Engines: " << thrust << endl;
+    //cout << "Elevators: " << elevatorsForce << " " << elevatorsTorque + elevatorsPoint.cross(elevatorsForce) << endl;
+    //cout << "Fuselage: " << fuselageDrag << endl;
+    //cout << "Total: " << netForce << " " << torque << endl;
+    //cout << "--------------------------------------" << endl;
+    //cout << "Air density: " << airDensity << endl;
+    //cout << "Ground effect multiplier: " << getGroundEffect(height) << endl;
+    //cout << "--------------------------------------" << endl;
+    //cout << "Throttle: " << engine.getThrottle() << endl;
+    //cout << "Elevator Deflection: " << elevators.getDeflection() << endl;
+    //cout << "Flaps position: " << wings.getFlaps() << endl;
+    //cout << "Brakes on/off: " << mainWheels.getBrakesStatus() << endl;
+    //cout << endl;
 }
 
 Plane Plane::getDefaultPlane() {

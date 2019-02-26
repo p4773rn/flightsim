@@ -8,10 +8,11 @@
 class Sky {
 public:
 	Sky(const std::string& path);
+	~Sky();
 	void render(const glm::mat4& view, const glm::mat4& projection);
 private:
 	GLuint texture;
-	Shader* shader;
+	Shader shader;
 	GLuint VAO;
 	GLuint VBO;
 };
