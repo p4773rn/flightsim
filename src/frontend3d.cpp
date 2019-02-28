@@ -49,7 +49,7 @@ void Frontend3d::draw(sf::RenderWindow& window) {
     //terrain->draw(camera.get_position(), view, projection, glm::vec3(light));
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    planeModel->draw(glm::scale(planeTransform, glm::vec3(10,10,10)), view, projection, 
+    planeModel->draw(glm::scale(planeTransform, glm::vec3(1,1,1)), view, projection, 
                 camera.get_position(), glm::vec3(view * light));
     glDisable(GL_BLEND);
 }

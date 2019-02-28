@@ -9,7 +9,7 @@
 #include <tuple>
 
 #define HALF_SIZE 8000
-#define Y_INCREMENT 19
+#define Y_INCREMENT 0
 
 Grid3d::Grid3d() {
     std::vector<std::pair<std::string, GLuint>> paths = {
