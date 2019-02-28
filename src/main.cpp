@@ -23,12 +23,10 @@ int main()
     window.setFramerateLimit(FPS);
     window.setMouseCursorVisible(false);
 
-    sf::Vector2<int> windowPosition(1920-800, 0);
+    sf::Vector2<int> windowPosition(400, 0);
 
     window.setPosition(windowPosition);
 
-    sf::Clock clock;
-    double lastUpdateTime = clock.getElapsedTime().asSeconds();
 
     sf::View view = window.getDefaultView();
     
@@ -38,6 +36,10 @@ int main()
     // plane.setThrottle(75);
     // TODO: put this inside plane somewhere
     double elevatorsDevlectionStep = 0.05;
+    
+    
+    sf::Clock clock;
+    double lastUpdateTime = clock.getElapsedTime().asSeconds();
     while (window.isOpen())
     {
         sf::Event event;

@@ -223,7 +223,7 @@ Plane Plane::getDefaultPlane() {
     );
 
     Plane plane = Plane(
-        Vec2(1, 1), // pos
+        Vec2(1, 2), // pos
         Vec2(1, 0),// velocity
         0, // pitch angle in rads
         51710, // mass

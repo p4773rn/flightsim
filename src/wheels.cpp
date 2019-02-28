@@ -24,7 +24,7 @@ std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const V
     Vec2 relativeSpeed = Vec2( -angularVelocity * relativePosition.getY(), angularVelocity * relativePosition.getX());
 
     // Check for crash
-    /*
+    
     if (relativePosition.getY() + planePosition.getY() < position.getY()) {
         cout << "Crash Position: " << relativePosition + planePosition << endl;
         cout << "Crash Speed: " << relativeSpeed + velocity << endl;
@@ -35,7 +35,7 @@ std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const V
         }
         throw std::runtime_error("Wheels break");
     }
-*/
+
     Vec2 absolutePosition = relativePosition + planePosition;
     Vec2 absoluteSpeed = relativeSpeed + velocity;
 
