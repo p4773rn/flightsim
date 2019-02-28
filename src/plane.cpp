@@ -175,8 +175,8 @@ Plane Plane::getDefaultPlane() {
                 { 10.0 * M_PI / 180,    1.53,    0.082,  0.25,   -0.290 },
                 { 12.0 * M_PI / 180,    1.52,    0.112,  0.25,   -0.275 }
             }), // take-off flaps position coeffs
-            103, // area
-            0.0623598775, // construction pitch angle
+            105, // area
+            deg2rad(2), // construction pitch angle
             3.6 // chordLength
     );
 
@@ -218,7 +218,7 @@ Plane Plane::getDefaultPlane() {
                 {  14.0 * M_PI / 180,  0.87, 0.036, 0.25, -0.012 }
             }), // temp solution TODO: refactor airfoil constructor to allow creating airfoils with no flaps
             33, // area
-            -0.0104719755, // construction pitch angle
+            deg2rad(-5), // construction pitch angle
             2.6 // chordLength
     );
 
@@ -230,7 +230,7 @@ Plane Plane::getDefaultPlane() {
         2027731, // inertia
         
         std::move(wings),
-        Vec2(-1, 0), // wingsPoint
+        Vec2(-0.5, 0), // wingsPoint
         std::move(elevators),
         Vec2(-15, 1), // elevatorsPoint
         Engine(105000), // engine

@@ -64,7 +64,7 @@ std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const V
         double frictionForceMagnitude = (rollingFrictionMagnitude + axleFrictionMagnitude) / 2;
         if (brakesOn > 0) {
             // TODO: Temp storage of friction coeffs, probably refactor?
-            double slipFrictionCoefficient = 0.7;
+            double slipFrictionCoefficient = 0.6;
             // ABS braking gives friciton which is not greater than friction from slipping
             // Assumption: Ideal ABS gives the same friction as slipping (without damaging tires)
             double brakesFrictionMagnitude = normalForceMagnitude * slipFrictionCoefficient;

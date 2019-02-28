@@ -78,11 +78,11 @@ void Frontend3d::mouseInput(sf::Window& window){
     
     
     //camera.move_mouse(offset_x, offset_y);
-    cameraDistance = clamp(cameraDistance, 100.0f, 1500.0f);
+    cameraDistance = clamp(cameraDistance, 20.0f, 1500.0f);
     camera.orbit(offset_x, offset_y, cameraDistance, planePos); 
 }
 
 void Frontend3d::input(const sf::Event& event) {
     if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
-        cameraDistance += event.mouseWheelScroll.delta * -20;
+        cameraDistance += event.mouseWheelScroll.delta * -10;
 }

@@ -23,7 +23,10 @@ int main()
     window.setFramerateLimit(FPS);
     window.setMouseCursorVisible(false);
 
-    sf::Vector2<int> windowPosition(400, 0);
+    int screenWidth = sf::VideoMode::getDesktopMode().width;
+    if (screenWidth > 1920)
+        screenWidth = 1920;
+    sf::Vector2<int> windowPosition(screenWidth - 800, 0);
 
     window.setPosition(windowPosition);
 
@@ -64,6 +67,9 @@ int main()
                             break;
                         case sf::Keyboard::W:
                             plane.setElevatorDeflection(plane.getElevatorDeflection() + elevatorsDevlectionStep);
+                            break;
+                        case sf::Keyboard::E:
+                            plane.setElevatorDeflection(0);
                             break;
                         case sf::Keyboard::F:
                             plane.setFlaps(plane.getFlaps() - 0.25);
