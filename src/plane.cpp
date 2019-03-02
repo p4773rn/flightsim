@@ -46,8 +46,8 @@ void Plane::update(double delta) {
     std::tie(frontWheelsForce, frontWheelsTorque) = frontWheels.getForceAndTorque(velocity, pos, angularVelocity, pitchAngle, mass);
     std::tie(mainWheelsForce, mainWheelsTorque) = mainWheels.getForceAndTorque(velocity, pos, angularVelocity, pitchAngle, mass);
 
-    //cout << endl << "FRONT WHEELS FORCE: " << frontWheelsForce << endl << endl;
-    //cout << endl << "MAIN WHEELS FORCE: " << mainWheelsForce << endl << endl;
+    cout << endl << "FRONT WHEELS FORCE: " << frontWheelsForce << endl << endl;
+    cout << endl << "MAIN WHEELS FORCE: " << mainWheelsForce << endl << endl;
     netForce += frontWheelsForce;
     netForce += mainWheelsForce;
 
@@ -243,7 +243,7 @@ Plane Plane::getDefaultPlane() {
 
     Plane plane = Plane(
         Vec2(1, 2), // pos
-        Vec2(1, 0),// velocity
+        Vec2(0, 0),// velocity
         0, // pitch angle in rads
         51710, // mass
         2027731, // inertia

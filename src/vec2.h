@@ -28,6 +28,8 @@ public:
     }
 
     Vec2 normalized() const {
+        if (length() == 0)
+            return Vec2(0, 0);
         return (*this) / length();
     }
 
