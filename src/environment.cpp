@@ -23,5 +23,5 @@ double getGroundEffect(double height) {
     if (height > 15) {
         return 1;
     }
-    return 1.0 + ((15 - height) * 0.02);
+    return 1.0 + ((15 - height) * 0.013);
 }

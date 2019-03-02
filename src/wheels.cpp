@@ -56,7 +56,7 @@ std::tuple<Vec2, double> Wheels::getForceAndTorque(const Vec2& velocity, const V
         double gravitationalForceMagnitude = mass * GRAVITATIONAL_ACCELERATION;
         double rollingFrictionMagnitude =  normalForceMagnitude * rollingFrictionCoefficient / wheelsRadius;
 
-        double axleFrictionCoefficient = 0.009; // Experimental value
+        double axleFrictionCoefficient = 0.019; // Experimental value
         double numberOfWheels = 8; // TODO: refactor (move this somewhere else)
         // Divide the number of wheels by two because we have two Wheels objects which in sum will give the correct value (TODO: refactor this)
         double axleFrictionMagnitude = normalForceMagnitude * (numberOfWheels / 2) * axleFrictionCoefficient;

@@ -11,7 +11,7 @@
 
 int main()
 {
-    const int SPEED = 3; // simulation speed; 1 = real time; 10 = 10 times faster;
+    const int SPEED = 2; // simulation speed; 1 = real time; 10 = 10 times faster;
     const int FPS = 60; 
     
     sf::ContextSettings settings;
@@ -38,7 +38,7 @@ int main()
     Plane plane = Plane::getDefaultPlane();
     // plane.setThrottle(75);
     // TODO: put this inside plane somewhere
-    double elevatorsDevlectionStep = 0.05;
+    double elevatorsDevlectionStep = 0.01;
     
     
     sf::Clock clock;
@@ -72,10 +72,10 @@ int main()
                             plane.setElevatorDeflection(0);
                             break;
                         case sf::Keyboard::F:
-                            plane.setFlaps(plane.getFlaps() - 0.25);
+                            plane.setFlaps(plane.getFlaps() - 0.05);
                             break;
                         case sf::Keyboard::G:
-                            plane.setFlaps(plane.getFlaps() + 0.25);
+                            plane.setFlaps(plane.getFlaps() + 0.05);
                             break;
                         case sf::Keyboard::B:
                             plane.toggleBrakes();

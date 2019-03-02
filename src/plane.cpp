@@ -56,7 +56,7 @@ void Plane::update(double delta) {
     // dynamicPressure * area * coefficients.drag;
     double dynamicPressure = 0.5 * airDensity * velocity.lengthSquared();
     double fuselageArea = 4 * 4; // Simple square for now
-    double fuselageDragCoef = 1.0; // Experimentally obtained
+    double fuselageDragCoef = 0.11; // Experimentally obtained
     double fuselageDragMagnitude = dynamicPressure * fuselageArea * fuselageDragCoef;
     Vec2 fuselageDrag = - velocity.normalized() * fuselageDragMagnitude;
     netForce += fuselageDrag;
@@ -131,7 +131,8 @@ Plane Plane::getDefaultPlane() {
             }), // default flaps position OLD
         */
 
-            // OFFICIAL DATA OF MIDSPAN AIRFOIL OF BOEING-737
+            // OFFICIAL DATA OF MIDSPAN AIRFOIL OF BOEING-737 FOR R#=50000
+            /*
             Table(
             {
                 { deg2rad(-8.0),  -0.5,  0.08, 0.25, -0.033},
@@ -146,6 +147,24 @@ Plane Plane::getDefaultPlane() {
                 { deg2rad(10.0),   1.0,  0.04, 0.25,      0},
                 { deg2rad(12.0),   0.8,  0.06, 0.25,   0.01},
                 { deg2rad(14.0),   0.2,  0.18, 0.25,  -0.01},
+            }),
+            */
+           // OFFICIAL DATA OF MIDSPAN AIRFOIL OF BOEING-737 FOR R#=200000 (lift only, finish drag, moment)
+            Table(
+            {
+                { deg2rad(-8.0),  -0.8,  0.027, 0.25, -0.018},
+                { deg2rad(-6.0), -0.56,  0.015, 0.25, -0.005},
+                { deg2rad(-4.0),  -0.4,  0.012, 0.25, -0.005},
+                { deg2rad(-2.0),     0,  0.011, 0.25,  -0.01},
+                {  deg2rad(0.0),  0.15,   0.01, 0.25, -0.003},
+                {  deg2rad(2.0),   0.3,  0.012, 0.25, -0.005},
+                {  deg2rad(4.0),  0.61,  0.014, 0.25, -0.008},
+                {  deg2rad(6.0),   0.8,  0.017, 0.25, -0.003},
+                {  deg2rad(8.0),  1.05,  0.022, 0.25, 0.0025},
+                { deg2rad(10.0),  1.15,  0.027, 0.25,  0.007},
+                { deg2rad(12.0),  1.25,  0.032, 0.25,  0.013},
+                { deg2rad(14.0),   1.3,   0.05, 0.25,  0.024},
+                { deg2rad(16.0),   0.8,   0.12, 0.25,      0},
             }),
             /*
                 Original lift old drag
@@ -176,7 +195,7 @@ Plane Plane::getDefaultPlane() {
                 { 12.0 * M_PI / 180,    1.52,    0.112,  0.25,   -0.275 }
             }), // take-off flaps position coeffs
             105, // area
-            deg2rad(2), // construction pitch angle
+            deg2rad(1.5), // construction pitch angle
             3.6 // chordLength
     );
 
@@ -197,7 +216,7 @@ Plane Plane::getDefaultPlane() {
                 {   8.0 * M_PI / 180,  0.85, 0.018, 0.25,  0.0   },
                 {  10.0 * M_PI / 180,  0.90, 0.021, 0.25, -0.002 },
                 {  12.0 * M_PI / 180,  0.89, 0.028, 0.25, -0.004 },
-                {  14.0 * M_PI / 180,  0.87, 0.036, 0.25, -0.012 }
+                {  14.0 * M_PI / 180,  0.87, 0.036, 0.25, -0.012 },
             }),
             Table(
             {
@@ -215,10 +234,10 @@ Plane Plane::getDefaultPlane() {
                 {   8.0 * M_PI / 180,  0.85, 0.018, 0.25,  0.0   },
                 {  10.0 * M_PI / 180,  0.90, 0.021, 0.25, -0.002 },
                 {  12.0 * M_PI / 180,  0.89, 0.028, 0.25, -0.004 },
-                {  14.0 * M_PI / 180,  0.87, 0.036, 0.25, -0.012 }
+                {  14.0 * M_PI / 180,  0.87, 0.036, 0.25, -0.012 },
             }), // temp solution TODO: refactor airfoil constructor to allow creating airfoils with no flaps
             33, // area
-            deg2rad(-5), // construction pitch angle
+            deg2rad(-2), // construction pitch angle
             2.6 // chordLength
     );
 
@@ -232,10 +251,10 @@ Plane Plane::getDefaultPlane() {
         std::move(wings),
         Vec2(-0.5, 0), // wingsPoint
         std::move(elevators),
-        Vec2(-15, 1), // elevatorsPoint
+        Vec2(-20, 1), // elevatorsPoint
         Engine(105000), // engine
         Wheels(72467, 10, 10000, Vec2(15, -2)), // Front wheels
-        Wheels(434802, 400, 40000, Vec2(-3, -2)) // Main wheels
+        Wheels(434802, 400, 40000, Vec2(-2, -2)) // Main wheels
     );
 
     return plane;
