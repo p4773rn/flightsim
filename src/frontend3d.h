@@ -27,7 +27,7 @@ public:
 
     void update(const glm::vec3& planePos, const glm::vec3& yawPitchRoll);
 
-    void draw(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window, const Plane &plane);
     
     void keyInput();
     void mouseInput(sf::Window& window);

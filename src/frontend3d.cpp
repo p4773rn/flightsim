@@ -9,7 +9,7 @@ void Frontend3d::update(const glm::vec3& planePos, const glm::vec3& yawPitchRoll
     this->yawPitchRoll = yawPitchRoll;
 }
 
-void Frontend3d::draw(sf::RenderWindow& window) {
+void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane) {
     float yaw = yawPitchRoll.x;
     float pitch = yawPitchRoll.y;
     float roll = yawPitchRoll.z;
@@ -22,10 +22,18 @@ void Frontend3d::draw(sf::RenderWindow& window) {
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	sky.render(camera.get_view_no_translate(), projection);
+
+    // Arrows
 	arrow.set_uniforms(view, projection, cameraDistance);
+    /*
 	arrow.draw(planePos, glm::vec3(0.0f, 0.0f, 1.0f), 20.0f);
 	arrow.draw(planePos, glm::vec3(1.0f, 1.0f, 0.0f), 20.0f);
 	arrow.draw(planePos, glm::vec3(0.0f, 0.0f, -1.0f), 20.0f);
+    */
+    // Velocity
+    arrow.draw(planePos, glm::vec3(0.0f, plane.getVelocity().getY(), -plane.getVelocity().getX()), 30.0f);
+    // Net force
+    // arrow.draw(planePos, glm::vec3(0.0f, plane.().getY(), -plane.getVelocity().getX()), 30.0f);
 	grid.render(planePos, view, projection);
     //terrain->draw(camera.get_position(), view, projection, glm::vec3(light));
     glEnable(GL_BLEND);
@@ -65,5 +73,5 @@ void Frontend3d::mouseInput(sf::Window& window){
 
 void Frontend3d::input(const sf::Event& event) {
     if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
-        cameraDistance += event.mouseWheelScroll.delta * -20;
+        cameraDistance += event.mouseWheelScroll.delta * -10;
 }

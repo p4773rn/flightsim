@@ -10,7 +10,7 @@ public:
 
     int getThrottle() const {return throttle;}
     void setThrottle(int throttle);
-    Vec2 getThrust(double angle) const;
+    Vec2 getThrust(double pitchAngle) const;
 private:
     int throttle = 0; // 0 5 10 15 ...
     double maxThrust;

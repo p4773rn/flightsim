@@ -11,7 +11,7 @@
 
 int main()
 {
-    const int SPEED = 3; // simulation speed; 1 = real time; 10 = 10 times faster;
+    const int SPEED = 2; // simulation speed; 1 = real time; 10 = 10 times faster;
     const int FPS = 60; 
     
     sf::ContextSettings settings;
@@ -23,7 +23,13 @@ int main()
     window.setFramerateLimit(FPS);
     window.setMouseCursorVisible(false);
 
-    sf::Clock clock;
+    int screenWidth = sf::VideoMode::getDesktopMode().width;
+    if (screenWidth > 1920)
+        screenWidth = 1920;
+    sf::Vector2<int> windowPosition(screenWidth - 800, 0);
+
+    window.setPosition(windowPosition);
+
 
     sf::View view = window.getDefaultView();
     std::cout << "TEST" << std::endl;
@@ -34,8 +40,12 @@ int main()
 
     Plane plane = Plane::getDefaultPlane();
     // plane.setThrottle(75);
+    // TODO: put this inside plane somewhere
+    double elevatorsDevlectionStep = 0.01;
+    
+    
+    sf::Clock clock;
     double lastUpdateTime = clock.getElapsedTime().asSeconds();
-
     while (window.isOpen())
     {
         sf::Event event;
@@ -56,16 +66,19 @@ int main()
                             plane.setThrottle(plane.getThrottle() + 5);
                             break;
                         case sf::Keyboard::Q:
-                            plane.setElevatorDeflection(plane.getElevatorDeflection() - 0.1);
+                            plane.setElevatorDeflection(plane.getElevatorDeflection() - elevatorsDevlectionStep);
                             break;
                         case sf::Keyboard::W:
-                            plane.setElevatorDeflection(plane.getElevatorDeflection() + 0.1);
+                            plane.setElevatorDeflection(plane.getElevatorDeflection() + elevatorsDevlectionStep);
+                            break;
+                        case sf::Keyboard::E:
+                            plane.setElevatorDeflection(0);
                             break;
                         case sf::Keyboard::F:
-                            plane.setFlaps(plane.getFlaps() - 0.25);
+                            plane.setFlaps(plane.getFlaps() - 0.05);
                             break;
                         case sf::Keyboard::G:
-                            plane.setFlaps(plane.getFlaps() + 0.25);
+                            plane.setFlaps(plane.getFlaps() + 0.05);
                             break;
                         case sf::Keyboard::B:
                             plane.toggleBrakes();
@@ -88,11 +101,11 @@ int main()
 
         // negative z axis is forward
         glm::vec3 planePos(0, plane.getPos().getY(), -plane.getPos().getX());
-        glm::vec3 yawPitchRoll(0, plane.getAngle(), 0);
+        glm::vec3 yawPitchRoll(0, plane.getPitchAngle(), 0);
         frontend.update(planePos, yawPitchRoll);
 
         window.clear();
-        frontend.draw(window);
+        frontend.draw(window, plane);
 
 
         window.display();

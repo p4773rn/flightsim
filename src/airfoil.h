@@ -22,12 +22,13 @@ public:
     Airfoil(Airfoil&& other) = default;
 
 
-    std::tuple<Vec2, double> getForceAndTorque(const Vec2& velocity, double angle, double airDensity, double height) const;
+    std::tuple<Vec2, double> getForceAndTorque(const Vec2& velocity, double pitchAngle, double airDensity, double height) const;
     
-    double getAngleOfAttack(const Vec2& velocity, double angle) const {
+    double getAngleOfAttack(const Vec2& velocity, double pitchAngle) const {
+        double maxElevatorsDeflection = 11.0; // in degrees, total deflection range is twice as big however
         return airfoilAngle 
-               + deflection * (5.0 * M_PI / 180)
-               + angle
+               + deflection * (maxElevatorsDeflection * M_PI / 180)
+               + pitchAngle
                + atan2(-velocity.getY(), velocity.getX());
     }
 
@@ -46,7 +47,7 @@ private:
     // TODO: come up with better controls
     // TODO: make the deflections change continiously with time
     // TODO: come up with better names for deflection and flaps
-    double deflection; // a number between -1 and 1
+    double deflection; // a multiplier between -1 and 1
     double flaps; // [0, 0.25, 0.5, 0.75, 1] where 0 is minimal drag and 1 is take-off position
 };
 
