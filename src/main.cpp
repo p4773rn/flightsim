@@ -36,8 +36,9 @@ int main()
 
 	//WE INIT GLEW BEFORE FRONTEND
 	if (GLEW_OK != glewInit()) std::cerr << "GLEW INIT Error";
+	//Model test("assets/models/boeing747-400-jw.ac");
+	//return 0;
     Frontend3d frontend;
-
     Plane plane = Plane::getDefaultPlane();
     // plane.setThrottle(75);
     // TODO: put this inside plane somewhere

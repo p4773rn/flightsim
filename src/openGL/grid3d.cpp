@@ -21,7 +21,7 @@ Grid3d::Grid3d() :
         -HALF_SIZE, -Y_INCREMENT, HALF_SIZE,
         -HALF_SIZE, -Y_INCREMENT,-HALF_SIZE
     };
-    indices = {3, 1, 2, 1, 0, 2};
+    indices = {3, 2, 1, 2, 0, 1};
 
 
 	glGenVertexArrays(1, &VAO);

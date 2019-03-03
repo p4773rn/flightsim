@@ -21,18 +21,22 @@ public:
 		camera(glm::vec3(0.0, 40.0f, 0.0)),
 		mainShader({{"src/openGL/shaders/basic.vrtx", GL_VERTEX_SHADER},
 					{"src/openGL/shaders/basic.frgmnt", GL_FRAGMENT_SHADER}}),
-		planeModel("assets/models/boeing.obj"),
+		planeModel("assets/models/737-300.ac"),
+		//planeModel("assets/models/747-400.ac"), //747 is lighter model, might be useful for acceleration purposes
 		sky("assets/terrain/textures/sky")
-	{std::cout << "Frontend3D was created...\n";};
+	{	
+		planeModel.set_position(glm::vec3(0.0f, planePos.y, -planePos.z));
+    	planeModel.set_default_rotation(glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f));
+		std::cout << "Frontend3D was created...\n";
+	};
 
     void update(const glm::vec3& planePos, const glm::vec3& yawPitchRoll);
 
     void draw(sf::RenderWindow& window, const Plane &plane);
-    
+
     void keyInput();
     void mouseInput(sf::Window& window);
     void input(const sf::Event& event);
-    
 private:
     glm::vec3 planePos;
     glm::vec3 yawPitchRoll;

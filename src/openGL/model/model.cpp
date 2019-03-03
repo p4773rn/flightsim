@@ -9,182 +9,69 @@
 #include <utility>
 #include <SFML/Graphics/Image.hpp>
 #include "../misc.h"
+#include "ac3d_loader.h"
+#include <queue>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/euler_angles.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 using std::cout;
 using std::endl;
 
 Model::Model(const std::string& fname) : 
-    file_name{fname},
-    shader({{"src/openGL/shaders/basic.vrtx", GL_VERTEX_SHADER},
-            {"src/openGL/shaders/basic.frgmnt", GL_FRAGMENT_SHADER}
-           })
+    file_name{fname}
 { 
-    load_obj(file_name);
-	std::cout << "Model " << fname << " was created...\n";
+    //load_obj(file_name);
+    AC3D_loader ac_loader(fname);
+	//exit(1);
+	std::cout << "Model " << fname << " was loaded...\n";
+	objects.swap(ac_loader.objects);
+	textures.swap(ac_loader.textures);
+	materials.swap(ac_loader.materials);
+	std::cout << "Number of objects:" << objects.size() << std::endl;
+	std::cout << "Successfully copied objects, textures, materials to model\n";
 }
 
-void Model::load_obj(const std::string& file_name) {
-    std::string dir = getParentPath(file_name);
-
-	std::vector<glm::vec3> vs;
-	std::vector<glm::vec2> vts;
-	std::vector<glm::vec3> vns;
-
-	std::map<std::string, std::vector<Vertex>> meshData;
-    std::string materialName;
-
-	//parse OBJ file
-	std::ifstream model_file(file_name);
-	if (!model_file.is_open())
-	    std::cerr << "Can't open " << file_name << std::endl;
-
-	for(std::string line; getline(model_file, line);) {
-		std::istringstream sin(line);
-        std::string key;
-        sin >> key;
-    
-        if (key == "mtllib") {
-            std::string mtl_file_name;
-            sin >> mtl_file_name;
-            cout << dir + "/" + mtl_file_name << endl;
-            load_mtl(dir + "/" + mtl_file_name);
-        } else if (key == "v") {
-			glm::vec3 v;
-			sin >> v.x >> v.y >> v.z;
-			vs.push_back(v);
-		} else if (key == "vt") {
-            glm::vec2 vt;
-            sin >> vt.x >> vt.y;
-            vts.push_back(vt);
-        } else if (key == "vn") {
-            glm::vec3 vn;
-            sin >> vn.x >> vn.y >> vn.z;
-            vns.push_back(vn);
-        } else if (key == "usemtl") {
-            sin >> materialName;
-        } else if (key == "f") {
-            for (int i = 0; !sin.eof(); ++i) {
-                int vi=0, vti=0, vni=0; // 0 is not a valid index and indicates that index was not initialized
-                sin >> vi;
-                if (sin.peek() == '/') {
-                    sin.get();
-                    if (sin.peek() == '/') {
-                        sin.get();
-                        sin >> vni;
-                    } else {
-                        sin >> vti;
-                        if (sin.peek() == '/') {
-                            sin.get();
-                            sin >> vni;
-                        }
-                    }
-                }
-                sin >> std::ws; // there might be '\r' after the last vertex in a face
-                
-                Vertex v;
-                v.position = vs[vi-1];
-                if (vti != 0)
-                    v.texcoords = vts[vti-1];
-                if (vni != 0)
-                    v.normal = vns[vni-1];
-
-                auto& vertices = meshData[materialName];
-                if (i < 3) {
-                    vertices.push_back(v);
-                } else {
-                    Vertex v1 = vertices[vertices.size() - i];
-                    Vertex v2 = vertices[vertices.size() - 1];
-                    vertices.push_back(v1);
-                    vertices.push_back(v2);
-                    vertices.push_back(v);
-                }
-            }
-        }
-	}
-
-	//for (auto& v : vertices)
-	//    cout << v << endl;
-	
-    for (auto& mv : meshData) {
-        auto& materialName = mv.first;
-        auto& vertices = mv.second;
-        meshes.push_back(Mesh(vertices, std::move(materials[materialName])));
-    }
-    materials.clear();
-}
-
-void Model::load_mtl(const std::string& file_name) {
-    std::string dir = getParentPath(file_name);
-
-    std::string materialName;
-
-	//parse MTL file
-	std::ifstream model_file(file_name);
-	for(std::string line; getline(model_file, line);) {
-		std::istringstream sin(line);
-        std::string key;
-        sin >> key;
-
-		if (key == "newmtl") {
-			sin >> materialName;
-		} else if (key == "Ns") {
-            sin >> materials[materialName].shininess;
-        } else if (key == "Kd") {
-            Material& mat = materials[materialName];
-            sin >> mat.diffuseColor.x >> mat.diffuseColor.y >> mat.diffuseColor.z;
-        } else if (key == "Ks") {
-            //Material& mat = materials[materialName];
-            //sin >> mat.specularColor.x >> mat.specularColor.y >> mat.specularColor.z;
-        } else if (key == "map_Kd") {
-            std::string path;
-            sin >> path;
-            Material& mat = materials[materialName];
-            mat.texture = std::make_unique<Texture>(dir + "/" + path);
-        } else if (key == "map_Ks") {
-            //std::string path;
-            //sin >> path;
-            //textures.add(dir + "/" + path);
-            //Material& mat = materials[materialName];
-            //mat.specularMapI = textures.size() - 1;
-        } else if (key == "d") {
-            Material& mat = materials[materialName];
-            sin >> mat.alpha;
-        } else if (key == "Tr") {
-            float tr;
-            sin >> tr;
-            Material& mat = materials[materialName];
-            mat.alpha = 1 - tr;
-        }
-
-	}
-
-    
-    //for (auto nameIndex : materialNameIndex) {
-    //    auto& mat = materials[nameIndex.second];
-    //    cout << "Material " << nameIndex.first << endl;
-    //    cout << mat.diffuseColor << " " << mat.specularColor << endl;
-    //    cout << mat.diffuseMapI << " " << mat.specularMapI << endl;
-    //    cout << mat.shininess << endl;
-    //}
-    cout << "Loaded materials: " << materials.size() << endl;
-}
-
-void Model::draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection, 
-                 const glm::vec3& cameraPos, const glm::vec3& light){
+void Model::draw(const Shader& shader){
     shader.use();
-    glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "model"),
-                       1, GL_FALSE, glm::value_ptr(model));
-    glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "view"),
-                       1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "projection"),
-                       1, GL_FALSE, glm::value_ptr(projection));
-    glUniform3fv(glGetUniformLocation(shader.getID(), "lightSource"), 
-                       1, glm::value_ptr(light));
-    
-    for (auto& mesh : meshes) {
-        if (mesh.transparent()) {
-            mesh.sortByZ(model, cameraPos);
-        }
-        mesh.draw(shader);
-    }
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+    model *= glm::yawPitchRoll(rotation.x, rotation.y, rotation.z);
+    model *= glm::yawPitchRoll(default_rotation.x, default_rotation.y, default_rotation.z);
+    draw_rec(shader, model, 0);
+}
+//glm::yawPitchRoll(yaw, pitch, roll)
+void Model::draw_rec(const Shader& shader, const glm::mat4& model, int index) {
+	//17635 - vertices only
+	//5531 - vertices while using indices
+	//exit(1);
+	glm::mat4 TR(1.0f);
+	TR = glm::translate(TR, objects[index].position);
+	TR *= glm::yawPitchRoll(objects[index].yaw_roll_pitch.x,
+							objects[index].yaw_roll_pitch.y,
+							objects[index].yaw_roll_pitch.z);
+	if (!objects[index].indices.empty()){
+		bool has_texture = objects[index].texture_id > -1;
+		glUniform1i(shader.get_loc("is_texture"), has_texture);
+		if (has_texture) {
+			textures[objects[index].texture_id].activate(GL_TEXTURE0);
+			glUniform1i(shader.get_loc("texture0"), 0);
+		}
+		if (objects[index].material_id > -1) {
+			auto& m = materials[objects[index].material_id];
+			//std::cout << m.ambient.x << " " << m.ambient.y << " " << m.ambient.z << std::endl;
+			glUniform3fv(shader.get_loc("diffuse_color"), 1, glm::value_ptr(m.rgb));
+			glUniform3fv(shader.get_loc("ambient"), 1, glm::value_ptr(m.ambient));
+			glUniform3fv(shader.get_loc("emission"), 1, glm::value_ptr(m.emission));
+			glUniform3fv(shader.get_loc("specular"), 1, glm::value_ptr(m.specular));
+			glUniform1i(shader.get_loc("shininess"), m.shininess);
+			glUniform1f(shader.get_loc("alpha"), m.transparency);
+		}
+
+		glUniformMatrix4fv(shader.get_loc("model"), 1, GL_FALSE, glm::value_ptr(model * TR));
+		glBindVertexArray(objects[index].VAO);
+		glDrawElements(GL_TRIANGLES, objects[index].indices.size(), GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+	}
+	for (int i : objects[index].children)
+		draw_rec(shader, model * TR, i);
 }

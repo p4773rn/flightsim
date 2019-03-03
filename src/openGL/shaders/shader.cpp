@@ -2,6 +2,7 @@
 #include "shader.h"
 #include <sstream>
 
+#include <cstdlib>
 
 Shader::Shader(std::initializer_list<std::pair<std::string, GLuint>> paths){
 	std::cout << "Creating Shader...\n";
@@ -14,7 +15,7 @@ Shader::Shader(std::initializer_list<std::pair<std::string, GLuint>> paths){
 		shaders.push_back(shader);
 	}
 	glLinkProgram(program);
-	check_error(program, false, "LINKING::ERROR");
+	if (!check_error(program, false, "LINKING::ERROR")) exit(-1);
 	for (auto& shader : shaders)
 		glDeleteShader(shader);
 }
@@ -38,7 +39,7 @@ GLuint Shader::create_shader(const std::string& path, GLuint shader_type){
 	GLuint shader = glCreateShader(shader_type);
 	glShaderSource(shader, 1, &source, NULL);
 	glCompileShader(shader);
-	check_error(shader, true, "SHADER::COMPILE ERROR");
+	if (!check_error(shader, true, "SHADER::COMPILE ERROR")) exit(-1);
 	
 	return shader;
 }
@@ -51,6 +52,7 @@ bool Shader::check_error(GLuint program, bool isShader,const std::string& error_
 		if(!success){
 			glGetShaderInfoLog(program, 512, NULL, infoLog);
 			std::cerr << error_msg << std::endl << infoLog << std::endl;
+			exit(1);
 			return false;
 		}
 	}
@@ -64,9 +66,5 @@ bool Shader::check_error(GLuint program, bool isShader,const std::string& error_
 	}
 
 	return true;
-}
-
-void Shader::use(){
-	glUseProgram(Shader::program);
 }
 
