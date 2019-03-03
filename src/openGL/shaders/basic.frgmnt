@@ -1,45 +1,48 @@
 #version 330 core
 
-in vec3 normal;
 in vec3 vertexPos;
 in vec2 texCoord;
+in vec3 normal;
 
-uniform vec3 lightSource;
+uniform vec3 light_source;
+
+uniform bool is_texture;
 uniform sampler2D texture0;
-
-uniform vec3 diffuseColor;
-uniform bool useTexture;
-
-uniform float shininess;
+uniform vec3 diffuse_color;
+uniform vec3 ambient;
+uniform vec3 emission;
+uniform vec3 specular;
+uniform int shininess;
 uniform float alpha;
 
 out vec4 FragColor;
 
 void main()
 {
-    vec3 objectColor;
-    if (useTexture)
-        objectColor = texture(texture0, texCoord).xyz;
+    vec3 object_color;
+    if (is_texture)
+    	object_color = texture(texture0, texCoord).xyz;
     else
-        objectColor = diffuseColor;
+    	object_color = diffuse_color;
 
-	float ambientStrength = 0.2;
-	float specularStrength = 0.8;
+	float ambient_strength = 0.2;
+	float specular_strength = 0.8;
 
-	vec3 lightColor = vec3(1.0);
+	vec3 light_color = vec3(1.0);
 
 	vec3 norm = normalize(normal);
-	vec3 dir = normalize(lightSource - vertexPos);
+	vec3 dir = normalize(light_source - vertexPos);
 	float diff = max(dot(norm, dir), 0.0);
+	vec3 diffuse = diff * ambient;
+	//ambient *= 0.2;//ambient_strength;
 
-	vec3 diffuse = diff * lightColor;
-	vec3 ambient = (ambientStrength * lightColor);
+	vec3 reflect_dir = reflect(-dir, norm);
+	float spec = pow(max(dot(normalize(-vertexPos), reflect_dir), 0.0), shininess);
+	vec3 specular_final = specular_strength * spec * specular;//light_color;
 
-	vec3 reflectDir = reflect(-dir, norm);
-	float spec = pow(max(dot(normalize(-vertexPos), reflectDir), 0.0), shininess);
-	vec3 specular = specularStrength * spec * lightColor;
-
-	vec3 result = (ambient + diffuse + specular) * objectColor;
-	FragColor = vec4(result, alpha);
-    //FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	vec3 result = (ambient + diffuse + specular_final) * object_color;
+	//FragColor = vec4(result, 1.0);
+	FragColor = vec4(object_color * 0.8, 1.0f);
+	//FragColor = vec4(texCoord.x, texCoord.y, 1.0, 1.0);
+   	//FragColor = vec4(normal.x, normal.y, normal.z, 1.0f);
 }

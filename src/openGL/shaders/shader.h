@@ -19,7 +19,8 @@ class Shader {
 		Shader(const std::vector<std::pair<std::string, GLuint>>& paths);
 		Shader(std::initializer_list<std::pair<std::string, GLuint>> paths);
 		~Shader();
-		void use();
+		void use() const {glUseProgram(Shader::program);};
+		inline GLint get_loc(const char* name) const {return glGetUniformLocation(program, name);};
 		GLuint getID() const { return program; }
 };
 

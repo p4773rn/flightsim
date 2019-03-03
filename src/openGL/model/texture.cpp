@@ -1,8 +1,9 @@
 #include "../shaders/shader.h"
 #include "texture.h"
 
-Texture::Texture(const std::string& path, bool generateMipmap){
+Texture::Texture(const std::string& path, bool generateMipmap, const std::string& t_name) : name(t_name) {
 	sf::Image image;
+	//std::cout << "On texture: " << name << std::endl;
 	if (!image.loadFromFile(path)) {
 		std::cout << "Error while loading file in Texture:" << path << std::endl;
 		return;
@@ -25,6 +26,8 @@ void Texture::activate(GLenum unit) {
 }
 
 void Texture::release() {
-	if (id)
+	if (id){	
+		std::cout << "Texture::release() call at " << name << std::endl;
 		glDeleteTextures(1, &id);
+	}
 }
