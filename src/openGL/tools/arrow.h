@@ -2,7 +2,7 @@
 #define CLASS_ARROW_GL
 
 #include <glm/glm.hpp>
-#include "shaders/shader.h"
+#include "../shaders/shader.h"
 
 class Arrow{
 public:

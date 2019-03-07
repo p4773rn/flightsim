@@ -8,9 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <utility>
 #include <SFML/Graphics/Image.hpp>
-#include "../misc.h"
 #include "ac3d_loader.h"
-#include <queue>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/matrix_transform.hpp>

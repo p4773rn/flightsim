@@ -55,6 +55,10 @@ void Camera::move_position(unsigned int dir) {
   }
 }
 
+void Camera::look_in(const glm::vec3& _direction) {
+	direction = -_direction;
+	right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0), direction));
+}
 
 void Camera::orbit(float x_offset, float y_offset, float distance, const glm::vec3& center) {
     phi += x_offset;

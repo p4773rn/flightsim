@@ -67,7 +67,7 @@ void AC3D_loader::load(const std::string& fname) {
 			sin >> current_object.type;
 			current_state = OBJECT;
 		} else if(current_state == OBJECT && key == "name") {
-			sin >> current_object.name;
+			sin >> current_object.name; 
 			process_string(current_object.name);
 		} else if(current_state == OBJECT && key == "texture") {
 			std::string texture_name;

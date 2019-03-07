@@ -1,13 +1,14 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "plot.h"
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
 #include "table.h"
 #include "plane.h"
 #include "frontend3d.h"
+//#include "//frontend2d.h"
 #include <glm/glm.hpp>
+#include "plot.h"
 
 int main()
 {
@@ -20,31 +21,30 @@ int main()
     settings.minorVersion = 3;
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "FlightSim", sf::Style::Default, settings);
+    //sf::RenderWindow window(sf::VideoMode(800, 600), "FlightSim");
     window.setFramerateLimit(FPS);
     window.setMouseCursorVisible(false);
 
     int screenWidth = sf::VideoMode::getDesktopMode().width;
     if (screenWidth > 1920)
         screenWidth = 1920;
-    sf::Vector2<int> windowPosition(screenWidth - 800, 0);
+    //sf::Vector2<int> windowPosition(screenWidth - 800, 0);
 
-    window.setPosition(windowPosition);
+    //window.setPosition(windowPosition);
 
 
     sf::View view = window.getDefaultView();
-    std::cout << "TEST" << std::endl;
 
-	//WE INIT GLEW BEFORE FRONTEND
+	//WE INIT GLEW BEFORE //frontend
 	if (GLEW_OK != glewInit()) std::cerr << "GLEW INIT Error";
-	//Model test("assets/models/boeing747-400-jw.ac");
-	//return 0;
+
     Frontend3d frontend;
     Plane plane = Plane::getDefaultPlane();
     // plane.setThrottle(75);
     // TODO: put this inside plane somewhere
     double elevatorsDevlectionStep = 0.01;
-    
-    
+	
+
     sf::Clock clock;
     double lastUpdateTime = clock.getElapsedTime().asSeconds();
     while (window.isOpen())
@@ -105,9 +105,8 @@ int main()
         glm::vec3 yawPitchRoll(0, plane.getPitchAngle(), 0);
         frontend.update(planePos, yawPitchRoll);
 
-        window.clear();
+        //window.clear(sf::Color(127, 142,123));
         frontend.draw(window, plane);
-
 
         window.display();
     }

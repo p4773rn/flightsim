@@ -3,7 +3,6 @@
 #include <iomanip>
 #include <cmath>
 #include <glm/gtc/noise.hpp>
-#include "misc.h"
 #include <sstream>
 
 using std::cout;
