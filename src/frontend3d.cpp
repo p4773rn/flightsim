@@ -113,7 +113,7 @@ void Frontend3d::input(const sf::Event& event) {
 			case sf::Keyboard::Key::V:
 				is_first_person = !is_first_person;
 				break;
-			case sf::Keyboard::Key::F:
+			case sf::Keyboard::Key::L:
 				is_cam_fixed = is_first_person ? !is_cam_fixed : is_cam_fixed;
 				break;
 		}
