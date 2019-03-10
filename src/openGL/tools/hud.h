@@ -2,6 +2,9 @@
 #define CLASS_HUD
 #include <SFML/Graphics.hpp>
 #include "../../plane.h"
+//Hardcoded offsets for attitudeindicator texture
+const sf::Vector2i ai_position = {0,212}; //20 degrees starts at 212
+const sf::Vector2i ai_wh = {143, 132}; //width of texture and height of 20 to -20 range
 
 class HUD {
 public:

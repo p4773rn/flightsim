@@ -18,15 +18,16 @@ HUD::HUD() {
     pointerSprite.setTexture(pointerTexture);
     pointerSprite.setOrigin(sSize/2.0f);
     
-    if (!attitudeIndicatorTexture.loadFromFile("assets/attitude_indicator.png"))
+    if (!attitudeIndicatorTexture.loadFromFile("assets/ai.png"))
         std::cerr << "Error: attitudeIndicatorTexture not loaded" << std::endl;
     if (!attitudeBackgroundTexture.loadFromFile("assets/attitude_indicator_background.png"))
         std::cerr << "Error: attitudeBackgroundTexture not loaded" << std::endl;
     attitudeIndicatorSprite.setTexture(attitudeIndicatorTexture);
-    sf::Vector2f aSize(attitudeIndicatorTexture.getSize().x, attitudeIndicatorTexture.getSize().y);
-    attitudeIndicatorSprite.setOrigin(aSize/2.0f);
+    sf::Vector2f origin(ai_wh.x/2.0f, ai_wh.y/2.0f);
+    attitudeIndicatorSprite.setOrigin(origin);
     attitudeBackgroundSprite.setTexture(attitudeBackgroundTexture);
-    attitudeBackgroundSprite.setOrigin(aSize/2.0f);
+    sf::Vector2f aSize(attitudeBackgroundTexture.getSize().x, attitudeBackgroundTexture.getSize().y);
+    attitudeBackgroundSprite.setOrigin(sf::Vector2f(aSize.x/2.0f, aSize.y/2.0f));
 }
 
 void HUD::draw(sf::RenderWindow& window, const Plane &plane){
@@ -46,6 +47,7 @@ void HUD::draw(sf::RenderWindow& window, const Plane &plane){
 	sout << "Brake: " << (plane.getBrakesStatus() ? "Yes" : "No") << std::endl;
 	sout << "Wings AoA: " << plane.getWingsAoA() << " degrees" << std::endl;
 	sout << "Elevators AoA: " << plane.getElevatorsAoA() << " degrees" << std::endl;
+	sout << "Pitch Angle: " << plane.getPitchAngle() * 180 / M_PI << std::endl;
 	text.setString(sout.str());
 	text.setCharacterSize(12);
 	//text.setRotation(-45.0);
@@ -61,11 +63,13 @@ void HUD::draw(sf::RenderWindow& window, const Plane &plane){
     window.draw(speedometerSprite);
     window.draw(pointerSprite);
 
-    rect = attitudeIndicatorSprite.getTextureRect();
-    pos = sf::Vector2f(size.x - rect.width/2, size.y - rect.height/2);//pos.x + rect.width, rect.height);
+	// Attitude Indicator
+    pos = sf::Vector2f(size.x - ai_wh.x/2.0f, size.y - ai_wh.y/2.0f);
     // 10 degrees map to 30 pixels on indicator sprite
-    float yOffset = plane.getPitchAngle() * 180.0f / M_PI * 3;
-    attitudeIndicatorSprite.setPosition(pos + sf::Vector2f(0, yOffset));
+    float y_offset = -plane.getPitchAngle() * 180.0f / M_PI * 3;
+    attitudeIndicatorSprite.setPosition(pos);// + sf::Vector2f(0, yOffset));
+    //clip texture
+    attitudeIndicatorSprite.setTextureRect(sf::IntRect(0, ai_position.y + y_offset, ai_wh.x, ai_wh.y));
     attitudeBackgroundSprite.setPosition(pos);
     window.draw(attitudeIndicatorSprite);
     window.draw(attitudeBackgroundSprite);
