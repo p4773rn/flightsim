@@ -42,6 +42,7 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane) {
     //glm::mat4 planeTransform = glm::translate(glm::mat4(1), planePos) * glm::yawPitchRoll(yaw, pitch, roll);
     glm::mat4 view = camera.get_view();
     glm::mat4 projection = glm::perspective(glm::radians(90.0f), 800.0f/600.0f, 0.1f, 4*4096.0f);
+    //glm::mat4 projection = glm::perspective(glm::radians(90.0f), 16.0f/9.0f, 0.1f, 4*4096.0f);
     glm::vec3 light(-500.0f, 800.0f, 2048.0f);
   	
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -62,6 +63,7 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane) {
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     if (!is_first_person) planeModel.draw(mainShader);
+    hud.draw(window, plane);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     //glDisable(GL_BLEND);
 }

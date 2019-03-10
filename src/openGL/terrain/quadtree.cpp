@@ -65,7 +65,7 @@ Quadtree::Quadtree(const glm::vec3& _camera_position, const std::string& path, c
 	glBufferData(GL_ARRAY_BUFFER, sizeof(patch), patch, GL_STATIC_DRAW);
 	glVertexAttribPointer(0,2, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), (void*) 0);
 	glEnableVertexAttribArray(0);
-
+	glBindVertexArray(0);
 
 	heightmap = Texture(path);
 	load_textures();
@@ -174,6 +174,7 @@ void Quadtree::renderNode(TreeNode* node) {
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glPatchParameteri(GL_PATCH_VERTICES, 4);
 	glDrawArrays(GL_PATCHES, 0, 4);
+	glBindVertexArray(0);
 }
 
 void Quadtree::render_rec(TreeNode* node) {

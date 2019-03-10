@@ -42,8 +42,6 @@ Frontend2d::Frontend2d() {
     attitudeIndicatorSprite.setOrigin(aSize/2.0f);
     attitudeBackgroundSprite.setTexture(attitudeBackgroundTexture);
     attitudeBackgroundSprite.setOrigin(aSize/2.0f);
-
-
 }
 
 void Frontend2d::update(const Plane& plane) {

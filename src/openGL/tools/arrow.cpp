@@ -51,6 +51,7 @@ Arrow::Arrow() : shader({{"src/openGL/shaders/arrow.vrtx", GL_VERTEX_SHADER},
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
 	std::cout << "Arrow was created...\n";
 }
 
@@ -77,6 +78,7 @@ void Arrow::draw(const glm::vec3& origin, const glm::vec3& direction, float scal
     glUniform1f(glGetUniformLocation(shader.getID(), "scale"), scale);
     
 	glDrawElements(GL_TRIANGLES, N_INDICES, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
 }
 
 Arrow::~Arrow() {

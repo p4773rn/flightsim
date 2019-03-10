@@ -44,7 +44,9 @@ int main()
     // TODO: put this inside plane somewhere
     double elevatorsDevlectionStep = 0.01;
 	
-
+	sf::CircleShape circle;
+	circle.setRadius(20.0f);
+	circle.setPosition(20, 30);
     sf::Clock clock;
     double lastUpdateTime = clock.getElapsedTime().asSeconds();
     while (window.isOpen())
@@ -107,7 +109,9 @@ int main()
 
         //window.clear(sf::Color(127, 142,123));
         frontend.draw(window, plane);
-
+        
+        //window.pushGLStates();
+		//window.popGLStates();
         window.display();
     }
 

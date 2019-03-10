@@ -37,6 +37,7 @@ Grid3d::Grid3d() :
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
 }
 
 Grid3d::~Grid3d() {
@@ -73,6 +74,7 @@ void Grid3d::render(const glm::vec3& pos, const glm::mat4& view, const glm::mat4
 
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glDepthMask(GL_TRUE);
+	glBindVertexArray(0);
 }
 
 

@@ -44,7 +44,8 @@ public:
     const Vec2& getPos() const {return pos;}
     float getPitchAngle() const {return pitchAngle;}
     Vec2 getVelocity() const {return velocity;}
-    
+    float getWingsAoA() const {return wings.getAngleOfAttack(velocity, pitchAngle) / M_PI * 180;}
+    float getElevatorsAoA() const {return elevators.getAngleOfAttack(velocity, pitchAngle) / M_PI * 180;}
     void update(double delta);
 
     int getThrottle() const {return engine.getThrottle();}

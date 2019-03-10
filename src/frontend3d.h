@@ -12,8 +12,7 @@
 #include "openGL/shaders/shader.h"
 #include "openGL/tools/grid3d.h"
 #include "openGL/tools/arrow.h"
-
-const unsigned int MAX_CAMERA = 2;
+#include "openGL/tools/hud.h"
 
 class Frontend3d {
 public:
@@ -30,6 +29,7 @@ private:
     Sky sky;
 	Grid3d grid;
 	Arrow arrow;
+	HUD hud;
     glm::vec3 planePos;
     glm::vec3 yawPitchRoll;
     bool is_first_person = false;
