@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 #include "table.h"
-#include "plane.h"
+#include "plane3d.h"
 #include "frontend3d.h"
 //#include "//frontend2d.h"
 #include <glm/glm.hpp>
@@ -12,7 +12,7 @@
 
 int main()
 {
-    const int SPEED = 2; // simulation speed; 1 = real time; 10 = 10 times faster;
+    const int SPEED = 5; // simulation speed; 1 = real time; 10 = 10 times faster;
     const int FPS = 60; 
     
     sf::ContextSettings settings;
@@ -39,16 +39,15 @@ int main()
 	if (GLEW_OK != glewInit()) std::cerr << "GLEW INIT Error";
 
     Frontend3d frontend;
-    Plane plane = Plane::getDefaultPlane();
-    // plane.setThrottle(75);
-    // TODO: put this inside plane somewhere
-    double elevatorsDevlectionStep = 0.01;
-	
+    Plane3D plane;	
 
     sf::Clock clock;
     double lastUpdateTime = clock.getElapsedTime().asSeconds();
     while (window.isOpen())
     {
+        float deltaTime = (clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED;
+        lastUpdateTime = clock.getElapsedTime().asSeconds();
+        
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -60,30 +59,30 @@ int main()
                 
                 case sf::Event::KeyPressed:
                     switch (event.key.code) {
-                        case sf::Keyboard::Z:
-                            plane.setThrottle(plane.getThrottle() - 5);
-                            break;
-                        case sf::Keyboard::X:
-                            plane.setThrottle(plane.getThrottle() + 5);
-                            break;
-                        case sf::Keyboard::Q:
-                            plane.setElevatorDeflection(plane.getElevatorDeflection() - elevatorsDevlectionStep);
-                            break;
-                        case sf::Keyboard::W:
-                            plane.setElevatorDeflection(plane.getElevatorDeflection() + elevatorsDevlectionStep);
-                            break;
-                        case sf::Keyboard::E:
-                            plane.setElevatorDeflection(0);
-                            break;
-                        case sf::Keyboard::F:
-                            plane.setFlaps(plane.getFlaps() - 0.05);
-                            break;
-                        case sf::Keyboard::G:
-                            plane.setFlaps(plane.getFlaps() + 0.05);
-                            break;
-                        case sf::Keyboard::B:
-                            plane.toggleBrakes();
-                            break;
+                        //case sf::Keyboard::Z:
+                        //    plane.setThrottle(plane.getThrottle() - 5);
+                        //    break;
+                        //case sf::Keyboard::X:
+                        //    plane.setThrottle(plane.getThrottle() + 5);
+                        //    break;
+                        //case sf::Keyboard::Q:
+                        //    plane.setElevatorDeflection(plane.getElevatorDeflection() - elevatorsDevlectionStep);
+                        //    break;
+                        //case sf::Keyboard::W:
+                        //    plane.setElevatorDeflection(plane.getElevatorDeflection() + elevatorsDevlectionStep);
+                        //    break;
+                        //case sf::Keyboard::E:
+                        //    plane.setElevatorDeflection(0);
+                        //    break;
+                        //case sf::Keyboard::F:
+                        //    plane.setFlaps(plane.getFlaps() - 0.05);
+                        //    break;
+                        //case sf::Keyboard::G:
+                        //    plane.setFlaps(plane.getFlaps() + 0.05);
+                        //    break;
+                        //case sf::Keyboard::B:
+                        //    plane.toggleBrakes();
+                        //    break;
                     }
                     break;
 
@@ -92,23 +91,18 @@ int main()
             }
         }
 
-        //std::cout << clock.getElapsedTime().asSeconds() * SPEED << " " << std::endl;
-
-        plane.update((clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED);
-        lastUpdateTime = clock.getElapsedTime().asSeconds();
+        plane.update(deltaTime);
 
         frontend.mouseInput(window);
         frontend.keyInput();
 
         // negative z axis is forward
-        glm::vec3 planePos(0, plane.getPos().getY(), -plane.getPos().getX());
-        glm::vec3 yawPitchRoll(0, plane.getPitchAngle(), 0);
-        frontend.update(planePos, yawPitchRoll);
+        glm::vec3 yawPitchRoll(plane.get_angles().y, plane.get_angles().x, plane.get_angles().z);
+        frontend.update(plane.pos, yawPitchRoll);
 
-        //window.clear(sf::Color(127, 142,123));
-        frontend.draw(window, plane);
-
+        frontend.draw(window, plane.debug_arrows);
         window.display();
+        
     }
 
     return 0;

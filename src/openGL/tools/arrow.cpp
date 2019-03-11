@@ -64,7 +64,7 @@ void Arrow::set_uniforms(const glm::mat4& view, const glm::mat4& projection, flo
     glUniform1f(glGetUniformLocation(shader.getID(), "cam_distance"), distance);
 }
 
-void Arrow::draw(const glm::vec3& origin, const glm::vec3& direction, float scale) {
+void Arrow::draw(const glm::vec3& origin, const glm::vec3& direction, float scale, const glm::vec3& color) {
 	shader.use();
 	float angle = acos(glm::dot(glm::normalize(direction), arrow_dir));
 	glm::mat4 model = glm::mat4(1.0f);
@@ -75,6 +75,7 @@ void Arrow::draw(const glm::vec3& origin, const glm::vec3& direction, float scal
 	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "model"),
                      1, GL_FALSE, glm::value_ptr(model));
     glUniform1f(glGetUniformLocation(shader.getID(), "scale"), scale);
+    glUniform3f(glGetUniformLocation(shader.getID(), "color"), color.x, color.y, color.z);
     
 	glDrawElements(GL_TRIANGLES, N_INDICES, GL_UNSIGNED_INT, 0);
 }

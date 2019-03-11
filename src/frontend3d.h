@@ -1,7 +1,8 @@
 #ifndef FRONTEND3D_H
 #define FRONTEND3D_H
 #include <SFML/Graphics.hpp>
-#include <list>
+#include <vector>
+#include <tuple>
 #include <memory>
 #include "plane.h"
 #include "misc.h"
@@ -19,7 +20,7 @@ class Frontend3d {
 public:
     Frontend3d ();
     void update(const glm::vec3& planePos, const glm::vec3& yawPitchRoll);
-    void draw(sf::RenderWindow& window, const Plane &plane);
+    void draw(sf::RenderWindow& window, const std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>> arrows);
     void keyInput();
     void mouseInput(sf::Window& window);
     void input(const sf::Event& event);
@@ -35,7 +36,7 @@ private:
     bool is_first_person = false;
     bool is_cam_fixed = false;
     float cameraDistance = 50; // distance from plane
-    
+   
     //Terrain terrain;
 };
 
