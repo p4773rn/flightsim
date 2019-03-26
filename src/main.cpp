@@ -9,6 +9,7 @@
 //#include "//frontend2d.h"
 #include <glm/glm.hpp>
 #include "plot.h"
+#include "airfoil_segment.h"
 
 int main()
 {
@@ -39,8 +40,13 @@ int main()
 	if (GLEW_OK != glewInit()) std::cerr << "GLEW INIT Error";
 
     Frontend3d frontend;
-    Plane plane = Plane::getDefaultPlane();
+    std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>> debugArrows;
+    
+    Plane plane = Plane::getDefaultPlane(debugArrows);
     // plane.setThrottle(75);
+
+
+
     // TODO: put this inside plane somewhere
     double elevatorsDevlectionStep = 0.01;
 	
@@ -49,6 +55,7 @@ int main()
 	circle.setPosition(20, 30);
     sf::Clock clock;
     double lastUpdateTime = clock.getElapsedTime().asSeconds();
+    
     while (window.isOpen())
     {
         sf::Event event;
@@ -94,22 +101,25 @@ int main()
             }
         }
 
+        
         //std::cout << clock.getElapsedTime().asSeconds() * SPEED << " " << std::endl;
-
-        plane.update((clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED);
+        float delta = (clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED;
+        plane.update(delta, debugArrows);
         lastUpdateTime = clock.getElapsedTime().asSeconds();
 
         frontend.mouseInput(window);
         frontend.keyInput();
 
         // negative z axis is forward
-        glm::vec3 planePos(0, plane.getPos().getY(), -plane.getPos().getX());
-        glm::vec3 yawPitchRoll(0, plane.getPitchAngle(), 0);
+        glm::vec3 planePos(0);
+        glm::vec3 yawPitchRoll(0);
         frontend.update(planePos, yawPitchRoll);
 
         //window.clear(sf::Color(127, 142,123));
-        frontend.draw(window, plane);
-        
+        frontend.draw(window, plane, debugArrows);
+
+
+       
         //window.pushGLStates();
 		//window.popGLStates();
         window.display();

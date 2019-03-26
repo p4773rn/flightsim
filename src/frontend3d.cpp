@@ -35,7 +35,8 @@ void Frontend3d::update(const glm::vec3& planePos, const glm::vec3& yawPitchRoll
     }
 }
 
-void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane) {
+void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane, 
+                      const std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows) {
     float yaw = yawPitchRoll.x;
     float pitch = yawPitchRoll.y;
     float roll = yawPitchRoll.z;
@@ -47,11 +48,20 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane) {
   	
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
 	//sky.render(camera.get_view_no_translate(), projection);
 	//arrow.set_uniforms(view, projection, cameraDistance);
 	//arrow.draw(planePos, glm::vec3(1.0, 1.0f, -1.0f), 50.0f);
 	//arrow.draw(planePos + glm::vec3(0.0f, -1.5f, 25.0f), glm::vec3(0.0f, 0.0f, -1.0f), 42.0f);
+	
+	arrow.set_uniforms(view, projection, cameraDistance);
+
+    for (auto& a : debugArrows) {
+        glm::vec3 pos, dir, color;
+        std::tie(pos, dir, color) = a;
+        arrow.draw(pos, glm::normalize(dir), glm::length(dir), color);
+    }
+
 	grid.render(planePos, view, projection);
     //terrain->draw(camera.get_position(), view, projection, glm::vec3(light));
     //DRAWING MODELS
@@ -62,7 +72,7 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane) {
     //glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    if (!is_first_person) planeModel.draw(mainShader);
+    //if (!is_first_person) planeModel.draw(mainShader);
     hud.draw(window, plane);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     //glDisable(GL_BLEND);
