@@ -10,7 +10,6 @@ class Plane {
 public:
     Plane(glm::dvec3 pos,
           glm::dvec3 vel,
-          glm::dvec3 angles,
           double mass,
           glm::dmat3 inertia,
 
@@ -24,7 +23,7 @@ public:
           
           pos{pos},
           vel{vel},
-          angles{angles},
+          orientation{0, 0, 0, 0},
           angVel{0},
           mass{mass},
           inertia{inertia},
@@ -43,7 +42,7 @@ public:
 
     double getHeight() const {return pos.y;}
     const glm::dvec3& getPos() const {return pos;}
-    const glm::dvec3& getAngles() const {return angles;}
+    //const glm::dvec3& getAngles() const {return angles;}
     const glm::dvec3& getVel() const {return vel;}
     void update(double delta,
         std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows);
@@ -51,11 +50,27 @@ public:
     int getThrottle() const {return engine.getThrottle();}
     void setThrottle(int throttle) {engine.setThrottle(throttle);}
 
-    double getElevatorDeflection() const {return elevators.back().getDeflection().x;}
-    void setElevatorDeflection(double deflection) {elevators.back().setDeflection(glm::dvec2(deflection, 0));}
+    double getRudderDeflection() const {return rudder.back().getDeflection().x;}
+    void setRudderDeflection(double deflection) {
+        for (auto& s : rudder)
+            s.setDeflection(glm::dvec2(deflection, 0));
+        
+    }
 
-    double getFlaps() const {return wings.back().getFlaps();}
-    void setFlaps(double flapsPosition) {wings.back().setFlaps(flapsPosition);}
+    double getElevatorDeflection() const {return elevators.back().getDeflection().x;}
+    void setElevatorDeflection(double deflection) {
+        for (auto& s : elevators)
+            s.setDeflection(glm::dvec2(deflection, 0));
+        
+    }
+
+    double getFlaps() const {return wings.front().getFlaps();}
+    void setFlaps(double flapsPosition) {
+        for (size_t i = 0; i < wings.size()/2; ++i) {
+            wings[i].setFlaps(flapsPosition);
+            wings[wings.size()-1-i].setFlaps(-flapsPosition);
+        }
+    }
     void toggleBrakes() {
         mainWheels.toggleBrakes();
         frontWheels.toggleBrakes();
@@ -76,7 +91,7 @@ public:
 private:
     glm::dvec3 pos; // For now, xy coordinates of the plane
     glm::dvec3 vel;
-    glm::dvec3 angles; // euler angles of the plane
+    glm::dquat orientation;
     glm::dvec3 angVel;
     double mass;
     glm::dmat3 inertia;

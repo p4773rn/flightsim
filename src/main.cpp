@@ -13,7 +13,7 @@
 
 int main()
 {
-    const int SPEED = 2; // simulation speed; 1 = real time; 10 = 10 times faster;
+    const int SPEED = 1; // simulation speed; 1 = real time; 10 = 10 times faster;
     const int FPS = 60; 
     
     sf::ContextSettings settings;
@@ -75,19 +75,24 @@ int main()
                         case sf::Keyboard::X:
                             plane.setThrottle(plane.getThrottle() + 5);
                             break;
-                        case sf::Keyboard::Q:
+                        case sf::Keyboard::Up:
                             plane.setElevatorDeflection(plane.getElevatorDeflection() - elevatorsDevlectionStep);
                             break;
-                        case sf::Keyboard::W:
+                        case sf::Keyboard::Down:
                             plane.setElevatorDeflection(plane.getElevatorDeflection() + elevatorsDevlectionStep);
                             break;
-                        case sf::Keyboard::E:
-                            plane.setElevatorDeflection(0);
+
+                        case sf::Keyboard::Q:
+                            plane.setRudderDeflection(plane.getRudderDeflection() - elevatorsDevlectionStep);
                             break;
-                        case sf::Keyboard::F:
+                        case sf::Keyboard::W:
+                            plane.setRudderDeflection(plane.getRudderDeflection() + elevatorsDevlectionStep);
+                            break;
+                        
+                        case sf::Keyboard::Right:
                             plane.setFlaps(plane.getFlaps() - 0.05);
                             break;
-                        case sf::Keyboard::G:
+                        case sf::Keyboard::Left:
                             plane.setFlaps(plane.getFlaps() + 0.05);
                             break;
                         case sf::Keyboard::B:
@@ -101,6 +106,7 @@ int main()
             }
         }
 
+        debugArrows.clear();
         
         //std::cout << clock.getElapsedTime().asSeconds() * SPEED << " " << std::endl;
         float delta = (clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED;
@@ -111,7 +117,7 @@ int main()
         frontend.keyInput();
 
         // negative z axis is forward
-        glm::vec3 planePos(0);
+        glm::vec3 planePos = plane.getPos();
         glm::vec3 yawPitchRoll(0);
         frontend.update(planePos, yawPitchRoll);
 
