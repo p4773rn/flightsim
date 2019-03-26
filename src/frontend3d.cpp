@@ -59,6 +59,7 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
     for (auto& a : debugArrows) {
         glm::vec3 pos, dir, color;
         std::tie(pos, dir, color) = a;
+		//TODO: arrow of form (0,-y,0) don't render
         arrow.draw(pos, glm::normalize(dir), glm::length(dir), color);
     }
 

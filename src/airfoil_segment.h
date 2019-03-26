@@ -13,7 +13,7 @@
 class AirfoilSegment {
 public:
     AirfoilSegment( const Table& tableFlaps0,
-                    glm::dvec3 pos, 
+                    glm::dvec3 pos,
                     glm::dvec2 angle,
                     double area) :
         tableFlaps0{tableFlaps0},
@@ -29,10 +29,11 @@ public:
     //     angVel: angular velocity in airplane body coordinates
     //     height: height of center of mass in world coordinates
     // returns
-    //     force: force on center of mass in airplane body coordinates
+    //     force: force on center of mass in world coordinates
     //     torque: torque in airplane body coordinates
     std::tuple<glm::dvec3, glm::dvec3> getForceAndTorque(
-        const glm::dvec3& vel, 
+        const glm::dvec3& vel,
+        const glm::dquat& orientation,
         const glm::dvec3& angVel, 
         double height,
         std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows) const;

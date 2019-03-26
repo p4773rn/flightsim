@@ -17,7 +17,7 @@ Table::Entry::Entry(double alpha, double lift, double drag, double axis, double 
 
 Table::Entry Table::get(double alpha) const {
     if (alpha < entries.front().alpha || entries.back().alpha <= alpha)
-        return Entry(0, 0, 0, 0, 0);
+        return Entry(0, 0, entries.back().drag, 0, 0);
 
     for (int i = 0; i < entries.size() - 1; ++i) {
         double alpha1 = entries[i].alpha;
