@@ -9,7 +9,7 @@ public:
 	Arrow();
 	~Arrow();
 	void set_uniforms(const glm::mat4& view, const glm::mat4& projection, float distance);
-	void draw(const glm::vec3& origin, const glm::vec3& direction, float scale);
+	void draw(const glm::vec3& origin, const glm::vec3& direction, float scale, const glm::vec3& color);
 private:
 	GLuint VAO;
 	GLuint VBO;

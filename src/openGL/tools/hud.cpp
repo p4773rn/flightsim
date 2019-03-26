@@ -31,46 +31,46 @@ HUD::HUD() {
 }
 
 void HUD::draw(sf::RenderWindow& window, const Plane &plane){
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	window.resetGLStates();
-	std::ostringstream sout;
-	sout.precision(2);
-	sout.flags(std::ios_base::fixed);
-	sout << "Altitude: " << plane.getPos().getY() << std::endl;
-	sout << "Velocity: " << plane.getVelocity().getX() << std::endl;
-	sout << "Vertical Velocity: " << plane.getVelocity().getY() << std::endl;
-	sout << "Throttle: " << plane.getThrottle() << std::endl;
-	sout << "Elevator: " << plane.getElevatorDeflection() * 100 << std::endl;
-	sout << "Flaps: " << plane.getFlaps() * 100 << std::endl;
-	sout << "Brake: " << (plane.getBrakesStatus() ? "Yes" : "No") << std::endl;
-	sout << "Wings AoA: " << plane.getWingsAoA() << " degrees" << std::endl;
-	sout << "Elevators AoA: " << plane.getElevatorsAoA() << " degrees" << std::endl;
-	sout << "Pitch Angle: " << plane.getPitchAngle() * 180 / M_PI << std::endl;
-	text.setString(sout.str());
-	text.setCharacterSize(12);
-	//text.setRotation(-45.0);
-	window.draw(text);
-	
-	sf::Vector2u size = window.getSize();
-	sf::IntRect rect = speedometerSprite.getTextureRect();
-    sf::Vector2f pos(rect.width/2.0f, size.y - rect.height/2.0f);//rect.width, rect.height);
-    speedometerSprite.setPosition(pos);
-    pointerSprite.setPosition(pos);
-    float maxSpeed = 200;
-    pointerSprite.setRotation(plane.getVelocity().length()/maxSpeed * 360);
-    window.draw(speedometerSprite);
-    window.draw(pointerSprite);
+	//glBindVertexArray(0);
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//window.resetGLStates();
+	//std::ostringstream sout;
+	//sout.precision(2);
+	//sout.flags(std::ios_base::fixed);
+	////sout << "Altitude: " << plane.getPos().getY() << std::endl;
+	////sout << "Velocity: " << plane.getVelocity().getX() << std::endl;
+	////sout << "Vertical Velocity: " << plane.getVelocity().getY() << std::endl;
+	////sout << "Throttle: " << plane.getThrottle() << std::endl;
+	////sout << "Elevator: " << plane.getElevatorDeflection() * 100 << std::endl;
+	////sout << "Flaps: " << plane.getFlaps() * 100 << std::endl;
+	////sout << "Brake: " << (plane.getBrakesStatus() ? "Yes" : "No") << std::endl;
+	////sout << "Wings AoA: " << plane.getWingsAoA() << " degrees" << std::endl;
+	////sout << "Elevators AoA: " << plane.getElevatorsAoA() << " degrees" << std::endl;
+	////sout << "Pitch Angle: " << plane.getPitchAngle() * 180 / M_PI << std::endl;
+	//text.setString(sout.str());
+	//text.setCharacterSize(12);
+	////text.setRotation(-45.0);
+	//window.draw(text);
+	//
+	//sf::Vector2u size = window.getSize();
+	//sf::IntRect rect = speedometerSprite.getTextureRect();
+    //sf::Vector2f pos(rect.width/2.0f, size.y - rect.height/2.0f);//rect.width, rect.height);
+    //speedometerSprite.setPosition(pos);
+    //pointerSprite.setPosition(pos);
+    //float maxSpeed = 200;
+    //pointerSprite.setRotation(plane.getVelocity().length()/maxSpeed * 360);
+    //window.draw(speedometerSprite);
+    //window.draw(pointerSprite);
 
-	// Attitude Indicator
-    pos = sf::Vector2f(size.x - ai_wh.x/2.0f, size.y - ai_wh.y/2.0f);
-    // 10 degrees map to 30 pixels on indicator sprite
-    float y_offset = -plane.getPitchAngle() * 180.0f / M_PI * 3;
-    attitudeIndicatorSprite.setPosition(pos);// + sf::Vector2f(0, yOffset));
-    //clip texture
-    attitudeIndicatorSprite.setTextureRect(sf::IntRect(0, ai_position.y + y_offset, ai_wh.x, ai_wh.y));
-    attitudeBackgroundSprite.setPosition(pos);
-    window.draw(attitudeIndicatorSprite);
-    window.draw(attitudeBackgroundSprite);
+	//// Attitude Indicator
+    //pos = sf::Vector2f(size.x - ai_wh.x/2.0f, size.y - ai_wh.y/2.0f);
+    //// 10 degrees map to 30 pixels on indicator sprite
+    //float y_offset = -plane.getPitchAngle() * 180.0f / M_PI * 3;
+    //attitudeIndicatorSprite.setPosition(pos);// + sf::Vector2f(0, yOffset));
+    ////clip texture
+    //attitudeIndicatorSprite.setTextureRect(sf::IntRect(0, ai_position.y + y_offset, ai_wh.x, ai_wh.y));
+    //attitudeBackgroundSprite.setPosition(pos);
+    //window.draw(attitudeIndicatorSprite);
+    //window.draw(attitudeBackgroundSprite);
 }
