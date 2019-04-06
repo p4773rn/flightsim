@@ -25,8 +25,8 @@ std::tuple<glm::dvec3, glm::dvec3> AirfoilSegment::getForceAndTorque(
     double aoa = asin(glm::dot(dragDir, normal));
     
     Table::Entry coefficients = tableFlaps0.get(aoa);
-    coefficients.lift *= 1 + flaps;
-    coefficients.drag *= 1 + flaps;
+    coefficients.lift *= 1 + (flaps / 4);
+    coefficients.drag *= 1 + (flaps / 4);
    
     // height of center of mass, not of this segment, but good enough
     double dynamicPressure = 0.5 * getAirDensity(height) * glm::length(segmentVel) * glm::length(segmentVel);

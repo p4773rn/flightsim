@@ -21,7 +21,7 @@ int main()
     settings.majorVersion = 3;
     settings.minorVersion = 3;
 
-    sf::RenderWindow window(sf::VideoMode(800, 600), "FlightSim", sf::Style::Default, settings);
+    sf::RenderWindow window(sf::VideoMode(1920 * 3 / 4, 1080 * 3 / 4), "FlightSim", sf::Style::Default, settings);
     //sf::RenderWindow window(sf::VideoMode(800, 600), "FlightSim");
     window.setFramerateLimit(FPS);
     window.setMouseCursorVisible(false);
@@ -29,9 +29,9 @@ int main()
     int screenWidth = sf::VideoMode::getDesktopMode().width;
     if (screenWidth > 1920)
         screenWidth = 1920;
-    //sf::Vector2<int> windowPosition(screenWidth - 800, 0);
+    sf::Vector2<int> windowPosition(1920 / 4, 0);
 
-    //window.setPosition(windowPosition);
+    window.setPosition(windowPosition);
 
 
     sf::View view = window.getDefaultView();
@@ -48,7 +48,7 @@ int main()
 
 
     // TODO: put this inside plane somewhere
-    double elevatorsDevlectionStep = 0.01;
+    double elevatorsDevlectionStep = 0.02;
 	
 	sf::CircleShape circle;
 	circle.setRadius(20.0f);
@@ -82,18 +82,18 @@ int main()
                             plane.setElevatorDeflection(plane.getElevatorDeflection() + elevatorsDevlectionStep);
                             break;
 
-                        case sf::Keyboard::Q:
+                        case sf::Keyboard::W:
                             plane.setRudderDeflection(plane.getRudderDeflection() - elevatorsDevlectionStep);
                             break;
-                        case sf::Keyboard::W:
+                        case sf::Keyboard::Q:
                             plane.setRudderDeflection(plane.getRudderDeflection() + elevatorsDevlectionStep);
                             break;
                         
                         case sf::Keyboard::Right:
-                            plane.setFlaps(plane.getFlaps() - 0.05);
+                            plane.setFlaps(plane.getFlaps() - 0.02);
                             break;
                         case sf::Keyboard::Left:
-                            plane.setFlaps(plane.getFlaps() + 0.05);
+                            plane.setFlaps(plane.getFlaps() + 0.02);
                             break;
                         case sf::Keyboard::B:
                             plane.toggleBrakes();
@@ -118,7 +118,9 @@ int main()
 
         // negative z axis is forward
         glm::vec3 planePos = plane.getPos();
-        glm::vec3 yawPitchRoll(0);
+        
+        glm::vec3 euler = plane.getAngles();
+        glm::vec3 yawPitchRoll(euler.y,euler.x,euler.z);
         frontend.update(planePos, yawPitchRoll);
 
         //window.clear(sf::Color(127, 142,123));

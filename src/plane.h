@@ -42,7 +42,7 @@ public:
 
     double getHeight() const {return pos.y;}
     const glm::dvec3& getPos() const {return pos;}
-    //const glm::dvec3& getAngles() const {return angles;}
+    glm::dvec3 getAngles() const {return glm::eulerAngles(orientation);}
     const glm::dvec3& getVel() const {return vel;}
     void update(double delta,
         std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows);
