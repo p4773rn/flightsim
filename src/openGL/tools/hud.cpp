@@ -31,27 +31,27 @@ HUD::HUD() {
 }
 
 void HUD::draw(sf::RenderWindow& window, const Plane &plane){
-	//glBindVertexArray(0);
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//window.resetGLStates();
-	//std::ostringstream sout;
-	//sout.precision(2);
-	//sout.flags(std::ios_base::fixed);
-	////sout << "Altitude: " << plane.getPos().getY() << std::endl;
-	////sout << "Velocity: " << plane.getVelocity().getX() << std::endl;
-	////sout << "Vertical Velocity: " << plane.getVelocity().getY() << std::endl;
-	////sout << "Throttle: " << plane.getThrottle() << std::endl;
-	////sout << "Elevator: " << plane.getElevatorDeflection() * 100 << std::endl;
-	////sout << "Flaps: " << plane.getFlaps() * 100 << std::endl;
-	////sout << "Brake: " << (plane.getBrakesStatus() ? "Yes" : "No") << std::endl;
-	////sout << "Wings AoA: " << plane.getWingsAoA() << " degrees" << std::endl;
-	////sout << "Elevators AoA: " << plane.getElevatorsAoA() << " degrees" << std::endl;
-	////sout << "Pitch Angle: " << plane.getPitchAngle() * 180 / M_PI << std::endl;
-	//text.setString(sout.str());
-	//text.setCharacterSize(12);
-	////text.setRotation(-45.0);
-	//window.draw(text);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	window.resetGLStates();
+	std::ostringstream sout;
+	sout.precision(2);
+	sout.flags(std::ios_base::fixed);
+	sout << "Altitude: " << plane.getPos().y << std::endl;
+	sout << "Velocity: " << abs(plane.getVelocity().z) << std::endl;
+	sout << "Vertical Velocity: " << plane.getVelocity().y << std::endl;
+	sout << "Throttle: " << plane.getThrottle() << std::endl;
+	sout << "Elevator: " << plane.getElevatorDeflection() * 100 << std::endl;
+	sout << "Flaps: " << plane.getFlaps() * 100 << std::endl;
+	sout << "Brake: " << (plane.getBrakesStatus() ? "Yes" : "No") << std::endl;
+	//sout << "Wings AoA: " << plane.getWingsAoA() << " degrees" << std::endl;
+	//sout << "Elevators AoA: " << plane.getElevatorsAoA() << " degrees" << std::endl;
+	sout << "Pitch Angle: " << plane.getAngles().x * 180 / M_PI << std::endl;
+	text.setString(sout.str());
+	text.setCharacterSize(12);
+	//text.setRotation(-45.0);
+	window.draw(text);
 	//
 	//sf::Vector2u size = window.getSize();
 	//sf::IntRect rect = speedometerSprite.getTextureRect();

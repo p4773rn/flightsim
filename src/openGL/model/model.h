@@ -3,6 +3,7 @@
 #include <vector>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <string>
 #include "texture.h"
 #include "../shaders/shader.h"
@@ -29,7 +30,7 @@ struct Object {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 	glm::vec3 position;
-	glm::vec3 yaw_roll_pitch;
+	glm::dquat orientation;
 	int texture_id = -1;
 	int material_id = -1;
 	GLuint VAO;
@@ -48,7 +49,7 @@ private:
 	std::vector<Material> materials;
 	void draw_rec(const Shader& shader, const glm::mat4& model, int i);
 	glm::vec3 position;
-	glm::vec3 rotation;
+	glm::dquat orientation;
 	glm::vec3 default_rotation;
     //Shader shader;
 public:
@@ -57,8 +58,8 @@ public:
 	void set_position(const glm::vec3& pos){
 		position = pos;
 	};
-	void set_rotation(const glm::vec3& _yaw_roll_pitch) {
-		rotation = _yaw_roll_pitch;
+	void set_orientation(const glm::dquat& _orientation) {
+		orientation = _orientation;
 	};
 	void set_default_rotation(const glm::vec3& _yaw_roll_pitch) {
 		default_rotation = _yaw_roll_pitch;

@@ -20,13 +20,12 @@ Frontend3d::Frontend3d():
 	std::cout << "Frontend3D was created...\n";
 };
 
-void Frontend3d::update(const glm::vec3& planePos, const glm::vec3& yawPitchRoll) {
+void Frontend3d::update(const glm::vec3& planePos, const glm::dquat& orientation) {
     this->planePos = planePos;
-    this->yawPitchRoll = yawPitchRoll;
-    
+    //this->yawPitchRoll = yawPitchRoll;
     //planeModel.set_position(planePos + glm::vec3(0.0f, 4.5f, 0.0f)); //For the 747-400
     planeModel.set_position(planePos + glm::vec3(0.0f, 1.5f, 0.0f));
-    planeModel.set_rotation(this->yawPitchRoll);
+    planeModel.set_orientation(orientation);//this->yawPitchRoll);
     if (is_first_person) {
     	glm::vec3 pilot_offset(0.0f,
     		pilot_default_offset.z * sin(yawPitchRoll.y) + pilot_default_offset.y * cos(yawPitchRoll.y),
@@ -73,7 +72,7 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
     //glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    //if (!is_first_person) planeModel.draw(mainShader);
+    if (!is_first_person) planeModel.draw(mainShader);
     hud.draw(window, plane);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     //glDisable(GL_BLEND);

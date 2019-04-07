@@ -164,7 +164,8 @@ static void reset_obj(Object& obj) {
 	obj.indices.clear();
 	obj.children.clear();
 	obj.position.x = 0; obj.position.y = 0; obj.position.z = 0;
-	obj.yaw_roll_pitch.x = 0; obj.yaw_roll_pitch.y = 0; obj.yaw_roll_pitch.z = 0;
+	//obj.yaw_roll_pitch.x = 0; obj.yaw_roll_pitch.y = 0; obj.yaw_roll_pitch.z = 0;
+	obj.orientation = glm::dquat();
 	obj.texture_id = -1;
 	obj.material_id = -1;
 	obj.VAO = -1;
