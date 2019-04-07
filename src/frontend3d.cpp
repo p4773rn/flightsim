@@ -8,12 +8,11 @@
 const glm::vec3 pilot_default_offset(0.0, 4.0f, 19.0f);
 
 Frontend3d::Frontend3d():
+        renderer(glm::ivec2(800, 600)),
 		camera(glm::vec3(0.0, 40.0f, 0.0)),
-		mainShader({{"src/openGL/shaders/basic.vrtx", GL_VERTEX_SHADER},
-					{"src/openGL/shaders/basic.frgmnt", GL_FRAGMENT_SHADER}}),
 		//planeModel("assets/models/737-300.ac"),
 		planeModel("assets/models/747-400.ac"), //747 is lighter model, might be useful for acceleration purposes
-		sky("assets/terrain/textures/sky")
+		terrain(glm::vec3(0, 0, 0), 1<<13)
 {	
 	planeModel.set_position(glm::vec3(0.0f, planePos.y, -planePos.z));
 	planeModel.set_default_rotation(glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f));
@@ -44,28 +43,17 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane) {
     glm::mat4 projection = glm::perspective(glm::radians(90.0f), 800.0f/600.0f, 0.1f, 4*4096.0f);
     //glm::mat4 projection = glm::perspective(glm::radians(90.0f), 16.0f/9.0f, 0.1f, 4*4096.0f);
     glm::vec3 light(-500.0f, 800.0f, 2048.0f);
-  	
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-	//sky.render(camera.get_view_no_translate(), projection);
-	//arrow.set_uniforms(view, projection, cameraDistance);
-	//arrow.draw(planePos, glm::vec3(1.0, 1.0f, -1.0f), 50.0f);
-	//arrow.draw(planePos + glm::vec3(0.0f, -1.5f, 25.0f), glm::vec3(0.0f, 0.0f, -1.0f), 42.0f);
-	grid.render(planePos, view, projection);
-    //terrain->draw(camera.get_position(), view, projection, glm::vec3(light));
-    //DRAWING MODELS
-  	mainShader.use();
-  	glUniformMatrix4fv(mainShader.get_loc("view"), 1, GL_FALSE, glm::value_ptr(view));
-  	glUniformMatrix4fv(mainShader.get_loc("projection"), 1, GL_FALSE, glm::value_ptr(projection));
-  	glUniform3fv(mainShader.get_loc("light_source"), 1, glm::value_ptr(light));
-    //glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    if (!is_first_person) planeModel.draw(mainShader);
-    hud.draw(window, plane);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    //glDisable(GL_BLEND);
+    glm::vec3 light_dir(0.1,-0.6,0.5);
+    glm::vec3 light_color(1);
+
+    if (!is_first_person) 
+        renderer.queue_render(&planeModel);
+    renderer.queue_render(&terrain);
+
+   // grid.set_pos(planePos);
+   // renderer.queue_render(&grid);
+
+    renderer.render(light_dir, light_color, projection, view, camera.get_position());
 }
 
 

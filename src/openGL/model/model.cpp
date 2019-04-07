@@ -30,15 +30,10 @@ Model::Model(const std::string& fname) :
 	std::cout << "Successfully copied objects, textures, materials to model\n";
 }
 
-void Model::draw(const Shader& shader){
-    shader.use();
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
-    model *= glm::yawPitchRoll(rotation.x, rotation.y, rotation.z);
-    model *= glm::yawPitchRoll(default_rotation.x, default_rotation.y, default_rotation.z);
-    draw_rec(shader, model, 0);
-}
 //glm::yawPitchRoll(yaw, pitch, roll)
-void Model::draw_rec(const Shader& shader, const glm::mat4& model, int index) {
+void Model::draw_rec(Shader& shader, const glm::mat4& model, int index,
+                     const glm::mat4& projection,
+                     const glm::mat4& view) {
 	//17635 - vertices only
 	//5531 - vertices while using indices
 	//exit(1);
@@ -49,27 +44,37 @@ void Model::draw_rec(const Shader& shader, const glm::mat4& model, int index) {
 							objects[index].yaw_roll_pitch.z);
 	if (!objects[index].indices.empty()){
 		bool has_texture = objects[index].texture_id > -1;
-		glUniform1i(shader.get_loc("is_texture"), has_texture);
+		shader.set("use_texture", has_texture);
 		if (has_texture) {
 			textures[objects[index].texture_id].activate(GL_TEXTURE0);
-			glUniform1i(shader.get_loc("texture0"), 0);
+			shader.set("texture0", 0);
 		}
 		if (objects[index].material_id > -1) {
 			auto& m = materials[objects[index].material_id];
-			//std::cout << m.ambient.x << " " << m.ambient.y << " " << m.ambient.z << std::endl;
-			glUniform3fv(shader.get_loc("diffuse_color"), 1, glm::value_ptr(m.rgb));
-			glUniform3fv(shader.get_loc("ambient"), 1, glm::value_ptr(m.ambient));
-			glUniform3fv(shader.get_loc("emission"), 1, glm::value_ptr(m.emission));
-			glUniform3fv(shader.get_loc("specular"), 1, glm::value_ptr(m.specular));
-			glUniform1i(shader.get_loc("shininess"), m.shininess);
-			glUniform1f(shader.get_loc("alpha"), m.transparency);
+			shader.set("diffuse_color", m.rgb);
+			// ac3d's shininess doesn't correspond shininess in our lighting model
+			shader.set("shininess", 0.1f);//m.shininess);
 		}
-
-		glUniformMatrix4fv(shader.get_loc("model"), 1, GL_FALSE, glm::value_ptr(model * TR));
+        
+	    shader.set("model", model * TR);	
+	    shader.set("view", view);
+	    shader.set("projection", projection);
 		glBindVertexArray(objects[index].VAO);
 		glDrawElements(GL_TRIANGLES, objects[index].indices.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 	}
 	for (int i : objects[index].children)
-		draw_rec(shader, model * TR, i);
+		draw_rec(shader, model * TR, i, projection, view);
+}
+
+
+void Model::geometry_pass(const glm::vec3& camera_pos,
+                          const glm::mat4& projection,
+                          const glm::mat4& view) {
+    Shader& shader = get_shader(); 
+    shader.use();
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+    model *= glm::yawPitchRoll(rotation.x, rotation.y, rotation.z);
+    model *= glm::yawPitchRoll(default_rotation.x, default_rotation.y, default_rotation.z);
+    draw_rec(shader, model, 0, projection, view);
 }

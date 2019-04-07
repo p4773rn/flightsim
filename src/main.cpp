@@ -96,7 +96,7 @@ int main()
 
         //std::cout << clock.getElapsedTime().asSeconds() * SPEED << " " << std::endl;
 
-        plane.update((clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED);
+        //plane.update((clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED);
         lastUpdateTime = clock.getElapsedTime().asSeconds();
 
         frontend.mouseInput(window);

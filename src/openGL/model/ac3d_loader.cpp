@@ -39,7 +39,7 @@ void AC3D_loader::load(const std::string& fname) {
 	surface_intervals.push_back(0);
 	std::vector<glm::vec3> temp_positions; //temp positions
 	std::vector<Vertex> surface_vertices; //vector of surface_vertices
-	glm::vec3 surface_normal; //surface normal
+	//glm::vec3 surface_normal; //surface normal
 	std::string parent_dir = fname.substr(0, fname.find_last_of("/\\"));
 	state current_state = GLOBAL;
 	
@@ -99,16 +99,16 @@ void AC3D_loader::load(const std::string& fname) {
 				int idx;	
 				sin >> idx;
 				v.position = temp_positions[idx];
-				v.normal = surface_normal;
+				//v.normal = surface_normal;
 				sin >> v.uv.x >> v.uv.y;
 				surface_vertices.push_back(v);
-				//calculate normal for surface
-				if(i == 2) {
-					glm::vec3 a = surface_vertices[1].position - surface_vertices[0].position;
-					glm::vec3 b = surface_vertices[2].position - surface_vertices[0].position;
-					surface_normal = glm::normalize(glm::cross(a,b));
-					surface_vertices[0].normal = surface_vertices[1].normal = surface_vertices[2].normal = surface_normal;
-				}
+				////calculate normal for surface
+				//if(i == 2) {
+				//	glm::vec3 a = surface_vertices[1].position - surface_vertices[0].position;
+				//	glm::vec3 b = surface_vertices[2].position - surface_vertices[0].position;
+				//	surface_normal = glm::normalize(glm::cross(a,b));
+				//	surface_vertices[0].normal = surface_vertices[1].normal = surface_vertices[2].normal = surface_normal;
+				//}
 				if (++i == n_refs && --surfaces_left == 0) current_state = OBJECT;
 			} else {
 				sin >> key;
@@ -173,6 +173,21 @@ static void reset_obj(Object& obj) {
 }
 
 static void buffer_data(Object& obj) {
+    for (int i = 0; i < obj.indices.size(); ++i) {
+        if (i % 3 == 2) {
+            Vertex& v1 = obj.vertices[obj.indices[i-2]];
+            Vertex& v2 = obj.vertices[obj.indices[i-1]];
+            Vertex& v3 = obj.vertices[obj.indices[i-0]];
+            glm::vec3 a = v2.position - v1.position;
+            glm::vec3 b = v3.position - v1.position;
+            glm::vec3 n = glm::normalize(glm::cross(a,b));
+            v1.normal = n;
+            v2.normal = n;
+            v3.normal = n;
+        }
+    }
+
+
 	glGenVertexArrays(1, &obj.VAO);
 	glGenBuffers(1, &obj.EBO);
 	glGenBuffers(1, &obj.VBO);

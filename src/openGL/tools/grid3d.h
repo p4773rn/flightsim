@@ -6,13 +6,19 @@
 #include <glm/glm.hpp>
 #include "../shaders/shader.h"
 #include <memory>
+#include "../renderer.h"
 
-class Grid3d {
+class Grid3d : public Renderable{
 public:
 	Grid3d();
 	~Grid3d();
-	void render(const glm::vec3& pos, const glm::mat4& view, const glm::mat4& projection);
+	void geometry_pass(const glm::vec3& camera_pos,
+                       const glm::mat4& projection,
+                       const glm::mat4& view);
+    void set_pos(const glm::vec3& pos) { this->pos = pos; }
 private:
+    glm::vec3 pos;
+
 	Shader shader;
 	GLuint VAO;
 	GLuint EBO;

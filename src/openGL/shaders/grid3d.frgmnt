@@ -1,6 +1,10 @@
 #version 330 core
 
-out vec4 FragColor;
+layout (location = 0) out vec3 gPosition;
+layout (location = 1) out vec3 gNormal;
+layout (location = 2) out vec3 gAlbedo;
+layout (location = 3) out vec2 gSpec;
+layout (location = 4) out ivec4 gFlag;
 
 in vec2 pos;
 
@@ -32,10 +36,15 @@ void main()
     vec3 color = bg_color * (1 - line) + l_color * line;
 
 	
-	//float fogAmount = 1.0 - exp(-distance(vec3(0.0f, height, 0.0f), vec3(pos.x, 0.0, pos.y)));//gl_Position.xyz) * b);
-	float dist = gl_FragCoord.z/(gl_FragCoord.w * 350);	
-	float fogAmount = 1.0 / exp(dist * FogDensity);
-	fogAmount = clamp(fogAmount, 0.0, 1.0);
-	gl_FragColor = mix(fogColor, vec4(color, 1.0f), fogAmount);
-    //gl_FragColor = vec4(color, 1.);
+    gPosition = vec3(pos.x, height, pos.y);
+    gNormal = vec3(0,1,0);
+    gAlbedo = color;
+    gSpec.r = 1;
+    gSpec.g = 0.8;
+    
+//    if (line > 0.5)
+//        gFlag.r = 1;
+//    else
+//        gFlag.r = 0;
+    gFlag.r = 1;
 }

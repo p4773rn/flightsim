@@ -6,6 +6,7 @@
 #include <string>
 #include "texture.h"
 #include "../shaders/shader.h"
+#include "../renderer.h"
 
 struct Material {
 	std::string name;
@@ -40,20 +41,32 @@ struct Object {
 
 
 
-class Model{
+class Model : public Renderable{
 private:
 	std::string file_name;
 	std::vector<Object> objects;
 	std::vector<Texture> textures;
 	std::vector<Material> materials;
-	void draw_rec(const Shader& shader, const glm::mat4& model, int i);
+	void draw_rec(Shader& shader, const glm::mat4& model, int i,
+                  const glm::mat4& projection,
+                  const glm::mat4& view);
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 default_rotation;
     //Shader shader;
+
+    static Shader& get_shader() {
+        static Shader shader({
+            std::pair<std::string, GLuint>("src/openGL/shaders/model.vrtx", GL_VERTEX_SHADER),
+            std::pair<std::string, GLuint>("src/openGL/shaders/model.frgmnt", GL_FRAGMENT_SHADER)
+        });
+        return shader;
+    }
 public:
 	Model(const std::string& file_name);
-	void draw(const Shader& shader);
+	void geometry_pass(const glm::vec3& camera_pos,
+                       const glm::mat4& projection,
+                       const glm::mat4& view);
 	void set_position(const glm::vec3& pos){
 		position = pos;
 	};

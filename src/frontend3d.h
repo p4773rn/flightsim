@@ -7,12 +7,12 @@
 #include "misc.h"
 #include "openGL/camera/camera.h"
 #include "openGL/terrain/terrain.h"
-#include "openGL/terrain/sky.h"
 #include "openGL/model/model.h"
 #include "openGL/shaders/shader.h"
 #include "openGL/tools/grid3d.h"
 #include "openGL/tools/arrow.h"
 #include "openGL/tools/hud.h"
+#include "openGL/renderer.h"
 
 class Frontend3d {
 public:
@@ -23,10 +23,10 @@ public:
     void mouseInput(sf::Window& window);
     void input(const sf::Event& event);
 private:
+    Renderer renderer;
     Camera camera;
-    Shader mainShader;
     Model planeModel;
-    Sky sky;
+    Terrain terrain;
 	Grid3d grid;
 	Arrow arrow;
 	HUD hud;
@@ -35,8 +35,6 @@ private:
     bool is_first_person = false;
     bool is_cam_fixed = false;
     float cameraDistance = 50; // distance from plane
-    
-    //Terrain terrain;
 };
 
 

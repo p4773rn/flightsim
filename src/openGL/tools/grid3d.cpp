@@ -46,7 +46,10 @@ Grid3d::~Grid3d() {
 	if (EBO) glDeleteBuffers(1, &EBO);
 }
 
-void Grid3d::render(const glm::vec3& pos, const glm::mat4& view, const glm::mat4& projection) {
+
+void Grid3d::geometry_pass(const glm::vec3& camera_pos,
+                           const glm::mat4& projection,
+                           const glm::mat4& view) {
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glBindVertexArray(VAO);
 	//glDepthMask(GL_FALSE);
