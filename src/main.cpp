@@ -2,7 +2,6 @@
 #include <iostream>
 #include <cmath>
 #include <cstdlib>
-#include <ctime>
 #include "table.h"
 #include "plane.h"
 #include "frontend3d.h"
@@ -10,6 +9,8 @@
 #include <glm/glm.hpp>
 #include "plot.h"
 #include "airfoil_segment.h"
+
+using namespace std::chrono;
 
 int main()
 {
@@ -55,7 +56,9 @@ int main()
 	circle.setPosition(20, 30);
     sf::Clock clock;
     double lastUpdateTime = clock.getElapsedTime().asSeconds();
-    
+ 
+
+    int frame = 0;
     while (window.isOpen())
     {
         sf::Event event;
@@ -110,15 +113,17 @@ int main()
         
         //std::cout << clock.getElapsedTime().asSeconds() * SPEED << " " << std::endl;
         float delta = (clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED;
-        plane.update(delta, debugArrows);
+        //plane.update(delta, debugArrows);
         lastUpdateTime = clock.getElapsedTime().asSeconds();
 
         frontend.mouseInput(window);
         frontend.keyInput();
 
         // negative z axis is forward
-        glm::vec3 planePos = plane.getPos();
-        
+        //glm::vec3 planePos = glm::vec3(0, 0, -clock.getElapsedTime().asSeconds()*100);//plane.getPos();
+        glm::vec3 planePos = glm::vec3(0, 0, -frame*10);//plane.getPos();
+        frame++; 
+
         glm::vec3 euler = plane.getAngles();
         glm::vec3 yawPitchRoll(euler.y,euler.x,euler.z);
         frontend.update(planePos, yawPitchRoll);
