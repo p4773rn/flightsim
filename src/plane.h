@@ -39,43 +39,45 @@ public:
     
     Plane(const Plane& other) = default;
     Plane(Plane&& other) = default;
+    void update(double delta, std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows);
 
-    double getHeight() const {return pos.y;}
+
     const glm::dvec3& getPos() const {return pos;}
-    glm::dvec3 getAngles() const {return glm::eulerAngles(orientation);}
-    const glm::dvec3& getVel() const {return vel;}
-    void update(double delta,
-        std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows);
-
+    const glm::dvec3& getVelocity() const {return vel;}
     int getThrottle() const {return engine.getThrottle();}
-    void setThrottle(int throttle) {engine.setThrottle(throttle);}
-
+    double getHeight() const {return pos.y;}
+    glm::dvec3 getAngles() const {return glm::eulerAngles(orientation);}
+    glm::dquat& getOrientation() {return orientation;}
     double getRudderDeflection() const {return rudder.back().getDeflection().x;}
+    double getElevatorDeflection() const {return elevators.back().getDeflection().x;}
+    double getFlaps() const {return wings.front().getFlaps();}
+    bool getBrakesStatus() const {return mainWheels.getBrakesStatus();}
+    
     void setRudderDeflection(double deflection) {
         for (auto& s : rudder)
-            s.setDeflection(glm::dvec2(deflection, 0));
-        
+        	s.setDeflection(glm::dvec2(deflection, 0));
     }
+    
+    void setThrottle(int throttle) {engine.setThrottle(throttle);}
 
-    double getElevatorDeflection() const {return elevators.back().getDeflection().x;}
     void setElevatorDeflection(double deflection) {
         for (auto& s : elevators)
             s.setDeflection(glm::dvec2(deflection, 0));
         
     }
 
-    double getFlaps() const {return wings.front().getFlaps();}
     void setFlaps(double flapsPosition) {
         for (size_t i = 0; i < wings.size()/2; ++i) {
             wings[i].setFlaps(flapsPosition);
             wings[wings.size()-1-i].setFlaps(-flapsPosition);
         }
     }
+    
     void toggleBrakes() {
         mainWheels.toggleBrakes();
         frontWheels.toggleBrakes();
     }
-    bool getBrakesStatus() const {return mainWheels.getBrakesStatus();}
+    
 
     static Plane getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows);
 

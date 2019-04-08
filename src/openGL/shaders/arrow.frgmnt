@@ -8,11 +8,11 @@ layout (location = 4) out ivec4 gFlag;
 
 uniform vec3 color;
 
-in vec3 pos;
+in vec3 world_pos;
 
 void main()
 {
-    gPosition = pos;
+    gPosition = world_pos;
     gNormal = vec3(0,1,0);
     gAlbedo = color;
     gSpec.r = 1;

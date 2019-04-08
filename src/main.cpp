@@ -130,15 +130,10 @@ int main()
 
         // negative z axis is forward
         glm::vec3 planePos = plane.getPos();
-
-
-        glm::vec3 euler = plane.getAngles();
-        glm::vec3 yawPitchRoll(euler.y,euler.x,euler.z);
-        frontend.update(planePos, yawPitchRoll);
+        frontend.update(planePos, plane.getOrientation());//yawPitchRoll);
 
         //window.clear(sf::Color(127, 142,123));
         frontend.draw(window, plane, debugArrows);
-        
        
         //window.pushGLStates();
 		//window.popGLStates();

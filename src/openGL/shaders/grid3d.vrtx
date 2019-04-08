@@ -9,6 +9,7 @@ uniform mat4 projection;
 
 
 out vec2 pos;
+out vec3 world_pos;
 
 void main()
 {
@@ -22,5 +23,6 @@ void main()
     //mat4 ip = inverse(p);
 	//gl_Position = p * v * m1 * pos4;
 	gl_Position = projection * view * model1 * pos4;
+	world_pos = vec3(model1 * pos4);
     pos = ((model2 * pos4).xz) * 0.00125;
 }

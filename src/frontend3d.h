@@ -17,7 +17,7 @@
 class Frontend3d {
 public:
     Frontend3d(const glm::ivec2& screen_size);
-    void update(const glm::vec3& planePos, const glm::vec3& yawPitchRoll);
+    void update(const glm::vec3& planePos, const glm::dquat& orientation);
     void draw(sf::RenderWindow& window, const Plane &plane, 
               const std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows);
     void keyInput();

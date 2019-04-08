@@ -30,7 +30,7 @@ Model::Model(const std::string& fname) :
 	std::cout << "Successfully copied objects, textures, materials to model\n";
 }
 
-//glm::yawPitchRoll(yaw, pitch, roll)
+
 void Model::draw_rec(Shader& shader, const glm::mat4& model, int index,
                      const glm::mat4& projection,
                      const glm::mat4& view) {
@@ -39,9 +39,10 @@ void Model::draw_rec(Shader& shader, const glm::mat4& model, int index,
 	//exit(1);
 	glm::mat4 TR(1.0f);
 	TR = glm::translate(TR, objects[index].position);
-	TR *= glm::yawPitchRoll(objects[index].yaw_roll_pitch.x,
+	/*TR *= glm::yawPitchRoll(objects[index].yaw_roll_pitch.x,
 							objects[index].yaw_roll_pitch.y,
-							objects[index].yaw_roll_pitch.z);
+							objects[index].yaw_roll_pitch.z);*/
+	TR *= (glm::mat4)glm::mat4_cast(objects[index].orientation);
 	if (!objects[index].indices.empty()){
 		bool has_texture = objects[index].texture_id > -1;
 		shader.set("use_texture", has_texture);
@@ -74,7 +75,7 @@ void Model::geometry_pass(const glm::vec3& camera_pos,
     Shader& shader = get_shader(); 
     shader.use();
     glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
-    model *= glm::yawPitchRoll(rotation.x, rotation.y, rotation.z);
+    model *= (glm::mat4)glm::mat4_cast(orientation); //glm::yawPitchRoll(rotation.x, rotation.y, rotation.z);
     model *= glm::yawPitchRoll(default_rotation.x, default_rotation.y, default_rotation.z);
     draw_rec(shader, model, 0, projection, view);
 }

@@ -8,12 +8,12 @@ uniform mat4 projection;
 uniform float scale;
 uniform float cam_distance;
 
-out vec3 pos;
+out vec3 world_pos;
 
 void main()
 {
 	float adj = cam_distance * 0.01;
 	if (adj < 1.0f) adj = 1.0f;
-	pos = vec3(adj * aPos.x, scale * aPos.y, adj * aPos.z);
-	gl_Position = projection * view * model * vec4(pos, 1.0f);
+	world_pos = vec3(model * vec4(adj * aPos.x, scale * aPos.y, adj * aPos.z, 1.0));
+	gl_Position = projection * view * vec4(world_pos, 1.0f);
 }

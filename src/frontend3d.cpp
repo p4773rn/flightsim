@@ -20,13 +20,13 @@ Frontend3d::Frontend3d(const glm::ivec2& screen_size):
 	std::cout << "Frontend3D was created...\n";
 };
 
-void Frontend3d::update(const glm::vec3& planePos, const glm::vec3& yawPitchRoll) {
+void Frontend3d::update(const glm::vec3& planePos, const glm::dquat& orientation) {
     this->planePos = planePos;
-    this->yawPitchRoll = yawPitchRoll;
-    
-    //planeModel.set_position(this->planePos + glm::vec3(0.0f, 4.5f, 0.0f)); //For the 747-400
-    planeModel.set_position(this->planePos + glm::vec3(0.0f, 1.5f, 0.0f));
-    planeModel.set_rotation(this->yawPitchRoll);
+
+    //this->yawPitchRoll = yawPitchRoll;
+    //planeModel.set_position(planePos + glm::vec3(0.0f, 4.5f, 0.0f)); //For the 747-400
+    planeModel.set_position(planePos + glm::vec3(0.0f, 1.5f, 0.0f));
+    planeModel.set_orientation(orientation);//this->yawPitchRoll);
     if (is_first_person) {
     	glm::vec3 pilot_offset(0.0f,
     		pilot_default_offset.z * sin(yawPitchRoll.y) + pilot_default_offset.y * cos(yawPitchRoll.y),
