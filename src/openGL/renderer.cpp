@@ -118,9 +118,9 @@ void Renderer::render(const glm::vec3& light_dir, const glm::vec3& light_color,
 {
     // geometry pass
     //-----------------------------------
-//    glBindFramebuffer(GL_FRAMEBUFFER, g_buffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glBindFramebuffer(GL_FRAMEBUFFER, g_buffer);
+    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_DEPTH_TEST);
     //glEnable(GL_CULL_FACE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -158,36 +158,36 @@ void Renderer::render(const glm::vec3& light_dir, const glm::vec3& light_color,
     //}
         
 
-//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//    //opaque_renderables.clear();
-//   
-//
-//    // lighting pass
-//    //-----------------------------------
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, g_position);
-//    glActiveTexture(GL_TEXTURE1);
-//    glBindTexture(GL_TEXTURE_2D, g_normal);
-//    glActiveTexture(GL_TEXTURE2);
-//    glBindTexture(GL_TEXTURE_2D, g_albedo);
-//    glActiveTexture(GL_TEXTURE3);
-//    glBindTexture(GL_TEXTURE_2D, g_spec);
-//    glActiveTexture(GL_TEXTURE4);
-//    glBindTexture(GL_TEXTURE_2D, g_flag);
-//
-//    lighting_shader.use();
-//    lighting_shader.set("gPosition", 0);
-//    lighting_shader.set("gNormal", 1);
-//    lighting_shader.set("gAlbedo", 2);
-//    lighting_shader.set("gSpec", 3);
-//    lighting_shader.set("gFlag", 4);
-//    lighting_shader.set("view", view);
-//    lighting_shader.set("light_dir", light_dir);
-//    lighting_shader.set("light_color", light_color);
-//    lighting_shader.set("camera_pos", camera_pos);
-//    
-//    glBindVertexArray(quad_vao);
-//    glDrawArrays(GL_TRIANGLES, 0, 6);
-//    glBindVertexArray(0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    //opaque_renderables.clear();
+   
+
+    // lighting pass
+    //-----------------------------------
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, g_position);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, g_normal);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, g_albedo);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, g_spec);
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, g_flag);
+
+    lighting_shader.use();
+    lighting_shader.set("gPosition", 0);
+    lighting_shader.set("gNormal", 1);
+    lighting_shader.set("gAlbedo", 2);
+    lighting_shader.set("gSpec", 3);
+    lighting_shader.set("gFlag", 4);
+    lighting_shader.set("view", view);
+    lighting_shader.set("light_dir", light_dir);
+    lighting_shader.set("light_color", light_color);
+    lighting_shader.set("camera_pos", camera_pos);
+    
+    glBindVertexArray(quad_vao);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    //glBindVertexArray(0);
 }

@@ -12,7 +12,7 @@ Frontend3d::Frontend3d():
 		camera(glm::vec3(0.0, 40.0f, 0.0)),
 		//planeModel("assets/models/737-300.ac"),
 		planeModel("assets/models/747-400.ac"), //747 is lighter model, might be useful for acceleration purposes
-		terrain(glm::vec3(0, 0, 0), 1<<13)
+		terrain(glm::vec3(0, 0, 0), 1<<16)
 {	
 	planeModel.set_position(glm::vec3(0.0f, planePos.y, -planePos.z));
 	planeModel.set_default_rotation(glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f));

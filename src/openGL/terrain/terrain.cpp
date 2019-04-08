@@ -12,7 +12,8 @@ Terrain::Terrain(const glm::vec3& origin, float size) :
         std::pair<std::string, GLuint>("src/openGL/shaders/terrain.tec", GL_TESS_CONTROL_SHADER),
         std::pair<std::string, GLuint>("src/openGL/shaders/terrain.tse", GL_TESS_EVALUATION_SHADER),
         std::pair<std::string, GLuint>("src/openGL/shaders/terrain.frgmnt", GL_FRAGMENT_SHADER)
-    })
+    }),
+    tex_coord_offset(0)
 {
     this->size = size;
     this->origin = origin;
