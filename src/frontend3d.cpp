@@ -10,8 +10,8 @@ const glm::vec3 pilot_default_offset(0.0, 4.0f, 19.0f);
 Frontend3d::Frontend3d(const glm::ivec2& screen_size):
         renderer(screen_size),
 		camera(glm::vec3(0.0, 40.0f, 0.0)),
-		//planeModel("assets/models/737-300.ac"),
-		planeModel("assets/models/747-400.ac"), //747 is lighter model, might be useful for acceleration purposes
+		planeModel("assets/models/737-300.ac"),
+		//planeModel("assets/models/747-400.ac"), //747 is lighter model, might be useful for acceleration purposes
 		terrain(glm::vec3(0, 0, 0), 1<<16),
 		screen_size{screen_size}
 {	
@@ -24,8 +24,8 @@ void Frontend3d::update(const glm::vec3& planePos, const glm::vec3& yawPitchRoll
     this->planePos = planePos;
     this->yawPitchRoll = yawPitchRoll;
     
-    planeModel.set_position(this->planePos + glm::vec3(0.0f, 4.5f, 0.0f)); //For the 747-400
-    //planeModel.set_position(this->planePos + glm::vec3(0.0f, 1.5f, 0.0f));
+    //planeModel.set_position(this->planePos + glm::vec3(0.0f, 4.5f, 0.0f)); //For the 747-400
+    planeModel.set_position(this->planePos + glm::vec3(0.0f, 1.5f, 0.0f));
     planeModel.set_rotation(this->yawPitchRoll);
     if (is_first_person) {
     	glm::vec3 pilot_offset(0.0f,
@@ -49,21 +49,16 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
 
     if (!is_first_person) 
         renderer.queue_render(&planeModel);
-    renderer.queue_render(&terrain);
 
-   // grid.set_pos(planePos);
-   // renderer.queue_render(&grid);
+    grid.set_pos(planePos);
+    renderer.queue_render(&grid);
 
     renderer.render(light_dir, light_color, projection, view, camera.get_position());
 
-	//arrow.set_uniforms(view, projection, cameraDistance);
-
-    //for (auto& a : debugArrows) {
-    //    glm::vec3 pos, dir, color;
-    //    std::tie(pos, dir, color) = a;
-	//	//TODO: arrow of form (0,-y,0) don't render
-    //    arrow.draw(pos, glm::normalize(dir), glm::length(dir), color);
-    //}
+    arrow.set_arrows(debugArrows, cameraDistance);
+    renderer.queue_render(&arrow);
+   
+    renderer.queue_render(&terrain);
 
     //hud.draw(window, plane);
 }

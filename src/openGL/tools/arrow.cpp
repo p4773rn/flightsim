@@ -55,30 +55,37 @@ Arrow::Arrow() : shader({{"src/openGL/shaders/arrow.vrtx", GL_VERTEX_SHADER},
 	std::cout << "Arrow was created...\n";
 }
 
-void Arrow::set_uniforms(const glm::mat4& view, const glm::mat4& projection, float distance) {
-	shader.use();
-	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "view"),
-                     1, GL_FALSE, glm::value_ptr(view));
-  	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "projection"),
-                     1, GL_FALSE,
-                     glm::value_ptr(projection));
-    glUniform1f(glGetUniformLocation(shader.getID(), "cam_distance"), distance);
+void Arrow::set_arrows(const std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debug_arrows, 
+                       float camera_distance) {
+    this->debug_arrows = debug_arrows;
+    this->camera_distance = camera_distance;
 }
 
-void Arrow::draw(const glm::vec3& origin, const glm::vec3& direction, float scale, const glm::vec3& color) {
+void Arrow::geometry_pass(const glm::vec3& camera_pos,
+                   const glm::mat4& projection,
+                   const glm::mat4& view){
 	shader.use();
-	float angle = acos(glm::dot(glm::normalize(direction), arrow_dir));
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(origin.x, origin.y, origin.z));
-	if (angle != 0)	model = glm::rotate(model, angle, glm::cross(arrow_dir, glm::normalize(direction)));
 
 	glBindVertexArray(VAO);
-	glUniformMatrix4fv(glGetUniformLocation(shader.getID(), "model"),
-                     1, GL_FALSE, glm::value_ptr(model));
-    glUniform1f(glGetUniformLocation(shader.getID(), "scale"), scale);
-    glUniform3f(glGetUniformLocation(shader.getID(), "color"), color.r, color.g, color.b);
-    
-	glDrawElements(GL_TRIANGLES, N_INDICES, GL_UNSIGNED_INT, 0);
+	shader.set("view", view);
+	shader.set("projection", projection);
+	shader.set("cam_distance", camera_distance);
+
+    for (auto& a : debug_arrows) {
+        glm::vec3 origin, direction, color;
+        std::tie(origin, direction, color) = a;
+        
+        float angle = acos(glm::dot(glm::normalize(direction), arrow_dir));
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(origin.x, origin.y, origin.z));
+        if (angle != 0)	model = glm::rotate(model, angle, glm::cross(arrow_dir, glm::normalize(direction)));
+        
+        shader.set("model", model);
+        shader.set("scale", glm::length(direction));
+        shader.set("color", color);
+        
+        glDrawElements(GL_TRIANGLES, N_INDICES, GL_UNSIGNED_INT, 0);
+    }
 	glBindVertexArray(0);
 }
 

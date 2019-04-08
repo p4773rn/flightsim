@@ -10,11 +10,10 @@
 #include "plot.h"
 #include "airfoil_segment.h"
 
-using namespace std::chrono;
 
 int main()
 {
-    const int SPEED = 1; // simulation speed; 1 = real time; 10 = 10 times faster;
+    float speed = 1; // simulation speed; 1 = real time; 10 = 10 times faster;
     const int FPS = 60; 
     
     sf::ContextSettings settings;
@@ -85,11 +84,11 @@ int main()
                             plane.setElevatorDeflection(plane.getElevatorDeflection() + elevatorsDevlectionStep);
                             break;
 
-                        case sf::Keyboard::W:
-                            plane.setRudderDeflection(plane.getRudderDeflection() - elevatorsDevlectionStep);
+                        case sf::Keyboard::E:
+                            plane.setElevatorDeflection(0);
                             break;
-                        case sf::Keyboard::Q:
-                            plane.setRudderDeflection(plane.getRudderDeflection() + elevatorsDevlectionStep);
+                        case sf::Keyboard::F:
+                            plane.setFlaps(0);
                             break;
                         
                         case sf::Keyboard::Right:
@@ -101,6 +100,16 @@ int main()
                         case sf::Keyboard::B:
                             plane.toggleBrakes();
                             break;
+
+                        case sf::Keyboard::Add:
+                            speed += 0.1;
+                            break;
+                        case sf::Keyboard::Subtract:
+                            speed = glm::max(0.0f, speed-0.1f);
+                            break;
+                        case sf::Keyboard::Divide:
+                            speed = 1;
+                            break;
                     }
                     break;
 
@@ -111,18 +120,17 @@ int main()
 
         debugArrows.clear();
         
-        //std::cout << clock.getElapsedTime().asSeconds() * SPEED << " " << std::endl;
-        float delta = (clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED;
-        //plane.update(delta, debugArrows);
+        //std::cout << clock.getElapsedTime().asSeconds() * speed << " " << std::endl;
+        float delta = (clock.getElapsedTime().asSeconds() - lastUpdateTime) * speed;
+        plane.update(delta, debugArrows);
         lastUpdateTime = clock.getElapsedTime().asSeconds();
 
         frontend.mouseInput(window);
         frontend.keyInput();
 
         // negative z axis is forward
-        //glm::vec3 planePos = glm::vec3(0, 0, -clock.getElapsedTime().asSeconds()*100);//plane.getPos();
-        glm::vec3 planePos = glm::vec3(0, 0, -frame*10);//plane.getPos();
-        frame++; 
+        glm::vec3 planePos = plane.getPos();
+
 
         glm::vec3 euler = plane.getAngles();
         glm::vec3 yawPitchRoll(euler.y,euler.x,euler.z);
@@ -130,8 +138,7 @@ int main()
 
         //window.clear(sf::Color(127, 142,123));
         frontend.draw(window, plane, debugArrows);
-
-
+        
        
         //window.pushGLStates();
 		//window.popGLStates();
