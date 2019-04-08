@@ -7,12 +7,13 @@
 
 const glm::vec3 pilot_default_offset(0.0, 4.0f, 19.0f);
 
-Frontend3d::Frontend3d():
-        renderer(glm::ivec2(800, 600)),
+Frontend3d::Frontend3d(const glm::ivec2& screen_size):
+        renderer(screen_size),
 		camera(glm::vec3(0.0, 40.0f, 0.0)),
 		//planeModel("assets/models/737-300.ac"),
 		planeModel("assets/models/747-400.ac"), //747 is lighter model, might be useful for acceleration purposes
-		terrain(glm::vec3(0, 0, 0), 1<<16)
+		terrain(glm::vec3(0, 0, 0), 1<<16),
+		screen_size{screen_size}
 {	
 	planeModel.set_position(glm::vec3(0.0f, planePos.y, -planePos.z));
 	planeModel.set_default_rotation(glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f));
@@ -23,8 +24,8 @@ void Frontend3d::update(const glm::vec3& planePos, const glm::vec3& yawPitchRoll
     this->planePos = planePos;
     this->yawPitchRoll = yawPitchRoll;
     
-    planeModel.set_position(planePos + glm::vec3(0.0f, 4.5f, 0.0f)); //For the 747-400
-    //planeModel.set_position(planePos + glm::vec3(0.0f, 1.5f, 0.0f));
+    //planeModel.set_position(planePos + glm::vec3(0.0f, 4.5f, 0.0f)); //For the 747-400
+    planeModel.set_position(planePos + glm::vec3(0.0f, 1.5f, 0.0f));
     planeModel.set_rotation(this->yawPitchRoll);
     if (is_first_person) {
     	glm::vec3 pilot_offset(0.0f,
@@ -34,15 +35,15 @@ void Frontend3d::update(const glm::vec3& planePos, const glm::vec3& yawPitchRoll
     }
 }
 
-void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane) {
+void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane, 
+                      const std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows) {
     float yaw = yawPitchRoll.x;
     float pitch = yawPitchRoll.y;
     float roll = yawPitchRoll.z;
     //glm::mat4 planeTransform = glm::translate(glm::mat4(1), planePos) * glm::yawPitchRoll(yaw, pitch, roll);
     glm::mat4 view = camera.get_view();
-    glm::mat4 projection = glm::perspective(glm::radians(90.0f), 800.0f/600.0f, 0.1f, 4*4096.0f);
-    //glm::mat4 projection = glm::perspective(glm::radians(90.0f), 16.0f/9.0f, 0.1f, 4*4096.0f);
-    glm::vec3 light(-500.0f, 800.0f, 2048.0f);
+    //glm::mat4 projection = glm::perspective(glm::radians(90.0f), 800.0f/600.0f, 0.1f, 4*4096.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(90.0f), float(screen_size.x)/screen_size.y, 0.1f, 4*4096.0f);
     glm::vec3 light_dir(0.1,-0.6,0.5);
     glm::vec3 light_color(1);
 
@@ -54,6 +55,17 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane) {
    // renderer.queue_render(&grid);
 
     renderer.render(light_dir, light_color, projection, view, camera.get_position());
+
+	arrow.set_uniforms(view, projection, cameraDistance);
+
+    for (auto& a : debugArrows) {
+        glm::vec3 pos, dir, color;
+        std::tie(pos, dir, color) = a;
+		//TODO: arrow of form (0,-y,0) don't render
+        arrow.draw(pos, glm::normalize(dir), glm::length(dir), color);
+    }
+
+    //hud.draw(window, plane);
 }
 
 

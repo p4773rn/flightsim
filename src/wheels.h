@@ -2,6 +2,8 @@
 #define WHEELS_H
 
 #include "vec2.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <tuple>
 
 class Wheels {
@@ -14,7 +16,7 @@ public:
         brakesOn{false}
     {}
 
-    std::tuple<Vec2, double> getForceAndTorque(const Vec2& velocity, const Vec2& planePosition, double angularVelocity, double pitchAngle, double mass) const;
+    std::tuple<glm::dvec3, glm::dvec3> getForceAndTorque(const glm::dvec3& velocity, const glm::vec3& planePosition, const glm::dvec3 angularVelocity, const glm::dquat& orientation , double mass) const;
 
     void toggleBrakes() {brakesOn = !brakesOn;};
     bool getBrakesStatus() const {return brakesOn;}

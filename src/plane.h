@@ -1,82 +1,105 @@
 #ifndef PLANE_H
 #define PLANE_H
 
-#include "airfoil.h"
-#include "vec2.h"
+#include "airfoil_segment.h"
+#include <glm/glm.hpp>
 #include "engine.h"
 #include "wheels.h"
 
 class Plane {
 public:
-    Plane(Vec2 pos,
-          Vec2 velocity,
-          double pitchAngle,
+    Plane(glm::dvec3 pos,
+          glm::dvec3 vel,
           double mass,
-          double inertia,
+          glm::dmat3 inertia,
 
-          Airfoil wings,
-          Vec2 wingsPoint,
-          Airfoil elevators,
-          Vec2 elevatorsPoint,
+          std::vector<AirfoilSegment> wings,
+          std::vector<AirfoilSegment> elevators,
+          std::vector<AirfoilSegment> rudder,
+          std::vector<AirfoilSegment> fuselage,
           Engine engine,
           Wheels frontWheels,
           Wheels mainWheels) :
           
           pos{pos},
-          velocity{velocity},
-          pitchAngle{pitchAngle},
-          angularVelocity{0},
+          vel{vel},
+          orientation{0, 0, 0, 0},
+          angVel{0},
           mass{mass},
           inertia{inertia},
           wings{wings},
-          wingsPoint{wingsPoint},
           elevators{elevators},
-          elevatorsPoint{elevatorsPoint},
+          rudder{rudder},
+          fuselage{fuselage},
           engine{engine},
           frontWheels{frontWheels},
           mainWheels{mainWheels}
     {}
-
+    
+    
     Plane(const Plane& other) = default;
     Plane(Plane&& other) = default;
 
-    double getHeight() const {return pos.getY();}
-    const Vec2& getPos() const {return pos;}
-    float getPitchAngle() const {return pitchAngle;}
-    Vec2 getVelocity() const {return velocity;}
-    float getWingsAoA() const {return wings.getAngleOfAttack(velocity, pitchAngle) / M_PI * 180;}
-    float getElevatorsAoA() const {return elevators.getAngleOfAttack(velocity, pitchAngle) / M_PI * 180;}
-    void update(double delta);
+    double getHeight() const {return pos.y;}
+    const glm::dvec3& getPos() const {return pos;}
+    glm::dvec3 getAngles() const {return glm::eulerAngles(orientation);}
+    const glm::dvec3& getVel() const {return vel;}
+    void update(double delta,
+        std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows);
 
     int getThrottle() const {return engine.getThrottle();}
     void setThrottle(int throttle) {engine.setThrottle(throttle);}
 
-    double getElevatorDeflection() const {return elevators.getDeflection();}
-    void setElevatorDeflection(double deflection) {elevators.setDeflection(deflection);}
+    double getRudderDeflection() const {return rudder.back().getDeflection().x;}
+    void setRudderDeflection(double deflection) {
+        for (auto& s : rudder)
+            s.setDeflection(glm::dvec2(deflection, 0));
+        
+    }
 
-    double getFlaps() const {return wings.getFlaps();}
-    void setFlaps(double flapsPosition) {wings.setFlaps(flapsPosition);}
+    double getElevatorDeflection() const {return elevators.back().getDeflection().x;}
+    void setElevatorDeflection(double deflection) {
+        for (auto& s : elevators)
+            s.setDeflection(glm::dvec2(deflection, 0));
+        
+    }
+
+    double getFlaps() const {return wings.front().getFlaps();}
+    void setFlaps(double flapsPosition) {
+        for (size_t i = 0; i < wings.size()/2; ++i) {
+            wings[i].setFlaps(flapsPosition);
+            wings[wings.size()-1-i].setFlaps(-flapsPosition);
+        }
+    }
     void toggleBrakes() {
         mainWheels.toggleBrakes();
         frontWheels.toggleBrakes();
     }
     bool getBrakesStatus() const {return mainWheels.getBrakesStatus();}
 
-    static Plane getDefaultPlane();
+    static Plane getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows);
 
+    // doesn't take into account incidence, but hopefully it is small enough for estimating inertia
+    static void addPointMasses(double length, double root, double tip, double sweep, 
+                               const glm::dvec3& pos, double dihedral, bool invertX,
+                               std::vector<glm::dvec3>& pointMasses);
+    static std::vector<AirfoilSegment> createAirfoilSegments(
+                               int num_segments,
+                               double length, double root, double tip, double sweep, 
+                               const glm::dvec3& pos, double incidence, double dihedral, bool invertX,
+                               const Table& tableFlaps0);
 private:
-    Vec2 pos; // For now, xy coordinates of the plane
-    Vec2 velocity;
-    double pitchAngle; // pitchAngle of plane relative to horizon
-    double angularVelocity;
+    glm::dvec3 pos; // For now, xy coordinates of the plane
+    glm::dvec3 vel;
+    glm::dquat orientation;
+    glm::dvec3 angVel;
     double mass;
-    double inertia;
+    glm::dmat3 inertia;
 
-    Vec2 wingsPoint; // distance from wingss' force to the mass center
-    Airfoil wings;
-
-    Vec2 elevatorsPoint;
-    Airfoil elevators;
+    std::vector<AirfoilSegment> wings;
+    std::vector<AirfoilSegment> elevators;
+    std::vector<AirfoilSegment> rudder;
+    std::vector<AirfoilSegment> fuselage;
 
     Engine engine;
 

@@ -24,6 +24,8 @@ public:
     Table(const Table& other) = default;
     Table(Table&& other) = default;
 
+    Table& operator=(const Table& other) = default;
+
     Entry get(double alpha) const;
 
     friend std::ostream& operator<<(std::ostream& stream, const Table& table);

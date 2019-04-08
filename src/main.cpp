@@ -9,10 +9,11 @@
 //#include "//frontend2d.h"
 #include <glm/glm.hpp>
 #include "plot.h"
+#include "airfoil_segment.h"
 
 int main()
 {
-    const int SPEED = 2; // simulation speed; 1 = real time; 10 = 10 times faster;
+    const int SPEED = 1; // simulation speed; 1 = real time; 10 = 10 times faster;
     const int FPS = 60; 
     
     sf::ContextSettings settings;
@@ -20,15 +21,15 @@ int main()
     settings.majorVersion = 3;
     settings.minorVersion = 3;
 
-    sf::RenderWindow window(sf::VideoMode(800, 600), "FlightSim", sf::Style::Default, settings);
-    //sf::RenderWindow window(sf::VideoMode(800, 600), "FlightSim");
+    glm::ivec2 screenSize(800, 600);
+    sf::RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y), "FlightSim", sf::Style::Default, settings);
     window.setFramerateLimit(FPS);
     window.setMouseCursorVisible(false);
 
-    int screenWidth = sf::VideoMode::getDesktopMode().width;
-    if (screenWidth > 1920)
-        screenWidth = 1920;
-    //sf::Vector2<int> windowPosition(screenWidth - 800, 0);
+    //int screenWidth = sf::VideoMode::getDesktopMode().width;
+    //if (screenWidth > 1920)
+    //    screenWidth = 1920;
+    sf::Vector2<int> windowPosition(1920 / 4, 0);
 
     //window.setPosition(windowPosition);
 
@@ -38,17 +39,23 @@ int main()
 	//WE INIT GLEW BEFORE //frontend
 	if (GLEW_OK != glewInit()) std::cerr << "GLEW INIT Error";
 
-    Frontend3d frontend;
-    Plane plane = Plane::getDefaultPlane();
+    Frontend3d frontend(screenSize);
+    std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>> debugArrows;
+    
+    Plane plane = Plane::getDefaultPlane(debugArrows);
     // plane.setThrottle(75);
+
+
+
     // TODO: put this inside plane somewhere
-    double elevatorsDevlectionStep = 0.01;
+    double elevatorsDevlectionStep = 0.02;
 	
 	sf::CircleShape circle;
 	circle.setRadius(20.0f);
 	circle.setPosition(20, 30);
     sf::Clock clock;
     double lastUpdateTime = clock.getElapsedTime().asSeconds();
+    
     while (window.isOpen())
     {
         sf::Event event;
@@ -68,20 +75,25 @@ int main()
                         case sf::Keyboard::X:
                             plane.setThrottle(plane.getThrottle() + 5);
                             break;
-                        case sf::Keyboard::Q:
+                        case sf::Keyboard::Up:
                             plane.setElevatorDeflection(plane.getElevatorDeflection() - elevatorsDevlectionStep);
                             break;
-                        case sf::Keyboard::W:
+                        case sf::Keyboard::Down:
                             plane.setElevatorDeflection(plane.getElevatorDeflection() + elevatorsDevlectionStep);
                             break;
-                        case sf::Keyboard::E:
-                            plane.setElevatorDeflection(0);
+
+                        case sf::Keyboard::W:
+                            plane.setRudderDeflection(plane.getRudderDeflection() - elevatorsDevlectionStep);
                             break;
-                        case sf::Keyboard::F:
-                            plane.setFlaps(plane.getFlaps() - 0.05);
+                        case sf::Keyboard::Q:
+                            plane.setRudderDeflection(plane.getRudderDeflection() + elevatorsDevlectionStep);
                             break;
-                        case sf::Keyboard::G:
-                            plane.setFlaps(plane.getFlaps() + 0.05);
+                        
+                        case sf::Keyboard::Right:
+                            plane.setFlaps(plane.getFlaps() - 0.02);
+                            break;
+                        case sf::Keyboard::Left:
+                            plane.setFlaps(plane.getFlaps() + 0.02);
                             break;
                         case sf::Keyboard::B:
                             plane.toggleBrakes();
@@ -94,22 +106,28 @@ int main()
             }
         }
 
+        debugArrows.clear();
+        
         //std::cout << clock.getElapsedTime().asSeconds() * SPEED << " " << std::endl;
-
-        //plane.update((clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED);
+        float delta = (clock.getElapsedTime().asSeconds() - lastUpdateTime) * SPEED;
+        plane.update(delta, debugArrows);
         lastUpdateTime = clock.getElapsedTime().asSeconds();
 
         frontend.mouseInput(window);
         frontend.keyInput();
 
         // negative z axis is forward
-        glm::vec3 planePos(0, plane.getPos().getY(), -plane.getPos().getX());
-        glm::vec3 yawPitchRoll(0, plane.getPitchAngle(), 0);
+        glm::vec3 planePos = plane.getPos();
+        
+        glm::vec3 euler = plane.getAngles();
+        glm::vec3 yawPitchRoll(euler.y,euler.x,euler.z);
         frontend.update(planePos, yawPitchRoll);
 
         //window.clear(sf::Color(127, 142,123));
-        frontend.draw(window, plane);
-        
+        frontend.draw(window, plane, debugArrows);
+
+
+       
         //window.pushGLStates();
 		//window.popGLStates();
         window.display();
