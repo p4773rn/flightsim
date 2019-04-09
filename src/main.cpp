@@ -117,12 +117,16 @@ int main()
                     break;
             }
         }
-
-        debugArrows.clear();
         
         //std::cout << clock.getElapsedTime().asSeconds() * speed << " " << std::endl;
         float delta = (clock.getElapsedTime().asSeconds() - lastUpdateTime) * speed;
-        plane.update(delta, debugArrows);
+        
+        int num_steps = 20;
+        for (int i = 0; i < num_steps; ++i) {
+            debugArrows.clear();
+            plane.update(delta/num_steps, debugArrows);
+        }
+
         lastUpdateTime = clock.getElapsedTime().asSeconds();
 
 
