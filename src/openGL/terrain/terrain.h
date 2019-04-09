@@ -42,8 +42,7 @@ public:
     void set_origin(const glm::vec3& origin) { this->origin = origin; }
     //const glm::vec2& get_tex_coord_offset() const { return tex_coord_offset; }
     //void set_tex_coord_offset(const glm::vec2& tex_coord_offset) { this->tex_coord_offset = tex_coord_offset; }
-
-
+    void set_pos_offset(const glm::vec3& offset);
 
     float get_height(const glm::vec2& world_pos) const;
     glm::vec2 get_tex_coord(const glm::vec2 world_pos) const;

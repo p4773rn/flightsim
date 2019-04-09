@@ -215,7 +215,7 @@ void Terrain::render_tree(Node* node, const glm::vec3& camera_pos) {
 void Terrain::render_node(Node* node, const glm::vec3& camera_pos) {
     glm::vec3 node_pos(node->origin.x, origin.y, -node->origin.y);
     
-    float render_dist = 1e10;//std::max(get_max_render_dist(), camera_pos.y * 15);
+    float render_dist = 1e5;//std::max(get_max_render_dist(), camera_pos.y * 15);
     // closest possible point of the node
     float node_dist = glm::distance(glm::vec2(camera_pos.x, camera_pos.z), glm::vec2(node_pos.x, node_pos.z)) -
                       sqrt(node->size*node->size*2)*0.5;
@@ -264,6 +264,10 @@ void Terrain::load_textures() {
 
 
 
+void Terrain::set_pos_offset(const glm::vec3& offset) {
+    tex_coord_offset = glm::vec2(offset.x, offset.z) / get_size();
+    origin.y = -offset.y;
+}
 
 float Terrain::get_height(const glm::vec2& world_pos) const {
     auto tex_coord = get_tex_coord(world_pos);

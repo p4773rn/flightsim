@@ -20,12 +20,13 @@ Frontend3d::Frontend3d(const glm::ivec2& screen_size):
 	std::cout << "Frontend3D was created...\n";
 };
 
-void Frontend3d::update(const glm::vec3& planePos, const glm::dquat& orientation) {
-    this->planePos = planePos;
+void Frontend3d::update(const glm::dvec3& planePos, const glm::dquat& orientation) {
+    posOffset = glm::floor(planePos / 100.0) * 100.0;
+    this->planePos = planePos - posOffset;
 
     //this->yawPitchRoll = yawPitchRoll;
     //planeModel.set_position(planePos + glm::vec3(0.0f, 4.5f, 0.0f)); //For the 747-400
-    planeModel.set_position(planePos + glm::vec3(0.0f, 1.5f, 0.0f));
+    planeModel.set_position(this->planePos + glm::vec3(0.0f, 1.5f, 0.0f));
     planeModel.set_orientation(orientation);//this->yawPitchRoll);
     if (is_first_person) {
     	glm::vec3 pilot_offset(0.0f,
@@ -36,7 +37,7 @@ void Frontend3d::update(const glm::vec3& planePos, const glm::dquat& orientation
 }
 
 void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane, 
-                      const std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows) {
+                      std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>> debugArrows) {
     float yaw = yawPitchRoll.x;
     float pitch = yawPitchRoll.y;
     float roll = yawPitchRoll.z;
@@ -50,16 +51,23 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
     if (!is_first_person) 
         renderer.queue_render(&planeModel);
 
-    grid.set_pos(planePos);
-    renderer.queue_render(&grid);
-
-    renderer.render(light_dir, light_color, projection, view, camera.get_position());
-
+    //grid.set_pos(-posOffset);
+    //renderer.queue_render(&grid);
+    
+    for (auto& a : debugArrows) {
+        glm::vec3 origin, direction, color;
+        std::tie(origin, direction, color) = a;
+        origin -= posOffset;
+        a = std::make_tuple(origin, direction, color);
+    }
     arrow.set_arrows(debugArrows, cameraDistance);
     renderer.queue_render(&arrow);
-   
+
+
+    terrain.set_pos_offset(posOffset);
     renderer.queue_render(&terrain);
 
+    renderer.render(light_dir, light_color, projection, view, camera.get_position());
     //hud.draw(window, plane);
 }
 

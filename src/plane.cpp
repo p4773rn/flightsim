@@ -71,10 +71,10 @@ void Plane::update(double delta,
     std::tie(frontWheelsForce, frontWheelsTorque )= frontWheels.getForceAndTorque(vel, pos, angVel, orientation, mass);
     std::tie(mainWheelsForce, mainWheelsTorque )= mainWheels.getForceAndTorque(vel, pos, angVel, orientation, mass);
 
-    netForce += frontWheelsForce;
-    netForce += mainWheelsForce;
-    netTorque += frontWheelsTorque;
-    netTorque += mainWheelsTorque;
+    //netForce += frontWheelsForce;
+    //netForce += mainWheelsForce;
+    //netTorque += frontWheelsTorque;
+    //netTorque += mainWheelsTorque;
     
 
     glm::dvec3 acc = netForce / mass;

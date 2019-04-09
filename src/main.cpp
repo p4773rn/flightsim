@@ -125,12 +125,11 @@ int main()
         plane.update(delta, debugArrows);
         lastUpdateTime = clock.getElapsedTime().asSeconds();
 
+
+        glm::dvec3 planePos = plane.getPos();
+        frontend.update(planePos, plane.getOrientation());
         frontend.mouseInput(window);
         frontend.keyInput();
-
-        // negative z axis is forward
-        glm::vec3 planePos = plane.getPos();
-        frontend.update(planePos, plane.getOrientation());//yawPitchRoll);
 
         //window.clear(sf::Color(127, 142,123));
         frontend.draw(window, plane, debugArrows);

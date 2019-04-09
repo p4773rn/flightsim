@@ -17,9 +17,9 @@
 class Frontend3d {
 public:
     Frontend3d(const glm::ivec2& screen_size);
-    void update(const glm::vec3& planePos, const glm::dquat& orientation);
+    void update(const glm::dvec3& planePos, const glm::dquat& orientation);
     void draw(sf::RenderWindow& window, const Plane &plane, 
-              const std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows);
+              std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>> debugArrows);
     void keyInput();
     void mouseInput(sf::Window& window);
     void input(const sf::Event& event);
@@ -32,6 +32,7 @@ private:
 	Arrow arrow;
 	HUD hud;
     glm::vec3 planePos;
+    glm::dvec3 posOffset;
     glm::vec3 yawPitchRoll;
     bool is_first_person = false;
     bool is_cam_fixed = false;

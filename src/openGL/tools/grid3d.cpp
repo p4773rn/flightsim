@@ -54,10 +54,7 @@ void Grid3d::geometry_pass(const glm::vec3& camera_pos,
 	glBindVertexArray(VAO);
 	//glDepthMask(GL_FALSE);
 	shader.use();
-	glm::mat4 model1 = glm::translate(glm::mat4(1.), 
-	                    glm::vec3(  pos.x, 
-	                                0, //pos.y, //int(pos.y/Y_INCREMENT) * Y_INCREMENT, 
-	                                pos.z));
+	glm::mat4 model1 = glm::translate(glm::mat4(1.), pos);
 	glm::mat4 model2 = glm::translate(glm::mat4(1.), 
 	                    glm::vec3(  pos.x, 
 	                                0,
