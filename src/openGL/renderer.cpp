@@ -189,5 +189,5 @@ void Renderer::render(const glm::vec3& light_dir, const glm::vec3& light_color,
     
     glBindVertexArray(quad_vao);
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    //glBindVertexArray(0);
+    glBindVertexArray(0);
 }

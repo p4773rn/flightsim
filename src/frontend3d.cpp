@@ -5,7 +5,7 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <cmath>
 
-const glm::vec3 pilot_default_offset(0.0, 4.0f, 19.0f);
+const glm::vec3 pilot_default_offset(0.0, 0.0f, -6.0f);
 
 Frontend3d::Frontend3d(const glm::ivec2& screen_size):
         renderer(screen_size),
@@ -23,16 +23,18 @@ Frontend3d::Frontend3d(const glm::ivec2& screen_size):
 void Frontend3d::update(const glm::dvec3& planePos, const glm::dquat& orientation) {
     posOffset = glm::floor(planePos / 100.0) * 100.0;
     this->planePos = planePos - posOffset;
-
+	//(glm::mat4)glm::mat4_cast(orientation)
     //this->yawPitchRoll = yawPitchRoll;
     //planeModel.set_position(planePos + glm::vec3(0.0f, 4.5f, 0.0f)); //For the 747-400
     planeModel.set_position(this->planePos + glm::vec3(0.0f, 1.5f, 0.0f));
     planeModel.set_orientation(orientation);//this->yawPitchRoll);
     if (is_first_person) {
-    	glm::vec3 pilot_offset(0.0f,
+    	/*glm::vec3 pilot_offset(0.0f,
     		pilot_default_offset.z * sin(yawPitchRoll.y) + pilot_default_offset.y * cos(yawPitchRoll.y),
-    		-pilot_default_offset.z * cos(yawPitchRoll.y) + pilot_default_offset.y * sin(yawPitchRoll.y));
-    	camera.set_position(this->planePos + glm::vec3(0.0f, 4.5f, 0.0f) + pilot_offset);
+    		-pilot_default_offset.z * cos(yawPitchRoll.y) + pilot_default_offset.y * sin(yawPitchRoll.y));*/
+    	glm::vec3 offset = (glm::mat3)glm::mat3_cast(orientation) * pilot_default_offset;
+    	//camera.set_position(this->planePos + glm::vec3(0.0f, 4.5f, 0.0f) + pilot_offset);
+    	camera.set_position(this->planePos + offset);
     }
 }
 
@@ -46,9 +48,9 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
     //glm::mat4 projection = glm::perspective(glm::radians(90.0f), 800.0f/600.0f, 0.1f, 4*4096.0f);
     glm::mat4 projection = glm::perspective(glm::radians(90.0f), float(screen_size.x)/screen_size.y, 0.1f, 4*4096.0f);
     glm::vec3 light_dir(0.1,-0.6,0.5);
-    glm::vec3 light_color(1);
+    glm::vec3 light_color(1.0);
 
-    if (!is_first_person) 
+    //if (!is_first_person) 
         renderer.queue_render(&planeModel);
 
     //grid.set_pos(-posOffset);
@@ -61,14 +63,14 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
         a = std::make_tuple(origin, direction, color);
     }
     arrow.set_arrows(debugArrows, cameraDistance);
-    renderer.queue_render(&arrow);
+    //renderer.queue_render(&arrow);
 
 
     terrain.set_pos_offset(posOffset);
     renderer.queue_render(&terrain);
 
     renderer.render(light_dir, light_color, projection, view, camera.get_position());
-    //hud.draw(window, plane);
+    hud.draw(window, plane);
 }
 
 
@@ -102,7 +104,7 @@ void Frontend3d::mouseInput(sf::Window& window){
     		camera.move_mouse(offset_x, offset_y);
     	} else {
     		float alpha = yawPitchRoll.y;
-    		camera.look_in(glm::vec3(0.0, sin(alpha), -cos(alpha)));
+    		//camera.look_in(glm::vec3(0.0, sin(alpha), -cos(alpha)));
     	}
     } else {
     	cameraDistance = clamp(cameraDistance, 10.0f, 1500.0f);

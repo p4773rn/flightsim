@@ -34,7 +34,8 @@ void HUD::draw(sf::RenderWindow& window, const Plane &plane){
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	window.resetGLStates();
+	//window.resetGLStates();
+	window.pushGLStates();
 	std::ostringstream sout;
 	sout.precision(2);
 	sout.flags(std::ios_base::fixed);
@@ -48,29 +49,31 @@ void HUD::draw(sf::RenderWindow& window, const Plane &plane){
 	//sout << "Wings AoA: " << plane.getWingsAoA() << " degrees" << std::endl;
 	//sout << "Elevators AoA: " << plane.getElevatorsAoA() << " degrees" << std::endl;
 	sout << "Pitch Angle: " << plane.getAngles().x * 180 / M_PI << std::endl;
+	sout << "Roll Angle: " << plane.getAngles().z * 180 / M_PI << std::endl;
 	text.setString(sout.str());
 	text.setCharacterSize(12);
 	//text.setRotation(-45.0);
 	window.draw(text);
 	//
-	//sf::Vector2u size = window.getSize();
-	//sf::IntRect rect = speedometerSprite.getTextureRect();
-    //sf::Vector2f pos(rect.width/2.0f, size.y - rect.height/2.0f);//rect.width, rect.height);
-    //speedometerSprite.setPosition(pos);
-    //pointerSprite.setPosition(pos);
-    //float maxSpeed = 200;
-    //pointerSprite.setRotation(plane.getVelocity().length()/maxSpeed * 360);
-    //window.draw(speedometerSprite);
-    //window.draw(pointerSprite);
+	sf::Vector2u size = window.getSize();
+	sf::IntRect rect = speedometerSprite.getTextureRect();
+    sf::Vector2f pos(rect.width/2.0f, size.y - rect.height/2.0f);//rect.width, rect.height);
+    speedometerSprite.setPosition(pos);
+    pointerSprite.setPosition(pos);
+    float maxSpeed = 200;
+    pointerSprite.setRotation(glm::length(plane.getVelocity())/maxSpeed * 360);
+    window.draw(speedometerSprite);
+    window.draw(pointerSprite);
 
 	//// Attitude Indicator
-    //pos = sf::Vector2f(size.x - ai_wh.x/2.0f, size.y - ai_wh.y/2.0f);
+    pos = sf::Vector2f(size.x - ai_wh.x/2.0f, size.y - ai_wh.y/2.0f);
     //// 10 degrees map to 30 pixels on indicator sprite
-    //float y_offset = -plane.getPitchAngle() * 180.0f / M_PI * 3;
-    //attitudeIndicatorSprite.setPosition(pos);// + sf::Vector2f(0, yOffset));
+    float y_offset = -plane.getAngles().x * 180.0f / M_PI * 3;
+    attitudeIndicatorSprite.setPosition(pos);// + sf::Vector2f(0, yOffset));
     ////clip texture
-    //attitudeIndicatorSprite.setTextureRect(sf::IntRect(0, ai_position.y + y_offset, ai_wh.x, ai_wh.y));
-    //attitudeBackgroundSprite.setPosition(pos);
-    //window.draw(attitudeIndicatorSprite);
-    //window.draw(attitudeBackgroundSprite);
+    attitudeIndicatorSprite.setTextureRect(sf::IntRect(0, ai_position.y + y_offset, ai_wh.x, ai_wh.y));
+    attitudeBackgroundSprite.setPosition(pos);
+    window.draw(attitudeIndicatorSprite);
+    window.draw(attitudeBackgroundSprite);
+	window.popGLStates();
 }
