@@ -62,3 +62,4 @@ void Plot::draw(sf::RenderWindow& window, float angle) {
     sprite.setRotation(-angle / M_PI * 180);
     window.draw(sprite);
 }
+

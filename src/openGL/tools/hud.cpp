@@ -30,6 +30,7 @@ HUD::HUD() {
     attitudeBackgroundSprite.setOrigin(sf::Vector2f(aSize.x/2.0f, aSize.y/2.0f));
 }
 
+
 void HUD::draw(sf::RenderWindow& window, const Plane &plane){
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -48,8 +49,9 @@ void HUD::draw(sf::RenderWindow& window, const Plane &plane){
 	sout << "Brake: " << (plane.getBrakesStatus() ? "Yes" : "No") << std::endl;
 	//sout << "Wings AoA: " << plane.getWingsAoA() << " degrees" << std::endl;
 	//sout << "Elevators AoA: " << plane.getElevatorsAoA() << " degrees" << std::endl;
-	sout << "Pitch Angle: " << plane.getAngles().x * 180 / M_PI << std::endl;
+	sout << "Pitch Angle: " << plane.getPitchAngle() << std::endl;
 	sout << "Roll Angle: " << plane.getAngles().z * 180 / M_PI << std::endl;
+	sout << "Yaw Angle: " << plane.getYawAngle() << std::endl;
 	text.setString(sout.str());
 	text.setCharacterSize(12);
 	//text.setRotation(-45.0);
@@ -68,7 +70,8 @@ void HUD::draw(sf::RenderWindow& window, const Plane &plane){
 	//// Attitude Indicator
     pos = sf::Vector2f(size.x - ai_wh.x/2.0f, size.y - ai_wh.y/2.0f);
     //// 10 degrees map to 30 pixels on indicator sprite
-    float y_offset = -plane.getAngles().x * 180.0f / M_PI * 3;
+    //float y_offset = -plane.getAngles().x * 180.0f / M_PI * 3;
+    float y_offset = -plane.getPitchAngle() * 3;
     attitudeIndicatorSprite.setPosition(pos);// + sf::Vector2f(0, yOffset));
     ////clip texture
     attitudeIndicatorSprite.setTextureRect(sf::IntRect(0, ai_position.y + y_offset, ai_wh.x, ai_wh.y));
@@ -77,3 +80,4 @@ void HUD::draw(sf::RenderWindow& window, const Plane &plane){
     window.draw(attitudeBackgroundSprite);
 	window.popGLStates();
 }
+

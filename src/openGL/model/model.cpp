@@ -39,9 +39,7 @@ void Model::draw_rec(Shader& shader, const glm::mat4& model, int index,
 	//exit(1);
 	glm::mat4 TR(1.0f);
 	TR = glm::translate(TR, objects[index].position);
-	/*TR *= glm::yawPitchRoll(objects[index].yaw_roll_pitch.x,
-							objects[index].yaw_roll_pitch.y,
-							objects[index].yaw_roll_pitch.z);*/
+	
 	TR *= (glm::mat4)glm::mat4_cast(objects[index].orientation);
 	if (!objects[index].indices.empty()){
 		bool has_texture = objects[index].texture_id > -1;
@@ -57,7 +55,7 @@ void Model::draw_rec(Shader& shader, const glm::mat4& model, int index,
 			shader.set("shininess", 0.1f);//m.shininess);
 		}
         
-	    shader.set("model", model * TR);	
+	    shader.set("model", model * TR);
 	    shader.set("view", view);
 	    shader.set("projection", projection);
 		glBindVertexArray(objects[index].VAO);
@@ -77,5 +75,7 @@ void Model::geometry_pass(const glm::vec3& camera_pos,
     glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
     model *= (glm::mat4)glm::mat4_cast(orientation); //glm::yawPitchRoll(rotation.x, rotation.y, rotation.z);
     model *= glm::yawPitchRoll(default_rotation.x, default_rotation.y, default_rotation.z);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     draw_rec(shader, model, 0, projection, view);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }

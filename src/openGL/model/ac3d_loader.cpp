@@ -35,11 +35,13 @@ void AC3D_loader::load(const std::string& fname) {
 	int n_refs = 0;
 	int vertices_left = 0;
 	int i = 0;
+	int idx = 0;
+	bool twosided = false;
 	std::vector<int> surface_intervals;
 	surface_intervals.push_back(0);
 	std::vector<glm::vec3> temp_positions; //temp positions
 	std::vector<Vertex> surface_vertices; //vector of surface_vertices
-	//glm::vec3 surface_normal; //surface normal
+	glm::vec3 surface_normal(0.0f, 1.0f, 0.0f); //surface normal
 	std::string parent_dir = fname.substr(0, fname.find_last_of("/\\"));
 	state current_state = GLOBAL;
 	
@@ -96,23 +98,37 @@ void AC3D_loader::load(const std::string& fname) {
 		} else if(current_state == SURFACE) {
 			if (i < n_refs) {
 				Vertex v;
-				int idx;	
+				int p_idx = idx;
 				sin >> idx;
+				bool clockwise = (idx > p_idx && temp_positions.size() != idx + 1) || (idx == temp_positions.size() - 1 && idx < p_idx);
+				/*if (idx > p_idx && temp_positions.size() != idx + 1) {
+					std::cout << idx << " " << p_idx << " " << twosided << " "<< temp_positions.size() << std::endl;
+					exit(-1);
+				}*/
 				v.position = temp_positions[idx];
-				//v.normal = surface_normal;
+				v.normal = surface_normal;
 				sin >> v.uv.x >> v.uv.y;
 				surface_vertices.push_back(v);
-				////calculate normal for surface
-				//if(i == 2) {
-				//	glm::vec3 a = surface_vertices[1].position - surface_vertices[0].position;
-				//	glm::vec3 b = surface_vertices[2].position - surface_vertices[0].position;
-				//	surface_normal = glm::normalize(glm::cross(a,b));
-				//	surface_vertices[0].normal = surface_vertices[1].normal = surface_vertices[2].normal = surface_normal;
-				//}
+				if(i == 2) {
+					unsigned int sc = surface_vertices.size();
+					glm::vec3 a =  surface_vertices[sc - 2].position - surface_vertices[sc - 3].position;
+					glm::vec3 b =  surface_vertices[sc - 1].position - surface_vertices[sc - 3].position;
+					if (n_refs == 3) surface_normal = glm::normalize(glm::cross(a, b)) * (glm::length(glm::cross(a,b)) / 2.0f);
+					else if (n_refs == 4) surface_normal = glm::normalize(glm::cross(a, b)) * (glm::length(glm::cross(a,b)));
+					surface_vertices[sc - 3].normal = surface_normal;
+					surface_vertices[sc - 2].normal = surface_normal;
+					surface_vertices[sc - 1].normal = surface_normal;
+				}
 				if (++i == n_refs && --surfaces_left == 0) current_state = OBJECT;
 			} else {
 				sin >> key;
-				if (key == "mat") {
+				if (key == "SURF") {
+					int flag;
+					sin >> std::hex >> flag;
+					flag = flag >> 5;
+					//std::cout << flag << std::endl;
+					twosided = (flag & 1) ? true : false;
+				} else if (key == "mat") {
 					sin >> current_object.material_id;
 				} else if (key == "refs") {
 					sin >> n_refs;
@@ -134,7 +150,6 @@ void AC3D_loader::load(const std::string& fname) {
 				}
 			}
 			for (auto& vertex : current_object.vertices) vertex.normal = glm::normalize(vertex.normal);
-	
 			if (!current_object.vertices.empty()) buffer_data(current_object);
 		
 			objects.push_back(current_object);
@@ -147,6 +162,7 @@ void AC3D_loader::load(const std::string& fname) {
 			if (kids) {
 				parents.push({ci, kids});
 			}
+			idx = 0;
 			reset_obj(current_object);
 			temp_positions.clear();
 			surface_vertices.clear();
@@ -174,7 +190,8 @@ static void reset_obj(Object& obj) {
 }
 
 static void buffer_data(Object& obj) {
-    for (int i = 0; i < obj.indices.size(); ++i) {
+	//calculating normals
+    /*for (int i = 0; i < obj.indices.size(); ++i) {
         if (i % 3 == 2) {
             Vertex& v1 = obj.vertices[obj.indices[i-2]];
             Vertex& v2 = obj.vertices[obj.indices[i-1]];
@@ -186,7 +203,7 @@ static void buffer_data(Object& obj) {
             v2.normal = n;
             v3.normal = n;
         }
-    }
+    }*/
 
 
 	glGenVertexArrays(1, &obj.VAO);
@@ -228,8 +245,7 @@ static void push_vertice(Object& o, const Vertex& v) {
 		indice = o.vertices.size();
 		o.vertices.push_back(v);
 	} else {
-		//std::cout << "MERGING NORMALS " << v_iterator->normal.x << " " << v_iterator->normal.y << " " << v_iterator->normal.z << std::endl;
-		v_iterator->normal = v_iterator->normal + v.normal;
+		v_iterator->normal = v_iterator->normal + v.normal;// * (1.0f - glm::dot(v_iterator->normal, v.normal));
 		indice = std::distance(o.vertices.begin(), v_iterator);
 	}
 	o.indices.push_back(indice);

@@ -51,6 +51,8 @@ public:
     double getRudderDeflection() const {return rudder.back().getDeflection().x;}
     double getElevatorDeflection() const {return elevators.back().getDeflection().x;}
     double getFlaps() const {return wings.front().getFlaps();}
+    double getPitchAngle() const;
+    double getYawAngle() const;
     bool getBrakesStatus() const {return mainWheels.getBrakesStatus();}
     
     void setRudderDeflection(double deflection) {
