@@ -10,6 +10,7 @@ const glm::vec3 pilot_default_offset(0.0, 0.0f, -6.0f);
 Frontend3d::Frontend3d(const glm::ivec2& screen_size):
         renderer(screen_size),
 		camera(glm::vec3(0.0, 40.0f, 0.0)),
+		//planeModel("assets/models/737-400.ac"),
 		planeModel("assets/models/737-300.ac"),
 		//planeModel("assets/models/747-400.ac"), //747 is lighter model, might be useful for acceleration purposes
 		terrain(glm::vec3(0, 0, 0), 1<<16),
@@ -49,7 +50,7 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
     glm::mat4 projection = glm::perspective(glm::radians(90.0f), float(screen_size.x)/screen_size.y, 0.1f, 4*4096.0f);
     glm::vec3 light_dir(0.1,-0.6,0.5);
     glm::vec3 light_color(1.0);
-
+	glEnable(GL_CULL_FACE);
     //if (!is_first_person) 
         renderer.queue_render(&planeModel);
 

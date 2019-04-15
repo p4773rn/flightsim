@@ -120,7 +120,7 @@ void Renderer::render(const glm::vec3& light_dir, const glm::vec3& light_color,
     //-----------------------------------
     glBindFramebuffer(GL_FRAMEBUFFER, g_buffer);
     //glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_POINTS);
     glEnable(GL_DEPTH_TEST);
     //glEnable(GL_CULL_FACE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

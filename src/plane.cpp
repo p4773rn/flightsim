@@ -49,8 +49,8 @@ void Plane::update(double delta,
         debugArrows.push_back(std::make_tuple(arrowPos, arrowDir, arrowColor));
     }
 
-    cout << rudder.back().getDeflection().x << " ";
-    cout << elevators.back().getDeflection().x << " " << getFlaps() << endl;
+    //cout << rudder.back().getDeflection().x << " ";
+    //cout << elevators.back().getDeflection().x << " " << getFlaps() << endl;
     // cout << orientation.w << ' ' << orientation.x << ' ' << orientation.y << ' ' << orientation.z << ' '  << endl;
 
     glm::vec3 euler = glm::eulerAngles(orientation);
@@ -332,6 +332,18 @@ void Plane::addPointMasses(double length, double root, double tip, double sweep,
     }
 }
 
+double Plane::getPitchAngle() const {
+	double angle = glm::eulerAngles(orientation).x * 180.0 / M_PI;
+	if (angle > 90) angle = angle - 180;
+	if (angle < -90) angle = (180 + angle);
+	return angle;
+}
+
+double Plane::getYawAngle() const {
+	double angle = glm::eulerAngles(orientation).y * 180.0 / M_PI;
+	return angle;
+}
+
 std::vector<AirfoilSegment> Plane::createAirfoilSegments(
                                int num_segments,
                                double length, double root, double tip, double sweep, 
@@ -366,3 +378,4 @@ std::vector<AirfoilSegment> Plane::createAirfoilSegments(
 
     return segments;
 }
+
