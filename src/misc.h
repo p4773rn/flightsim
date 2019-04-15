@@ -2,6 +2,8 @@
 #define MISC_H
 
 #include <algorithm>
+#include <iostream>
+#include <glm/glm.hpp>
 
 double rad2deg(double rad);
 double deg2rad(double deg);
@@ -15,6 +17,9 @@ template<typename T>
 T lerp(const T& left, const T& right, const T& weight) {
     return left * (1 - weight) + right * weight;
 }
+
+
+std::ostream& operator<<(std::ostream& out, const glm::dvec3& v);
 
 
 #endif

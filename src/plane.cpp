@@ -66,16 +66,21 @@ void Plane::update(double delta,
 
     // 2D WHEELS TEST
     glm::dvec3 frontWheelsForce, frontWheelsTorque;
-    glm::dvec3 mainWheelsForce, mainWheelsTorque;
+    glm::dvec3 mainWheelsLForce, mainWheelsLTorque;
+    glm::dvec3 mainWheelsRForce, mainWheelsRTorque;
 
-    std::tie(frontWheelsForce, frontWheelsTorque )= frontWheels.getForceAndTorque(vel, pos, angVel, orientation, mass);
-    std::tie(mainWheelsForce, mainWheelsTorque )= mainWheels.getForceAndTorque(vel, pos, angVel, orientation, mass);
+    std::tie(frontWheelsForce, frontWheelsTorque)= frontWheels.getForceAndTorque(vel, pos, angVel, orientation, netForce, debugArrows);
+    std::tie(mainWheelsLForce, mainWheelsLTorque)= mainWheelsL.getForceAndTorque(vel, pos, angVel, orientation, netForce, debugArrows);
+    std::tie(mainWheelsRForce, mainWheelsRTorque)= mainWheelsR.getForceAndTorque(vel, pos, angVel, orientation, netForce, debugArrows);
 
-    //netForce += frontWheelsForce;
-    //netForce += mainWheelsForce;
-    //netTorque += frontWheelsTorque;
-    //netTorque += mainWheelsTorque;
-    
+    netForce += frontWheelsForce;
+    netForce += mainWheelsLForce;
+    netForce += mainWheelsRForce;
+    netTorque += frontWheelsTorque;
+    netTorque += mainWheelsLTorque;
+    netTorque += mainWheelsRTorque;
+   
+    std::cerr << vel << std::endl;
 
     glm::dvec3 acc = netForce / mass;
     vel += acc * delta;
@@ -283,8 +288,8 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
 
 
     Plane plane = Plane(
-        glm::dvec3(0, 200, 0), // pos
-        glm::dvec3(0, 0, -100),// velocity
+        glm::dvec3(0, 6, 0), // pos
+        glm::dvec3(0, 0, 0),// velocity
         totalMass,
         inertia,
         
@@ -293,8 +298,9 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
         std::move(rudder),
         std::move(fuselage),
         Engine(105000), // engine
-        Wheels(72467, 10, 10000, Vec2(15, -2)), // Front wheels
-        Wheels(434802, 400, 40000, Vec2(-2, -2)) // Main wheels
+        Wheels(72467, 10, 10000, glm::dvec3(0, -2, -10)), // Front wheels
+        Wheels(434802, 400, 40000, glm::dvec3(-3, -2, 5)), // Main wheels left
+        Wheels(434802, 400, 40000, glm::dvec3(3, -2, 5)) // Main wheels right
     );
 
     return plane;

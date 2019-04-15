@@ -19,7 +19,8 @@ public:
           std::vector<AirfoilSegment> fuselage,
           Engine engine,
           Wheels frontWheels,
-          Wheels mainWheels) :
+          Wheels mainWheelsL,
+          Wheels mainWheelsR) :
           
           pos{pos},
           vel{vel},
@@ -33,7 +34,8 @@ public:
           fuselage{fuselage},
           engine{engine},
           frontWheels{frontWheels},
-          mainWheels{mainWheels}
+          mainWheelsL{mainWheelsL},
+          mainWheelsR{mainWheelsR}
     {}
     
     
@@ -51,7 +53,7 @@ public:
     double getRudderDeflection() const {return rudder.back().getDeflection().x;}
     double getElevatorDeflection() const {return elevators.back().getDeflection().x;}
     double getFlaps() const {return wings.front().getFlaps();}
-    bool getBrakesStatus() const {return mainWheels.getBrakesStatus();}
+    bool getBrakesStatus() const {return mainWheelsL.getBrakesStatus();}
     
     void setRudderDeflection(double deflection) {
         for (auto& s : rudder)
@@ -74,7 +76,8 @@ public:
     }
     
     void toggleBrakes() {
-        mainWheels.toggleBrakes();
+        mainWheelsL.toggleBrakes();
+        mainWheelsR.toggleBrakes();
         frontWheels.toggleBrakes();
     }
     
@@ -106,7 +109,8 @@ private:
     Engine engine;
 
     Wheels frontWheels;
-    Wheels mainWheels;
+    Wheels mainWheelsL;
+    Wheels mainWheelsR;
 };
 
 

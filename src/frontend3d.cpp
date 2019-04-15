@@ -53,8 +53,9 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
     //if (!is_first_person) 
         renderer.queue_render(&planeModel);
 
-    //grid.set_pos(-posOffset);
-    //renderer.queue_render(&grid);
+    //TODO: bug - grid isn't following the plane
+    grid.set_pos(-posOffset);
+    renderer.queue_render(&grid);
     
     for (auto& a : debugArrows) {
         glm::vec3 origin, direction, color;
@@ -63,14 +64,14 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
         a = std::make_tuple(origin, direction, color);
     }
     arrow.set_arrows(debugArrows, cameraDistance);
-    //renderer.queue_render(&arrow);
+    renderer.queue_render(&arrow);
 
 
-    terrain.set_pos_offset(posOffset);
-    renderer.queue_render(&terrain);
+    //terrain.set_pos_offset(posOffset);
+    //renderer.queue_render(&terrain);
 
     renderer.render(light_dir, light_color, projection, view, camera.get_position());
-    hud.draw(window, plane);
+    //hud.draw(window, plane);
 }
 
 

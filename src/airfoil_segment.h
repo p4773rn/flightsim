@@ -25,7 +25,7 @@ public:
     {}
    
     // args
-    //     vel: velocity of center of mass in airplane body coordinates
+    //     vel: velocity of center of mass in world coordinates
     //     angVel: angular velocity in airplane body coordinates
     //     height: height of center of mass in world coordinates
     // returns
