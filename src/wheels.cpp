@@ -15,27 +15,25 @@ std::tuple<glm::dvec3, glm::dvec3> Wheels::getForceAndTorque(
     std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows
 ) const {
     glm::dvec3 direction(0, -2, 0); // offset of the wheel itself relative to where it is attached
-    glm::dvec3 position0 = planePosition + orientation * position; // position where wheel is attached
-    glm::dvec3 position1 = planePosition + orientation * (position + direction); // position of the wheel itself
+    glm::dvec3 absolutePosition = planePosition + orientation * position;
 
-    // velocity at position0
-    glm::dvec3 localVelocity = glm::cross(angularVelocity, position);
+    glm::dvec3 localVelocity = glm::conjugate(orientation) * velocity + glm::cross(angularVelocity, position);
     glm::dvec3 absoluteVelocity = velocity + orientation * glm::cross(angularVelocity, position);
 
-    double groundY = 0; // ground height at position1
-    glm::dvec3 groundNormal = glm::normalize(glm::dvec3(0, 1, 0)); // ground normal at position1
+    double groundY = 0; // ground height at absolutePosition
+    glm::dvec3 groundNormal = glm::normalize(glm::dvec3(0, 1, 0)); // ground normal at absolutePosition
 
-    if (position1.y > groundY) {
+    if (absolutePosition.y > groundY) {
         return {glm::dvec3(0), glm::dvec3(0)};
     }
     
-    if (position0.y < groundY) {
+    if (absolutePosition.y < groundY - 0.9) {
         throw std::runtime_error("Wheels break");
     }
 
     // how much the spring is compressed
     // not entirely correct
-    double springDeltaLength = (groundY - position1.y);
+    double springDeltaLength = (groundY - absolutePosition.y);
     
     glm::dvec3 springForce = orientation * (-direction) * (stiffness * springDeltaLength);
     glm::dvec3 dampingForce = orientation * (-direction) * glm::dot(absoluteVelocity, orientation * direction) * springFriction;
@@ -47,10 +45,10 @@ std::tuple<glm::dvec3, glm::dvec3> Wheels::getForceAndTorque(
    
     // Modeling only kinetic/rolling friction. No static friction
     glm::dvec3 frictionForce(0);
-    if (abs(localVelocity.x) > 0.1 || abs(localVelocity.z) > 0.1) {
+    if (abs(localVelocity.x) > 0.01 || abs(localVelocity.z) > 0.01) {
         //TODO: take ground surface (road/grass) into account
-        double frictionCoefficientZ = brakesOn ? 0.6 : 0.01; // friction coefficient when plane is moving forward/backward
-        double frictionCoefficientX = 0.6; // friction coefficient when plane is moving sideways
+        double frictionCoefficientZ = brakesOn ? 5 : 0.01; // friction coefficient when plane is moving forward/backward
+        double frictionCoefficientX = 1; // friction coefficient when plane is moving sideways
 
         
         glm::dvec3 localFrictionForceDirection = glm::normalize(glm::dvec3(-localVelocity.x,0,-localVelocity.z));
@@ -62,7 +60,7 @@ std::tuple<glm::dvec3, glm::dvec3> Wheels::getForceAndTorque(
 
         double frictionForceMagnitude = normalForceMagnitude * frictionCoefficient;
         frictionForce = frictionForceDirection * frictionForceMagnitude;
-        //debugArrows.push_back({glm::vec3(position0), glm::vec3(frictionForce*0.01), glm::vec3(0,1,1)});
+        //debugArrows.push_back({glm::vec3(absolutePosition), glm::vec3(frictionForce*0.01), glm::vec3(0,1,1)});
     }
 
     // Not using springForce and dampingForce for torque
@@ -71,7 +69,7 @@ std::tuple<glm::dvec3, glm::dvec3> Wheels::getForceAndTorque(
     glm::dvec3 torque = glm::cross(position, normalForce);
     force += springForce + dampingForce;
 
-    debugArrows.push_back({glm::vec3(position0), glm::vec3(force*0.01), glm::vec3(0,1,1)});
+    debugArrows.push_back({glm::vec3(absolutePosition), glm::vec3(force*0.01), glm::vec3(0,1,1)});
     
     return {force, torque};
 }
