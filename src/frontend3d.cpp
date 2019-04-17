@@ -55,7 +55,7 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
         renderer.queue_render(&planeModel);
 
     grid.set_pos(glm::vec3(planePos.x, 0, planePos.z));
-    //renderer.queue_render(&grid);
+    renderer.queue_render(&grid);
     
     for (auto& a : debugArrows) {
         glm::vec3 origin, direction, color;
@@ -67,8 +67,8 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
     renderer.queue_render(&arrow);
 
 
-    terrain.set_pos_offset(posOffset);
-    renderer.queue_render(&terrain);
+    //terrain.set_pos_offset(posOffset);
+    //renderer.queue_render(&terrain);
 
     renderer.render(light_dir, light_color, projection, view, camera.get_position());
     //hud.draw(window, plane);

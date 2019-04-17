@@ -25,7 +25,8 @@ std::tuple<glm::dvec3, glm::dvec3> Wheels::getForceAndTorque(
     debugArrows.push_back({glm::vec3(absolutePosition.x, h, absolutePosition.z), glm::vec3(0,1,0), glm::vec3(1,0,0)});
 
 
-    double groundY = h; // ground height at absolutePosition
+    //double groundY = h; // ground height at absolutePosition
+    double groundY = 0;
     glm::dvec3 groundNormal = glm::normalize(glm::dvec3(0, 1, 0)); // ground normal at absolutePosition
 
     if (absolutePosition.y > groundY) {
