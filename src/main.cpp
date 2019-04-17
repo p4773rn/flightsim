@@ -42,7 +42,7 @@ int main()
     Frontend3d frontend(screenSize);
     std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>> debugArrows;
     
-    Plane plane = Plane::getDefaultPlane(debugArrows);
+    Plane plane = Plane::getDefaultPlane(debugArrows, frontend.get_terrain());
     // plane.setThrottle(75);
 
 

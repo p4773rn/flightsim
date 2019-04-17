@@ -20,14 +20,19 @@ std::tuple<glm::dvec3, glm::dvec3> Wheels::getForceAndTorque(
     glm::dvec3 localVelocity = glm::conjugate(orientation) * velocity + glm::cross(angularVelocity, position);
     glm::dvec3 absoluteVelocity = velocity + orientation * glm::cross(angularVelocity, position);
 
-    double groundY = 0; // ground height at absolutePosition
+
+    double h = terrain.get_height(glm::vec2(absolutePosition.x, absolutePosition.z));
+    debugArrows.push_back({glm::vec3(absolutePosition.x, h, absolutePosition.z), glm::vec3(0,1,0), glm::vec3(1,0,0)});
+
+
+    double groundY = h; // ground height at absolutePosition
     glm::dvec3 groundNormal = glm::normalize(glm::dvec3(0, 1, 0)); // ground normal at absolutePosition
 
     if (absolutePosition.y > groundY) {
         return {glm::dvec3(0), glm::dvec3(0)};
     }
     
-    if (absolutePosition.y < groundY - 0.9) {
+    if (absolutePosition.y < groundY - 4) {
         throw std::runtime_error("Wheels break");
     }
 

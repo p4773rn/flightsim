@@ -84,7 +84,7 @@ public:
     }
     
 
-    static Plane getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows);
+    static Plane getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows, const Terrain& terrain);
 
     // doesn't take into account incidence, but hopefully it is small enough for estimating inertia
     static void addPointMasses(double length, double root, double tip, double sweep, 

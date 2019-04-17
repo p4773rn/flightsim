@@ -6,15 +6,17 @@
 #include <glm/gtc/quaternion.hpp>
 #include <tuple>
 #include <vector>
+#include "openGL/terrain/terrain.h"
 
 class Wheels {
 public:
-    Wheels(double stiffness, double frictionCoefficient, double springFriction, const glm::dvec3& position) :
+    Wheels(double stiffness, double frictionCoefficient, double springFriction, const glm::dvec3& position, const Terrain& terrain) :
         stiffness{stiffness},
         frictionCoefficient{frictionCoefficient},
         springFriction{springFriction},
         position{position},
-        brakesOn{false}
+        brakesOn{false},
+        terrain{terrain}
     {}
 
     std::tuple<glm::dvec3, glm::dvec3> getForceAndTorque(
@@ -34,6 +36,8 @@ private:
     double springFriction; // TEST?
     glm::dvec3 position; // position (where it is attached) relative to the plane
     bool brakesOn;
+
+    const Terrain& terrain;
 };
 
 #endif

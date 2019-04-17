@@ -49,8 +49,8 @@ void Plane::update(double delta,
         debugArrows.push_back(std::make_tuple(arrowPos, arrowDir, arrowColor));
     }
 
-    //cout << rudder.back().getDeflection().x << " ";
-    //cout << elevators.back().getDeflection().x << " " << getFlaps() << endl;
+    cout << rudder.back().getDeflection().x << " ";
+    cout << elevators.back().getDeflection().x << " " << getFlaps() << endl;
     // cout << orientation.w << ' ' << orientation.x << ' ' << orientation.y << ' ' << orientation.z << ' '  << endl;
 
     glm::vec3 euler = glm::eulerAngles(orientation);
@@ -93,7 +93,7 @@ void Plane::update(double delta,
 
 }
 
-Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows) {
+Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows, const Terrain& terrain) {
     // sources of specs
     
     // http://www.boeing.com/assets/pdf/commercial/airports/acaps/737.pdf
@@ -288,7 +288,7 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
 
 
     Plane plane = Plane(
-        glm::dvec3(0, 4, 0), // pos
+        glm::dvec3(0, -1740+100, 0), // pos
         glm::dvec3(0, 0, 0),// velocity
         totalMass,
         inertia,
@@ -298,12 +298,12 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
         std::move(rudder),
         std::move(fuselage),
         Engine(105000), // engine
-        Wheels(72467, 10, 10000, glm::dvec3(0, -4, -10)), // Front wheels
-        Wheels(434802, 400, 40000, glm::dvec3(-3, -4, 5)), // Main wheels left
-        Wheels(434802, 400, 40000, glm::dvec3(3, -4, 5)) // Main wheels right
+        Wheels(72467, 10, 10000, glm::dvec3(0, -4, -10), terrain), // Front wheels
+        Wheels(434802, 400, 40000, glm::dvec3(-3, -4, 5), terrain), // Main wheels left
+        Wheels(434802, 400, 40000, glm::dvec3(3, -4, 5), terrain) // Main wheels right
     );
-    plane.orientation = glm::dquat(glm::dvec3(0,3,0));
-    plane.vel = plane.orientation * glm::dvec3(0,0,0);
+    plane.orientation = glm::dquat(glm::dvec3(0,1,0));
+    plane.vel = plane.orientation * glm::dvec3(0,0,-40);
 
     return plane;
 }

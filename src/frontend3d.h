@@ -23,6 +23,8 @@ public:
     void keyInput();
     void mouseInput(sf::Window& window);
     void input(const sf::Event& event);
+
+    const Terrain& get_terrain() const {return terrain;}
 private:
     Renderer renderer;
     Camera camera;
