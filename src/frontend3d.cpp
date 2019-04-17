@@ -54,8 +54,7 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
     //if (!is_first_person) 
         renderer.queue_render(&planeModel);
 
-    //TODO: bug - grid isn't following the plane
-    grid.set_pos(-posOffset);
+    grid.set_pos(planePos);
     renderer.queue_render(&grid);
     
     for (auto& a : debugArrows) {
