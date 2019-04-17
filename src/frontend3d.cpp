@@ -54,7 +54,7 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
     //if (!is_first_person) 
         renderer.queue_render(&planeModel);
 
-    grid.set_pos(planePos);
+    grid.set_pos(glm::vec3(planePos.x, 0, planePos.z));
     renderer.queue_render(&grid);
     
     for (auto& a : debugArrows) {
