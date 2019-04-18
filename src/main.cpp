@@ -131,6 +131,7 @@ int main()
 
 
         glm::dvec3 planePos = plane.getPos();
+        //planePos.z = clock.getElapsedTime().asSeconds() * 1000;
         frontend.update(planePos, plane.getOrientation());
         frontend.mouseInput(window);
         frontend.keyInput();

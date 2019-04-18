@@ -8,7 +8,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include "shaders/shader.h"
-
+#include "clouds/clouds.h"
 
 
 class Renderable {
@@ -29,6 +29,7 @@ public:
                 const glm::mat4 projection, const glm::mat4& view, 
                 const glm::vec3& camera_pos);
 
+    Clouds& get_clouds() { return clouds; }
 private:
     // <shader_id, renderable, model matrix>
 //    std::map<GLuint, std::map<Renderable*, std::vector<glm::mat4>>> opaque_renderables;
@@ -40,6 +41,13 @@ private:
     GLuint g_albedo;
     GLuint g_spec;
     GLuint g_flag;
+
+    GLuint cloud_front_buffer;
+    GLuint cloud_front;
+    GLuint cloud_normal;
+    GLuint cloud_back_buffer;
+    GLuint cloud_back;
+    Clouds clouds;
 
     GLuint quad_vao;
     GLuint quad_vbo;

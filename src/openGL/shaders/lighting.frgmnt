@@ -10,6 +10,10 @@ uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
 uniform sampler2D gSpec;
 uniform isampler2D gFlag;
+uniform sampler2D cloud_front;
+uniform sampler2D cloud_back;
+uniform sampler2D cloud_normal;
+uniform bool camera_in_clouds;
 
 uniform mat4 view;
 uniform vec3 camera_pos;
@@ -117,13 +121,64 @@ void main()
     vec3 atmosphere_color = vec3(0.5,0.5,0.9);
     vec3 atmosphere_origin = camera_pos + vec3(0, 6371e3, 0);
 	float dist = distance(world_pos, camera_pos);
+	
+	vec3 nray = normalize(ray);
     if (drawn) {
-        atmosphere_color = sky(atmosphere_origin, normalize(ray), 0, dist);
+        //atmosphere_color = sky(atmosphere_origin, nray, 0, dist);
     } else {
-        atmosphere_color = sky(atmosphere_origin, normalize(ray), 0, 1e5);
+        //atmosphere_color = sky(atmosphere_origin, nray, 0, 1e5);
     }
     atmosphere_color = 1.0 - exp(-1.0 * atmosphere_color);
     // TODO: calculate atmosphere color at world_pos properly
+
+
+
+    //float t0, t1;
+    float cloud = 0;
+    vec3 cloud_color;
+    vec3 cloud_norm = texture(cloud_normal, tex_coord).xyz;
+    vec3 cloud_front = texture(cloud_front, tex_coord).xyz;
+    vec3 cloud_back = texture(cloud_back, tex_coord).xyz;
+    bool cloud_back_drawn = cloud_back != vec3(0);
+    if (cloud_back_drawn) {
+        vec3 norm = normalize(cloud_norm);
+        vec3 dir = normalize(-light_dir);
+        float glow = 1 - pow(abs(dot(norm, vec3(0,1,0))), 1);
+        glow = mix(1, glow, 0.6);
+        float diff = max(dot(norm, dir),0);
+
+        cloud_color = vec3(mix(glow, diff,0.3));
+        //cloud_color = vec3(0.7);
+        //cloud_color = norm;
+        cloud_color = vec3(1-(1-diff)*(1-glow));
+        if (camera_in_clouds)
+            cloud_color = vec3(0.6);
+
+        float dist_front = distance(camera_pos, cloud_front);
+        float dist_back = distance(camera_pos, cloud_back);
+        
+        if (camera_in_clouds)
+            dist_front = 0;
+
+        float dist_obj = distance(camera_pos, world_pos);
+        
+        float depth = dist_back - dist_front;
+        depth = min(depth, dist_obj);
+        
+        cloud = 1 - exp(-0.03 * depth);
+        //cloud = 1;
+
+        // if cloud is behind the object
+        if  (drawn && dist_front >= dist_obj)
+            cloud = 0;
+
+        float horizontal_dist = length(camera_pos.xz - cloud_front.xz);
+        if (camera_in_clouds) horizontal_dist = 0;
+        float transmittance = exp(-(2e-4)*horizontal_dist);
+        cloud_color = mix(atmosphere_color, cloud_color, transmittance);
+    }
+
+
 
 	float ambient_strength = 0.1;
 
@@ -147,8 +202,11 @@ void main()
         float extinction = 1e-4; // 1e-2:thick atmosphere, 1e-5:realisticish atmosphere
         float transmittance = exp(-extinction*dist);
         result = mix(atmosphere_color, result, transmittance);
-	    FragColor = vec4(result, 1.);
     } else {
-        FragColor = vec4(atmosphere_color,1);
+        result = atmosphere_color; 
     }
+    result = mix(result, cloud_color, cloud);
+
+    FragColor = vec4(result,1);
+
 }

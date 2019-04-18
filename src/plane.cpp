@@ -49,8 +49,8 @@ void Plane::update(double delta,
         debugArrows.push_back(std::make_tuple(arrowPos, arrowDir, arrowColor));
     }
 
-    cout << rudder.back().getDeflection().x << " ";
-    cout << elevators.back().getDeflection().x << " " << getFlaps() << endl;
+    //cout << rudder.back().getDeflection().x << " ";
+    //cout << elevators.back().getDeflection().x << " " << getFlaps() << endl;
     // cout << orientation.w << ' ' << orientation.x << ' ' << orientation.y << ' ' << orientation.z << ' '  << endl;
 
     glm::vec3 euler = glm::eulerAngles(orientation);
@@ -80,7 +80,7 @@ void Plane::update(double delta,
     auto localVel = glm::conjugate(orientation) * vel; 
     // localVel.z = -forward speed
     // localVel.y = not sure what it means
-    std::cout << pos << "\t " << localVel.z << "\t" << vel  << std::endl;
+    //std::cout << pos << "\t " << localVel.z << "\t" << vel  << std::endl;
 
     glm::dvec3 acc = netForce / mass;
     vel += acc * delta;
@@ -302,8 +302,8 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
         Wheels(434802, 400, 40000, glm::dvec3(-3, -4, 5), terrain), // Main wheels left
         Wheels(434802, 400, 40000, glm::dvec3(3, -4, 5), terrain) // Main wheels right
     );
-    plane.orientation = glm::dquat(glm::dvec3(0,1,0));
-    plane.vel = plane.orientation * glm::dvec3(0,0,-100);
+    plane.orientation = glm::dquat(glm::dvec3(0,3,0));
+    plane.vel = plane.orientation * glm::dvec3(0,0,0);
 
     return plane;
 }

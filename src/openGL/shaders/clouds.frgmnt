@@ -1,0 +1,29 @@
+#version 330 core
+
+layout (location = 0) out vec3 cloud_pos;
+layout (location = 1) out vec3 cloud_normal; // only available in front pass
+
+
+uniform sampler2D heightmap;
+uniform sampler2D normalmap;
+
+uniform float y_flip;
+uniform bool front_or_back;
+
+in vec2 tex;
+in vec3 world_pos;
+
+
+void main()
+{
+    if (front_or_back) {
+        cloud_pos = world_pos;
+        cloud_normal = texture(normalmap, tex).rbg;
+        cloud_normal.y *= y_flip;
+    } else {
+        cloud_pos = world_pos;
+    }
+
+    //if (texture(normalmap,tex).x == 0)
+    //    discard;
+}

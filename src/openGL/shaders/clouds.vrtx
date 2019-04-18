@@ -1,0 +1,30 @@
+#version 330 core
+
+layout (location = 0) in vec2 aPos;
+
+uniform sampler2D heightmap;
+uniform float cloudscape_size;
+uniform float radius;
+uniform float thickness;
+
+uniform mat4 view;
+uniform mat4 projection;
+uniform vec3 pos;
+uniform vec2 tex_coord_offset;
+
+uniform float y_flip;
+
+out vec2 tex;
+out vec3 world_pos;
+
+void main()
+{    
+    world_pos = pos + radius * vec3(aPos.x, 0, aPos.y);
+    tex = 0.5 + 0.5 * world_pos.xz / cloudscape_size + tex_coord_offset;
+    
+    float h = texture(heightmap, tex).x; 
+    if (h < 0.01) h = 0;
+    world_pos.y += y_flip * thickness * h + y_flip * 1;
+
+	gl_Position = projection * view * vec4(world_pos, 1);
+}
