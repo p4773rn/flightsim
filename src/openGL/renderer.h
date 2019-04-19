@@ -30,6 +30,10 @@ public:
                 const glm::vec3& camera_pos);
 
     Clouds& get_clouds() { return clouds; }
+
+    void switch_wireframe() { wireframe = !wireframe; }
+    void switch_clouds() { render_clouds = !render_clouds; }
+    void switch_mode() { mode++; if (mode > 4) mode = 0; }
 private:
     // <shader_id, renderable, model matrix>
 //    std::map<GLuint, std::map<Renderable*, std::vector<glm::mat4>>> opaque_renderables;
@@ -53,6 +57,10 @@ private:
     GLuint quad_vbo;
 
     Shader lighting_shader;
+
+    bool wireframe = false;
+    bool render_clouds = true;
+    int mode = 0;
 };
 
 

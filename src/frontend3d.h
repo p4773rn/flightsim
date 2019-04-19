@@ -24,7 +24,10 @@ public:
     void mouseInput(sf::Window& window);
     void input(const sf::Event& event);
 
+    void switch_arrows() { render_arrows = !render_arrows; }
+
     const Terrain& get_terrain() const {return terrain;}
+    Renderer& get_renderer() {return renderer;}
 private:
     Renderer renderer;
     Camera camera;
@@ -39,6 +42,7 @@ private:
     bool is_first_person = false;
     bool is_cam_fixed = false;
     float cameraDistance = 50; // distance from plane
+    bool render_arrows = true;
 
     glm::ivec2 screen_size;
 };

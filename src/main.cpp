@@ -55,7 +55,12 @@ int main()
 	circle.setPosition(20, 30);
     sf::Clock clock;
     double lastUpdateTime = clock.getElapsedTime().asSeconds();
- 
+
+    
+    bool keystate[sf::Keyboard::KeyCount];
+    for (int i = 0; i < sf::Keyboard::KeyCount; ++i)
+        keystate[i] = false;
+
 
     int frame = 0;
     while (window.isOpen())
@@ -68,7 +73,10 @@ int main()
                 case sf::Event::Closed:
                     window.close();
                     break;
-                
+                case sf::Event::KeyReleased:
+                    keystate[event.key.code] = false;
+                    break;
+
                 case sf::Event::KeyPressed:
                     switch (event.key.code) {
                         case sf::Keyboard::Z:
@@ -110,7 +118,24 @@ int main()
                         case sf::Keyboard::Divide:
                             speed = 1;
                             break;
+                        case sf::Keyboard::F1:
+                            if (!keystate[sf::Keyboard::F1])
+                                frontend.get_renderer().switch_wireframe();
+                            break;
+                        case sf::Keyboard::F2:
+                            if (!keystate[sf::Keyboard::F2])
+                                frontend.get_renderer().switch_clouds();
+                            break;
+                        case sf::Keyboard::F3:
+                            if (!keystate[sf::Keyboard::F3])
+                                frontend.get_renderer().switch_mode();
+                            break;
+                        case sf::Keyboard::F4:
+                            if (!keystate[sf::Keyboard::F4])
+                                frontend.switch_arrows();
+                            break;
                     }
+                    keystate[event.key.code] = true;
                     break;
 
                 default:

@@ -176,9 +176,13 @@ void Renderer::render(const glm::vec3& light_dir, const glm::vec3& light_color,
 {
     // geometry pass
     //-----------------------------------
-    glBindFramebuffer(GL_FRAMEBUFFER, g_buffer);
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    if (wireframe) {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    } else {
+        glBindFramebuffer(GL_FRAMEBUFFER, g_buffer);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
     glEnable(GL_DEPTH_TEST);
     //glEnable(GL_CULL_FACE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -190,27 +194,32 @@ void Renderer::render(const glm::vec3& light_dir, const glm::vec3& light_color,
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
   
+    
+    if (wireframe)
+        return;
 
     // clouds pass
     //-----------------------------------
     glBindFramebuffer(GL_FRAMEBUFFER, cloud_front_buffer);
     glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
+    glDepthMask(GL_TRUE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    clouds.front_pass(camera_pos, projection, view);
+    if (render_clouds)
+        clouds.front_pass(camera_pos, projection, view);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
     glBindFramebuffer(GL_FRAMEBUFFER, cloud_back_buffer);
     glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	glClearDepth(0);
+    glDepthMask(GL_TRUE);
+    glClearDepth(0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDepthFunc(GL_GREATER);
     //TODO: flip winding to work with culling 
-    clouds.back_pass(camera_pos, projection, view);
-	glClearDepth(1);
+    if (render_clouds)
+        clouds.back_pass(camera_pos, projection, view);
+    glClearDepth(1);
     glDepthFunc(GL_LESS);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -250,6 +259,7 @@ void Renderer::render(const glm::vec3& light_dir, const glm::vec3& light_color,
     lighting_shader.set("light_dir", light_dir);
     lighting_shader.set("light_color", light_color);
     lighting_shader.set("camera_pos", camera_pos);
+    lighting_shader.set("mode", mode);
     
     glBindVertexArray(quad_vao);
     glDrawArrays(GL_TRIANGLES, 0, 6);

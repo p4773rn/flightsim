@@ -19,7 +19,7 @@ uniform mat4 view;
 uniform vec3 camera_pos;
 uniform vec3 light_dir;
 uniform vec3 light_color;
-
+uniform int mode;
 
 #define PI 3.141592
 
@@ -206,6 +206,22 @@ void main()
         result = atmosphere_color; 
     }
     result = mix(result, cloud_color, cloud);
+
+    switch (mode) {
+        case 0: break;
+        case 1:
+            result = world_pos * 0.0001;
+            break;
+        case 2:
+            result = norm;
+            break;
+        case 3:
+            result = vec3(diff);
+            break;
+        case 4:
+            result = specular;
+            break;
+    }
 
     FragColor = vec4(result,1);
 

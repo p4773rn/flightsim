@@ -63,8 +63,10 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
         origin -= posOffset;
         a = std::make_tuple(origin, direction, color);
     }
-    arrow.set_arrows(debugArrows, cameraDistance);
-    renderer.queue_render(&arrow);
+    if (render_arrows) {
+        arrow.set_arrows(debugArrows, cameraDistance);
+        renderer.queue_render(&arrow);
+    }
 
 
     terrain.set_pos_offset(posOffset);
