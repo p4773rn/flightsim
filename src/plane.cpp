@@ -14,25 +14,25 @@ void Plane::update(double delta,
     std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>> bodyArrows;
     for (auto& s : wings) {
         glm::dvec3 force, torque;
-        std::tie(force, torque) = s.getForceAndTorque(vel, orientation, angVel, pos.y, bodyArrows);
+        std::tie(force, torque) = s.getForceAndTorque(vel, orientation, angVel, pos, bodyArrows);
         netForce += force;
         netTorque += torque;
     }
     for (auto& s : elevators) {
         glm::dvec3 force, torque;
-        std::tie(force, torque) = s.getForceAndTorque(vel, orientation, angVel, pos.y, bodyArrows);
+        std::tie(force, torque) = s.getForceAndTorque(vel, orientation, angVel, pos, bodyArrows);
         netForce += force;
         netTorque += torque;
     }
     for (auto& s : rudder) {
         glm::dvec3 force, torque;
-        std::tie(force, torque) = s.getForceAndTorque(vel, orientation, angVel, pos.y, bodyArrows);
+        std::tie(force, torque) = s.getForceAndTorque(vel, orientation, angVel, pos, bodyArrows);
         netForce += force;
         netTorque += torque;
     }
     for (auto& s : fuselage) {
         glm::dvec3 force, torque;
-        std::tie(force, torque) = s.getForceAndTorque(vel, orientation, angVel, pos.y, bodyArrows);
+        std::tie(force, torque) = s.getForceAndTorque(vel, orientation, angVel, pos, bodyArrows);
         netForce += force;
         netTorque += torque;
     }
@@ -271,15 +271,15 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
         { glm::radians(  0.0),   0.0,   1.0, 0.25,  0.0 },
     });
 
-    std::vector<AirfoilSegment> wings = createAirfoilSegments(10, wLength, wRoot, wTip, wSweep, wPos, wIncidence, wDihedral, false, wingsTable);
-    std::vector<AirfoilSegment> leftWings = createAirfoilSegments(10, wLength, wRoot, wTip, wSweep, wPos, wIncidence, wDihedral, true, wingsTable);
+    std::vector<AirfoilSegment> wings = createAirfoilSegments(10, wLength, wRoot, wTip, wSweep, wPos, wIncidence, wDihedral, false, wingsTable, terrain);
+    std::vector<AirfoilSegment> leftWings = createAirfoilSegments(10, wLength, wRoot, wTip, wSweep, wPos, wIncidence, wDihedral, true, wingsTable, terrain);
     wings.insert(wings.end(), leftWings.begin(), leftWings.end());
 
-    std::vector<AirfoilSegment> elevators = createAirfoilSegments(5, eLength, eRoot, eTip, eSweep, ePos, eIncidence, eDihedral, false, elevatorsTable);
-    std::vector<AirfoilSegment> leftElevators = createAirfoilSegments(5, eLength, eRoot, eTip, eSweep, ePos, eIncidence, eDihedral, true, elevatorsTable);
+    std::vector<AirfoilSegment> elevators = createAirfoilSegments(5, eLength, eRoot, eTip, eSweep, ePos, eIncidence, eDihedral, false, elevatorsTable, terrain);
+    std::vector<AirfoilSegment> leftElevators = createAirfoilSegments(5, eLength, eRoot, eTip, eSweep, ePos, eIncidence, eDihedral, true, elevatorsTable, terrain);
     elevators.insert(elevators.end(), leftElevators.begin(), leftElevators.end());
 
-    std::vector<AirfoilSegment> rudder = createAirfoilSegments(1, rLength, rRoot, rTip, rSweep, rPos, rIncidence, rDihedral, false, rudderTable);
+    std::vector<AirfoilSegment> rudder = createAirfoilSegments(1, rLength, rRoot, rTip, rSweep, rPos, rIncidence, rDihedral, false, rudderTable, terrain);
 
     std::vector<AirfoilSegment> fuselage;// = createAirfoilSegments(1, fLength, fRoot, fTip, fSweep, glm::dvec3, fIncidence, fDihedral, false, fuselageTable);
 
@@ -288,7 +288,7 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
 
 
     Plane plane = Plane(
-        glm::dvec3(0, -1728, 0), // pos
+        glm::dvec3(0, -1725, 0), // pos
         glm::dvec3(0, 0, 0),// velocity
         totalMass,
         inertia,
@@ -298,9 +298,9 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
         std::move(rudder),
         std::move(fuselage),
         Engine(105000), // engine
-        Wheels(72467, 10, 10000, glm::dvec3(0, -4, -10), terrain), // Front wheels
-        Wheels(434802, 400, 40000, glm::dvec3(-3, -4, 5), terrain), // Main wheels left
-        Wheels(434802, 400, 40000, glm::dvec3(3, -4, 5), terrain) // Main wheels right
+        Wheels(72467, 10, 10000, glm::dvec3(0, -3, -10), terrain), // Front wheels
+        Wheels(434802, 400, 40000, glm::dvec3(-3, -3, 5), terrain), // Main wheels left
+        Wheels(434802, 400, 40000, glm::dvec3(3, -3, 5), terrain) // Main wheels right
     );
     plane.orientation = glm::dquat(glm::dvec3(0,M_PI/2.0,0));
     plane.vel = plane.orientation * glm::dvec3(0,0,0);
@@ -350,7 +350,7 @@ std::vector<AirfoilSegment> Plane::createAirfoilSegments(
                                int num_segments,
                                double length, double root, double tip, double sweep, 
                                const glm::dvec3& pos, double incidence, double dihedral, bool invertX,
-                               const Table& tableFlaps0) {
+                               const Table& tableFlaps0, const Terrain& terrain) {
     std::vector<AirfoilSegment> segments; 
     
     double qlength = length / glm::cos(sweep); // length of quarter chord line
@@ -374,7 +374,7 @@ std::vector<AirfoilSegment> Plane::createAirfoilSegments(
         glm::dvec3 segmentPos = pos + offset;
         segmentPos.x *= scaleX;
 
-        AirfoilSegment segment(tableFlaps0, segmentPos, angle, area);
+        AirfoilSegment segment(tableFlaps0, segmentPos, angle, area, terrain);
         segments.push_back(segment);
     }
 

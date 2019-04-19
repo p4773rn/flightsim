@@ -43,6 +43,8 @@ private:
     bool is_first_person = false;
     bool is_cam_fixed = false;
     float cameraDistance = 50; // distance from plane
+    glm::vec3 cameraDirection;
+    glm::vec3 cameraRight;
     bool render_arrows = true;
 
     glm::ivec2 screen_size;

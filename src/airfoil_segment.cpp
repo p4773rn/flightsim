@@ -9,8 +9,9 @@ std::tuple<glm::dvec3, glm::dvec3> AirfoilSegment::getForceAndTorque(
     const glm::dvec3& vel, 
     const glm::dquat& orientation,
     const glm::dvec3& angVel, 
-    double height,
+    const glm::dvec3& planePos,
     std::vector<std::tuple<glm::vec3, glm::vec3, glm::vec3>>& debugArrows) const {
+    float height = planePos.y;
    
     glm::dvec3 segmentVel = glm::conjugate(orientation) * vel + glm::cross(angVel, pos);
    
@@ -31,7 +32,10 @@ std::tuple<glm::dvec3, glm::dvec3> AirfoilSegment::getForceAndTorque(
     // height of center of mass, not of this segment, but good enough
     double dynamicPressure = 0.5 * getAirDensity(height) * glm::length(segmentVel) * glm::length(segmentVel);
 
-    double liftMagnitude = dynamicPressure * area * coefficients.lift * getGroundEffect(height);
+
+    double groundHeight = terrain->get_height(glm::vec2(planePos.x, planePos.z));
+
+    double liftMagnitude = dynamicPressure * area * coefficients.lift * getGroundEffect(height - groundHeight) * 1.15;
     double dragMagnitude = dynamicPressure * area * coefficients.drag;
 
     glm::dvec3 lift = liftDir * liftMagnitude;

@@ -17,6 +17,7 @@ public:
   void set_position(const glm::vec3& _position) { position = _position;};
   void look_in(const glm::vec3& _direction);
   void orbit(float x_offset, float y_offset, float distance, const glm::vec3& center);
+  void set_right(const glm::vec3& right) {this->right = right;}
 private:
   glm::vec3 position;
   glm::vec3 direction;

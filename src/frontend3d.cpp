@@ -29,15 +29,18 @@ void Frontend3d::update(const glm::dvec3& planePos, const glm::dquat& orientatio
     //planeModel.set_position(planePos + glm::vec3(0.0f, 4.5f, 0.0f)); //For the 747-400
     glm::vec3 forward = glm::quat(orientation) * glm::vec3(0,0,-1);
     glm::vec3 up = glm::quat(orientation) * glm::vec3(0,1,0);
-    planeModel.set_position(this->planePos + forward * 5.0f + up * (-1.0f));
+    glm::vec3 right = glm::quat(orientation) * glm::vec3(1,0,0);
+    planeModel.set_position(this->planePos + forward * 5.0f + up * (-0.4f));
     planeModel.set_orientation(orientation);//this->yawPitchRoll);
     if (is_first_person) {
     	/*glm::vec3 pilot_offset(0.0f,
     		pilot_default_offset.z * sin(yawPitchRoll.y) + pilot_default_offset.y * cos(yawPitchRoll.y),
     		-pilot_default_offset.z * cos(yawPitchRoll.y) + pilot_default_offset.y * sin(yawPitchRoll.y));*/
-    	glm::vec3 offset = (glm::mat3)glm::mat3_cast(orientation) * pilot_default_offset;
+    	//glm::vec3 offset = (glm::mat3)glm::mat3_cast(orientation) * pilot_default_offset;
     	//camera.set_position(this->planePos + glm::vec3(0.0f, 4.5f, 0.0f) + pilot_offset);
-    	camera.set_position(this->planePos + offset);
+    	camera.set_position(this->planePos + forward * 14.0f);
+    	cameraDirection = forward;
+    	cameraRight = right;
     }
 }
 
@@ -120,7 +123,8 @@ void Frontend3d::mouseInput(sf::Window& window){
     		camera.move_mouse(offset_x, offset_y);
     	} else {
     		float alpha = yawPitchRoll.y;
-    		//camera.look_in(glm::vec3(0.0, sin(alpha), -cos(alpha)));
+    		camera.look_in(cameraDirection);
+    		camera.set_right(cameraRight);
     	}
     } else {
     	cameraDistance = clamp(cameraDistance, 10.0f, 1500.0f);

@@ -94,7 +94,7 @@ public:
                                int num_segments,
                                double length, double root, double tip, double sweep, 
                                const glm::dvec3& pos, double incidence, double dihedral, bool invertX,
-                               const Table& tableFlaps0);
+                               const Table& tableFlaps0, const Terrain& terrain);
 private:
     glm::dvec3 pos; // For now, xy coordinates of the plane
     glm::dvec3 vel;

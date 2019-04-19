@@ -157,7 +157,7 @@ int main()
                 plane.update(delta/num_steps, debugArrows);
             } catch (std::runtime_error ex) {
                 std::cout << ex.what() << std::endl;
-                //return 0;
+                return 0;
             }
         }
 
