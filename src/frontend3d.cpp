@@ -27,7 +27,9 @@ void Frontend3d::update(const glm::dvec3& planePos, const glm::dquat& orientatio
 	//(glm::mat4)glm::mat4_cast(orientation)
     //this->yawPitchRoll = yawPitchRoll;
     //planeModel.set_position(planePos + glm::vec3(0.0f, 4.5f, 0.0f)); //For the 747-400
-    planeModel.set_position(this->planePos + glm::vec3(0.0f, 1.5f, 0.0f));
+    glm::vec3 forward = glm::quat(orientation) * glm::vec3(0,0,-1);
+    glm::vec3 up = glm::quat(orientation) * glm::vec3(0,1,0);
+    planeModel.set_position(this->planePos + forward * 5.0f + up * (-1.0f));
     planeModel.set_orientation(orientation);//this->yawPitchRoll);
     if (is_first_person) {
     	/*glm::vec3 pilot_offset(0.0f,
@@ -57,7 +59,7 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
         time += clock.getElapsedTime().asSeconds();
         clock.restart();
     }
-    float angle = glm::mod(time * 0.5 + 0.6, M_PI*1.2) + M_PI;
+    float angle = glm::mod(time * 0.5 + 0.6, M_PI) + M_PI;
     light_dir = glm::normalize(glm::vec3(glm::cos(angle), glm::sin(angle), 0));
 
 

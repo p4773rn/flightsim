@@ -80,7 +80,7 @@ void Plane::update(double delta,
     auto localVel = glm::conjugate(orientation) * vel; 
     // localVel.z = -forward speed
     // localVel.y = not sure what it means
-    //std::cout << pos << "\t " << localVel.z << "\t" << vel  << std::endl;
+    std::cout << pos << "\t " << localVel.z << "\t" << vel  << std::endl;
 
     glm::dvec3 acc = netForce / mass;
     vel += acc * delta;
@@ -288,7 +288,7 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
 
 
     Plane plane = Plane(
-        glm::dvec3(0, 4, 0), // pos
+        glm::dvec3(0, -1728, 0), // pos
         glm::dvec3(0, 0, 0),// velocity
         totalMass,
         inertia,
@@ -302,8 +302,8 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
         Wheels(434802, 400, 40000, glm::dvec3(-3, -4, 5), terrain), // Main wheels left
         Wheels(434802, 400, 40000, glm::dvec3(3, -4, 5), terrain) // Main wheels right
     );
-    plane.orientation = glm::dquat(glm::dvec3(0,3,0));
-    plane.vel = plane.orientation * glm::dvec3(0,0,-100);
+    plane.orientation = glm::dquat(glm::dvec3(0,M_PI/2.0,0));
+    plane.vel = plane.orientation * glm::dvec3(0,0,0);
 
     return plane;
 }

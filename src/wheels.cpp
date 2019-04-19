@@ -70,6 +70,7 @@ std::tuple<glm::dvec3, glm::dvec3> Wheels::getForceAndTorque(
         frictionForce = frictionForceDirection * frictionForceMagnitude;
         //debugArrows.push_back({glm::vec3(absolutePosition), glm::vec3(frictionForce*0.01), glm::vec3(0,1,1)});
     }
+    //std::cout << frictionCoefficient << std::endl;
 
     // Not using springForce and dampingForce for torque
     // because they are numerically unstable
