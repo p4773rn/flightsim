@@ -110,7 +110,7 @@ int main()
                             break;
 
                         case sf::Keyboard::Add:
-                            speed += 0.1;
+                            speed = glm::min(3.0f, speed+0.1f);
                             break;
                         case sf::Keyboard::Subtract:
                             speed = glm::max(0.0f, speed-0.1f);
@@ -134,6 +134,10 @@ int main()
                             if (!keystate[sf::Keyboard::F4])
                                 frontend.switch_arrows();
                             break;
+                        case sf::Keyboard::F5:
+                            if (!keystate[sf::Keyboard::F5])
+                                frontend.switch_sun_cycle();
+                            break;
                     }
                     keystate[event.key.code] = true;
                     break;
@@ -149,7 +153,12 @@ int main()
         int num_steps = 20;
         for (int i = 0; i < num_steps; ++i) {
             debugArrows.clear();
-            plane.update(delta/num_steps, debugArrows);
+            try {
+                plane.update(delta/num_steps, debugArrows);
+            } catch (std::runtime_error ex) {
+                std::cout << ex.what() << std::endl;
+                //return 0;
+            }
         }
 
         lastUpdateTime = clock.getElapsedTime().asSeconds();

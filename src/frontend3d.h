@@ -25,6 +25,7 @@ public:
     void input(const sf::Event& event);
 
     void switch_arrows() { render_arrows = !render_arrows; }
+    void switch_sun_cycle() { sun_cycle = !sun_cycle; clock.restart(); }
 
     const Terrain& get_terrain() const {return terrain;}
     Renderer& get_renderer() {return renderer;}
@@ -45,6 +46,10 @@ private:
     bool render_arrows = true;
 
     glm::ivec2 screen_size;
+    
+    sf::Clock clock;
+    bool sun_cycle = false;
+    float time = 0;
 };
 
 

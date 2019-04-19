@@ -48,9 +48,19 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
     glm::mat4 view = camera.get_view();
     //glm::mat4 projection = glm::perspective(glm::radians(90.0f), 800.0f/600.0f, 0.1f, 4*4096.0f);
     glm::mat4 projection = glm::perspective(glm::radians(90.0f), float(screen_size.x)/screen_size.y, 0.1f, 4*4096.0f);
-    glm::vec3 light_dir(0.1,-0.6,0.5);
-    glm::vec3 light_color(1.0);
     
+    
+    glm::vec3 light_dir;
+    glm::vec3 light_color(1.0, 1.0, 1.0);
+
+    if (sun_cycle) {
+        time += clock.getElapsedTime().asSeconds();
+        clock.restart();
+    }
+    float angle = glm::mod(time * 0.5 + 0.6, M_PI*1.2) + M_PI;
+    light_dir = glm::normalize(glm::vec3(glm::cos(angle), glm::sin(angle), 0));
+
+
     //if (!is_first_person) 
         renderer.queue_render(&planeModel);
 

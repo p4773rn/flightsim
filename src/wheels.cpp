@@ -2,6 +2,7 @@
 #include "environment.h"
 #include <iostream>
 #include "misc.h"
+#include <cstdlib>
 
 using std::cout;
 using std::endl;
@@ -25,8 +26,8 @@ std::tuple<glm::dvec3, glm::dvec3> Wheels::getForceAndTorque(
     debugArrows.push_back({glm::vec3(absolutePosition.x, h, absolutePosition.z), glm::vec3(0,1,0), glm::vec3(1,0,0)});
 
 
-    //double groundY = h; // ground height at absolutePosition
-    double groundY = 0;
+    double groundY = h; // ground height at absolutePosition
+    //double groundY = 0;
     glm::dvec3 groundNormal = glm::normalize(glm::dvec3(0, 1, 0)); // ground normal at absolutePosition
 
     if (absolutePosition.y > groundY) {
@@ -34,6 +35,7 @@ std::tuple<glm::dvec3, glm::dvec3> Wheels::getForceAndTorque(
     }
     
     if (absolutePosition.y < groundY - 4) {
+        //exit(0);
         throw std::runtime_error("Wheels break");
     }
 

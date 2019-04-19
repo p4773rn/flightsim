@@ -303,7 +303,7 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
         Wheels(434802, 400, 40000, glm::dvec3(3, -4, 5), terrain) // Main wheels right
     );
     plane.orientation = glm::dquat(glm::dvec3(0,3,0));
-    plane.vel = plane.orientation * glm::dvec3(0,0,0);
+    plane.vel = plane.orientation * glm::dvec3(0,0,-100);
 
     return plane;
 }

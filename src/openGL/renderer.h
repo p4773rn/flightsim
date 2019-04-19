@@ -59,7 +59,7 @@ private:
     Shader lighting_shader;
 
     bool wireframe = false;
-    bool render_clouds = true;
+    bool render_clouds = false;
     int mode = 0;
 };
 

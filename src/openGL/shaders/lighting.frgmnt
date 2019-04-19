@@ -124,9 +124,9 @@ void main()
 	
 	vec3 nray = normalize(ray);
     if (drawn) {
-        //atmosphere_color = sky(atmosphere_origin, nray, 0, dist);
+        atmosphere_color = sky(atmosphere_origin, nray, 0, dist);
     } else {
-        //atmosphere_color = sky(atmosphere_origin, nray, 0, 1e5);
+        atmosphere_color = sky(atmosphere_origin, nray, 0, 1e5);
     }
     atmosphere_color = 1.0 - exp(-1.0 * atmosphere_color);
     // TODO: calculate atmosphere color at world_pos properly
