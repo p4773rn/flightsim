@@ -80,7 +80,7 @@ void Plane::update(double delta,
     auto localVel = glm::conjugate(orientation) * vel; 
     // localVel.z = -forward speed
     // localVel.y = not sure what it means
-    std::cout << pos << "\t " << localVel.z << "\t" << vel  << std::endl;
+    //std::cout << pos << "\t " << localVel.z << "\t" << vel  << std::endl;
 
     glm::dvec3 acc = netForce / mass;
     vel += acc * delta;
@@ -149,22 +149,6 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
     addPointMasses(eLength, eRoot, eTip, eSweep, ePos, eDihedral, false, pointMasses);
     addPointMasses(eLength, eRoot, eTip, eSweep, ePos, eDihedral, true, pointMasses);
     addPointMasses(rLength, rRoot, rTip, rSweep, rPos, rDihedral, false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, fDihedral, false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, fDihedral, true, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, glm::radians(90.), false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, glm::radians(-90.), false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, fDihedral, false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, fDihedral, true, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, glm::radians(90.), false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, glm::radians(-90.), false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, fDihedral, false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, fDihedral, true, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, glm::radians(90.), false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, glm::radians(-90.), false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, fDihedral, false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, fDihedral, true, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, glm::radians(90.), false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, glm::radians(-90.), false, pointMasses);
     addPointMasses(fLength, fRoot, fTip, fSweep, fPos, fDihedral, false, pointMasses);
     addPointMasses(fLength, fRoot, fTip, fSweep, fPos, fDihedral, true, pointMasses);
     addPointMasses(fLength, fRoot, fTip, fSweep, fPos, glm::radians(90.), false, pointMasses);
@@ -288,7 +272,7 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
 
 
     Plane plane = Plane(
-        glm::dvec3(0, -1725, 0), // pos
+        glm::dvec3(0, -1726, 0), // pos
         glm::dvec3(0, 0, 0),// velocity
         totalMass,
         inertia,
@@ -298,9 +282,9 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
         std::move(rudder),
         std::move(fuselage),
         Engine(105000), // engine
-        Wheels(72467, 10, 10000, glm::dvec3(0, -3, -10), terrain), // Front wheels
-        Wheels(434802, 400, 40000, glm::dvec3(-3, -3, 5), terrain), // Main wheels left
-        Wheels(434802, 400, 40000, glm::dvec3(3, -3, 5), terrain) // Main wheels right
+        Wheels(304670, 10, 60000, glm::dvec3(0, -3, -10), terrain), // Front wheels
+        Wheels(404802, 400, 80000, glm::dvec3(-2.5, -3, 3), terrain), // Main wheels left
+        Wheels(404802, 400, 80000, glm::dvec3(2.5, -3, 3), terrain) // Main wheels right
     );
     plane.orientation = glm::dquat(glm::dvec3(0,M_PI/2.0,0));
     plane.vel = plane.orientation * glm::dvec3(0,0,0);

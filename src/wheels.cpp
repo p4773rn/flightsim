@@ -42,9 +42,18 @@ std::tuple<glm::dvec3, glm::dvec3> Wheels::getForceAndTorque(
     // how much the spring is compressed
     // not entirely correct
     double springDeltaLength = (groundY - absolutePosition.y);
-    
+
+
+    //    double normalForceMagnitude =  -absolutePosition.getY() * stiffness - (absoluteSpeed.getY() * springFriction);
+
+
+/*
     glm::dvec3 springForce = orientation * (-direction) * (stiffness * springDeltaLength);
     glm::dvec3 dampingForce = orientation * (-direction) * glm::dot(absoluteVelocity, orientation * direction) * springFriction;
+*/
+
+    glm::dvec3 springForce = glm::dvec3(0, (stiffness * springDeltaLength), 0);
+    glm::dvec3 dampingForce = glm::dvec3(0, glm::dot(absoluteVelocity, orientation * direction) * springFriction, 0);
 
     // netForce is divided by 3 because we have 3 Wheel objects
     double normalForceMagnitude = abs(glm::dot(-netForce/3.0, groundNormal));
@@ -55,7 +64,7 @@ std::tuple<glm::dvec3, glm::dvec3> Wheels::getForceAndTorque(
     glm::dvec3 frictionForce(0);
     if (abs(localVelocity.x) > 0.01 || abs(localVelocity.z) > 0.01) {
         //TODO: take ground surface (road/grass) into account
-        double frictionCoefficientZ = brakesOn ? 5 : 0.01; // friction coefficient when plane is moving forward/backward
+        double frictionCoefficientZ = brakesOn ? 0.7 : 0.005; // friction coefficient when plane is moving forward/backward
         double frictionCoefficientX = 1; // friction coefficient when plane is moving sideways
 
         
@@ -74,9 +83,12 @@ std::tuple<glm::dvec3, glm::dvec3> Wheels::getForceAndTorque(
 
     // Not using springForce and dampingForce for torque
     // because they are numerically unstable
+    /*
     glm::dvec3 force = normalForce + frictionForce;
-    glm::dvec3 torque = glm::cross(position, normalForce);
     force += springForce + dampingForce;
+    */
+    glm::dvec3 force = springForce + dampingForce + frictionForce;
+    glm::dvec3 torque = glm::cross(position, springForce + dampingForce);
 
     debugArrows.push_back({glm::vec3(absolutePosition), glm::vec3(force*0.01), glm::vec3(0,1,1)});
     

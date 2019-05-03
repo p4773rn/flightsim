@@ -21,7 +21,7 @@ int main()
     settings.majorVersion = 3;
     settings.minorVersion = 3;
 
-    glm::ivec2 screenSize(800, 600);
+    glm::ivec2 screenSize(1920 * 3 / 4, 1080 * 3 / 4);
     sf::RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y), "FlightSim", sf::Style::Default, settings);
     window.setFramerateLimit(FPS);
     window.setMouseCursorVisible(false);
@@ -31,7 +31,7 @@ int main()
     //    screenWidth = 1920;
     sf::Vector2<int> windowPosition(1920 / 4, 0);
 
-    //window.setPosition(windowPosition);
+    window.setPosition(windowPosition);
 
 
     sf::View view = window.getDefaultView();
@@ -90,6 +90,16 @@ int main()
                             break;
                         case sf::Keyboard::Down:
                             plane.setElevatorDeflection(plane.getElevatorDeflection() + elevatorsDevlectionStep);
+                            break;
+
+                        case sf::Keyboard::Q:
+                            plane.setRudderDeflection(plane.getRudderDeflection() + elevatorsDevlectionStep);
+                            break;
+                        case sf::Keyboard::W:
+                            plane.setRudderDeflection(plane.getRudderDeflection() - elevatorsDevlectionStep);
+                            break;
+                        case sf::Keyboard::R:
+                            plane.setRudderDeflection(0);
                             break;
 
                         case sf::Keyboard::E:

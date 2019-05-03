@@ -36,7 +36,7 @@ std::tuple<glm::dvec3, glm::dvec3> AirfoilSegment::getForceAndTorque(
     double groundHeight = terrain->get_height(glm::vec2(planePos.x, planePos.z));
 
     double liftMagnitude = dynamicPressure * area * coefficients.lift * getGroundEffect(height - groundHeight) * 1.15;
-    double dragMagnitude = dynamicPressure * area * coefficients.drag;
+    double dragMagnitude = dynamicPressure * area * coefficients.drag * 1.3;
 
     glm::dvec3 lift = liftDir * liftMagnitude;
     glm::dvec3 drag = dragDir * dragMagnitude;

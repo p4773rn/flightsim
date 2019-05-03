@@ -89,7 +89,7 @@ void Frontend3d::draw(sf::RenderWindow& window, const Plane &plane,
 
     renderer.get_clouds().set_pos_offset(posOffset);
     renderer.render(light_dir, light_color, projection, view, camera.get_position());
-    //hud.draw(window, plane);
+    hud.draw(window, plane);
 }
 
 
