@@ -64,7 +64,7 @@ std::tuple<glm::dvec3, glm::dvec3> Wheels::getForceAndTorque(
     glm::dvec3 frictionForce(0);
     if (abs(localVelocity.x) > 0.01 || abs(localVelocity.z) > 0.01) {
         //TODO: take ground surface (road/grass) into account
-        double frictionCoefficientZ = brakesOn ? 0.7 : 0.04; // friction coefficient when plane is moving forward/backward
+        double frictionCoefficientZ = brakesOn ? 0.7 : 0.095; // friction coefficient when plane is moving forward/backward
         double frictionCoefficientX = 1; // friction coefficient when plane is moving sideways
 
         

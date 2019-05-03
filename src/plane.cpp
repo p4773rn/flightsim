@@ -157,14 +157,6 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
     addPointMasses(fLength, fRoot, fTip, fSweep, fPos, fDihedral, true, pointMasses);
     addPointMasses(fLength, fRoot, fTip, fSweep, fPos, glm::radians(90.), false, pointMasses);
     addPointMasses(fLength, fRoot, fTip, fSweep, fPos, glm::radians(-90.), false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, fDihedral, false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, fDihedral, true, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, glm::radians(90.), false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, glm::radians(-90.), false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, fDihedral, false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, fDihedral, true, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, glm::radians(90.), false, pointMasses);
-    addPointMasses(fLength, fRoot, fTip, fSweep, fPos, glm::radians(-90.), false, pointMasses);
     double dm = totalMass / pointMasses.size();
 
     glm::dvec3 centerMass(0);
@@ -272,7 +264,7 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
 
 
     Plane plane = Plane(
-        glm::dvec3(0, -1726, 0), // pos
+        glm::dvec3(1000, -1727, 0), // pos
         glm::dvec3(0, 0, 0),// velocity
         totalMass,
         inertia,

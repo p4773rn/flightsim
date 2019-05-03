@@ -40,7 +40,7 @@ void HUD::draw(sf::RenderWindow& window, const Plane &plane){
 	std::ostringstream sout;
 	sout.precision(2);
 	sout.flags(std::ios_base::fixed);
-    sout << "Z Distance: " << -plane.getPos().x << std::endl;
+    sout << "Z Distance: " << -plane.getPos().x + 1000 << std::endl;
 	sout << "Altitude: " << plane.getPos().y + 1728 << std::endl;
 	sout << "Velocity: " << glm::length(plane.getVelocity()) << std::endl;
 	sout << "Vertical Velocity: " << plane.getVelocity().y << std::endl;
