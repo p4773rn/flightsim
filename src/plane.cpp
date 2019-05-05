@@ -272,7 +272,7 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
 
 
     Plane plane = Plane(
-        glm::dvec3(0, -1726, 0), // pos
+        glm::dvec3(20000, -1726, -20000), // pos
         glm::dvec3(0, 0, 0),// velocity
         totalMass,
         inertia,
@@ -286,7 +286,7 @@ Plane Plane::getDefaultPlane(std::vector<std::tuple<glm::vec3, glm::vec3, glm::v
         Wheels(404802, 400, 80000, glm::dvec3(-2.5, -3, 3), terrain), // Main wheels left
         Wheels(404802, 400, 80000, glm::dvec3(2.5, -3, 3), terrain) // Main wheels right
     );
-    plane.orientation = glm::dquat(glm::dvec3(0,M_PI/2.0,0));
+    plane.orientation = glm::dquat(glm::dvec3(0,glm::radians(90+45.0),0));
     plane.vel = plane.orientation * glm::dvec3(0,0,0);
 
     return plane;
